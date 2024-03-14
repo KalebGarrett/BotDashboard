@@ -1,7 +1,23 @@
 ﻿@page "/"
+@using GoveeDashboard.App.Services
+@using GoveeDashboard.Models
 
-<PageTitle>Home</PageTitle>
+<PageTitle>Govee Dashboard</PageTitle>
 
 <h1>Hello, world!</h1>
+<p>Govee Devices: <b>@Devices.Count</b></p>
 
-Welcome to your new app.
+@code{
+
+    [Inject]
+    public GoveeService GoveeService { get; set; }
+
+    private List<Device> Devices { get; set; } = new List<Device>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        Devices = await GoveeService.Get();
+    }
+
+}
