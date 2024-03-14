@@ -1,2 +1,3 @@
 # GoveeDashboard
-A dashboard for my Govee devices.
+
+Powered by Blazor and .NET 8
