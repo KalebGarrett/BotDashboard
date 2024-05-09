@@ -1,0 +1,9 @@
+﻿@page "/"
+@using BotDashboard.App.Constants
+
+<PageTitle>Home</PageTitle>
+
+<h1>Hello, world!</h1>
+
+<br/><button class="btn btn-success mt-3" @onclick="() => RunImage(DockerImages.JokeBot)">Run Joke Bot</button>
+<button class="btn btn-danger mt-3" @onclick="() => StopImage(ContainerName)">Stop Joke Bot</button>
