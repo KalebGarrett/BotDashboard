@@ -1,4 +1,5 @@
 ﻿using BotDashboard.App.Commands;
+using BotDashboard.App.Events;
 using BotDashboard.App.Secrets;
 using Renci.SshNet;
 
@@ -12,7 +13,7 @@ public class DigitalOceanService
         var command = dockerCommand.Run(imageName);
         RunCommand(command);
     }
-    
+
     public void StopImage(string containerName)
     {
         var dockerCommand = new DockerCommand();
@@ -23,6 +24,7 @@ public class DigitalOceanService
     private void RunCommand(string command)
     {
         using var client = new SshClient(DigitalOcean.Host, DigitalOcean.Username, DigitalOcean.Password);
+        client.HostKeyReceived += SshEvents.ClientOnHostKeyReceived;
         client.Connect();
         client.RunCommand(command);
         client.Disconnect();

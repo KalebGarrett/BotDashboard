@@ -10,7 +10,6 @@ public partial class Home
 {
     [Inject]
     private DigitalOceanService DigitalOceanService { get; set; }
-    private string ContainerName { get; set; } = "jokebot"; //Remove test case
     
     private void RunImage(string imageName)
     {
