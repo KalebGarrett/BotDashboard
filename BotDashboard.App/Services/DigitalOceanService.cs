@@ -27,6 +27,7 @@ public class DigitalOceanService
         client.HostKeyReceived += SshEvents.ClientOnHostKeyReceived;
         client.Connect();
         client.RunCommand(command);
+        client.HostKeyReceived -= SshEvents.ClientOnHostKeyReceived;
         client.Disconnect();
     }
 }
