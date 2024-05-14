@@ -16,7 +16,17 @@ public class DockerCommand
     {
         return "docker stop $(docker ps -q)";
     }
+
+    public string ListContainers()
+    {
+        return "docker ps";
+    }
     
+    public string Stats()
+    {
+        return "docker stats";
+    }
+
     public string Pull(string imageName)
     {
         return $"docker pull {imageName}";

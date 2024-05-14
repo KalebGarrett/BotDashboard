@@ -1,6 +1,6 @@
 ﻿namespace BotDashboard.Models;
 
-public class Container
+public class Containers
 {
     public string ContainerId { get; set; }
     public string Image { get; set; }
