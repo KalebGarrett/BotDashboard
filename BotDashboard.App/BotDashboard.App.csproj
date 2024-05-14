@@ -16,4 +16,8 @@
       </Compile>
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\BotDashboard.Models\BotDashboard.Models.csproj" />
+    </ItemGroup>
+
 </Project>

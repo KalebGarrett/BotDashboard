@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using BotDashboard.App.Secrets;
+﻿using BotDashboard.App.Secrets;
 using Renci.SshNet.Common;
 
 namespace BotDashboard.App.Events;
