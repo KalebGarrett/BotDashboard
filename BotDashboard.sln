@@ -2,6 +2,8 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BotDashboard.App", "BotDashboard.App\BotDashboard.App.csproj", "{BCFC5113-7366-42C8-83BF-E549AC469A16}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BotDashboard.Models", "BotDashboard.Models\BotDashboard.Models.csproj", "{988D5D03-65E0-4C5E-953C-43632AE69125}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +14,9 @@ Global
 		{BCFC5113-7366-42C8-83BF-E549AC469A16}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BCFC5113-7366-42C8-83BF-E549AC469A16}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BCFC5113-7366-42C8-83BF-E549AC469A16}.Release|Any CPU.Build.0 = Release|Any CPU
+		{988D5D03-65E0-4C5E-953C-43632AE69125}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{988D5D03-65E0-4C5E-953C-43632AE69125}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{988D5D03-65E0-4C5E-953C-43632AE69125}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{988D5D03-65E0-4C5E-953C-43632AE69125}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
