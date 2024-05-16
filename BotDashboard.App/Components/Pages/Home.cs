@@ -12,19 +12,27 @@ public partial class Home
     [Inject]
     private DigitalOceanService DigitalOceanService { get; set; }
     private List<Containers> Containers { get; set; } = new List<Containers>();
+    private string Time { get; set; }
 
-    private void RunImage(string imageName)
+    protected override async Task OnInitializedAsync()
     {
-        DigitalOceanService.RunImage(imageName);
+        Containers = DigitalOceanService.ListContainers();
+        Time = LastFetched();
     }
     
     private void StopImage(string containerName)
     {
         DigitalOceanService.StopImage(containerName);
     }
-    
+
     private void ListContainers()
     {
-        DigitalOceanService.ListContainers();
+        Containers = DigitalOceanService.ListContainers();
+        Time = LastFetched();
+    }
+    
+    private string LastFetched()
+    {
+        return DateTime.UtcNow.ToLocalTime().ToString();
     }
 }
