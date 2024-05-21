@@ -7,9 +7,9 @@ public class DockerCommand
         return $"docker run {imageName}";
     }
 
-    public string Stop(string containerName)
+    public string Stop(string containerId)
     {
-        return $"docker stop {containerName}";
+        return $"docker stop {containerId}";
     }
 
     public string StopAll()
@@ -17,6 +17,11 @@ public class DockerCommand
         return "docker stop $(docker ps -q)";
     }
 
+    public string ListImages()
+    {
+        return "docker images";
+    }
+    
     public string ListContainers()
     {
         return "docker ps";

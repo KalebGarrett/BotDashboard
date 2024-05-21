@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Globalization;
 using BotDashboard.App.Secrets;
 using BotDashboard.App.Services;
 using BotDashboard.Models;
@@ -16,23 +17,19 @@ public partial class Home
 
     protected override async Task OnInitializedAsync()
     {
-        Containers = DigitalOceanService.ListContainers();
-        Time = LastFetched();
+        ListContainers();
     }
     
-    private void StopImage(string containerName)
-    {
-        DigitalOceanService.StopImage(containerName);
-    }
-
     private void ListContainers()
     {
         Containers = DigitalOceanService.ListContainers();
-        Time = LastFetched();
+        Time = DateTime.UtcNow.ToLocalTime().ToString(CultureInfo.CurrentCulture);
     }
     
-    private string LastFetched()
+    private void StopImage(string containerId)
     {
-        return DateTime.UtcNow.ToLocalTime().ToString();
+        DigitalOceanService.StopImage(containerId);
+        Task.Delay(TimeSpan.FromSeconds(3));
+        ListContainers();
     }
 }
