@@ -1,5 +1,4 @@
-﻿using System.ComponentModel;
-using BotDashboard.App.Commands;
+﻿using BotDashboard.App.Commands;
 using BotDashboard.App.Events;
 using BotDashboard.App.Secrets;
 using BotDashboard.Models;
@@ -16,10 +15,10 @@ public class DigitalOceanService
         RunCommand(command);
     }
 
-    public void StopImage(string containerName)
+    public void StopImage(string containerId)
     {
         var dockerCommand = new DockerCommand();
-        var command = dockerCommand.Stop(containerName);
+        var command = dockerCommand.Stop(containerId);
         RunCommand(command);
     }
     
@@ -32,14 +31,28 @@ public class DigitalOceanService
 
         var command = client.CreateCommand(dockerCommand.ListContainers());
         var response = command.Execute();
-        Console.WriteLine(response); //Remove test case
 
         client.HostKeyReceived -= SshEvents.ClientOnHostKeyReceived;
         client.Disconnect();
-
-        return response.ToList();
+        
+        return response.Split("\n")
+            .Skip(1)
+            .SkipLast(1)
+            .Select(str => str.Split("   ")
+                .Where(s => s != "").ToArray())
+            .Select(row => new Containers
+            {
+                ContainerId = row[0].Trim(),
+                Image = row[1].Trim(),
+                Command = row[2].Trim(),
+                Created = row[3].Trim(),
+                Status = row[4].Trim(),
+                Names = row[5].Trim()
+            })
+            .OrderBy(container => container.Image)
+            .ToList();
     }
-
+    
     private void RunCommand(string command)
     {
         using var client = new SshClient(DigitalOcean.Host, DigitalOcean.Username, DigitalOcean.Password);

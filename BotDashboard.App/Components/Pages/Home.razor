@@ -1,7 +1,7 @@
 ﻿@page "/"
 @using BotDashboard.App.Constants
 
-<PageTitle>Home</PageTitle>
+<PageTitle>Dashboard</PageTitle>
 
 <style>
     body{
@@ -9,10 +9,10 @@
     }
 </style>
 
-<h1 class="display-5 text-white">Control Panel</h1>
-<br/>
+<img src="imgs/Bot Harbot - Logo Resized.png" alt="Bot Harbor Logo" class="img-fluid"/>
+
 <b>
-    <h2 class="text-white">Containers Running</h2>
+    <h2 class="text-white mt-3">Containers Running</h2>
 </b>
 
 <div class="row">
@@ -23,20 +23,11 @@
     @foreach (var container in Containers)
     {
         <div class="col-md-4 mb-2">
-            <div class="card text-white rounded-3" style="background-color: #080E2C">
+            <div class="card text-white rounded-5" style="background-color: #080E2C">
                 <div class="position-relative">
                     <div class="bg-image hover-overlay ripple" data-mdb-ripple-color="light">
-                        <div class="row">
-                            <div class="col-md-6 justify-content-start">
-                                <img src="https://cdn.iconscout.com/icon/free/png-256/free-discord-4062811-3357697.png?f=webp"
-                                     class="mt-2 ms-3" width="50" height="50" alt="@container.Image"/>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-check form-switch mt-3">
-                                    <input class="form-check-input" type="checkbox" id="flexSwitchCheckChecked" checked>
-                                </div>
-                            </div>
-                        </div>
+                        <img src="https://cdn.iconscout.com/icon/free/png-256/free-discord-4062811-3357697.png?f=webp"
+                             class="mt-2 ms-3" width="50" height="50" alt="@container.Image"/>
                         <a href="#!">
                             <div class="mask" style="background-color: rgba(251, 251, 251, 0.15)"></div>
                         </a>
@@ -48,10 +39,16 @@
                         <p class="card-text">Status: @container.Status</p>
                     </div>
                 </div>
+                <div class="form-check form-switch position-absolute checkbox-large" style="top: 10px; right: 10px;">
+                    <input class="form-check-input" type="checkbox" id="flexSwitchCheckChecked" @onclick="() => StopImage(container.ContainerId)" checked >
+                </div>
             </div>
         </div>
     }
 </div>
 
 <p class="text-white col-md-5">Last Fetched @Time</p>
-<button class="btn btn-dark rounded-pill mt-1" style="background-color: #4111C6" @onclick="ListContainers">List Containers</button>
+<button class="btn btn-dark rounded-pill mt-1 mb-3" style="background-color: #4111C6" @onclick="ListContainers">
+    <i class="bi bi-list"></i>
+    List Containers
+</button>
