@@ -3,16 +3,11 @@
 
 <PageTitle>Dashboard</PageTitle>
 
-<style>
-    body{
-     background-color: #08081C;
-    }
-</style>
-
-<img src="imgs/Bot Harbot - Logo Resized.png" alt="Bot Harbor Logo" class="img-fluid"/>
-
+<div class="container-fluid logo-container text-white d-flex align-items-center justify-content-center">
+    <img src="imgs/Bot Harbot - Logo Resized.png" alt="Bot Harbor Logo" class="img-fluid"/>
+</div>
 <b>
-    <h2 class="text-white mt-3">Containers Running</h2>
+    <h2 class="text-white mt-4">Containers Running</h2>
 </b>
 
 <div class="row">
@@ -20,27 +15,30 @@
     {
         <p class="lead text-white">There are no containers currently running...</p>
     }
-    @foreach (var container in Containers)
+    @foreach (var container in Containers.OrderBy(x => x.Image))
     {
-        <div class="col-md-4 mb-2">
-            <div class="card text-white rounded-5" style="background-color: #080E2C">
+       
+        <div class="col-md-4 mb-4">
+            <div class="card container-card">
                 <div class="position-relative">
                     <div class="bg-image hover-overlay ripple" data-mdb-ripple-color="light">
-                        <img src="https://cdn.iconscout.com/icon/free/png-256/free-discord-4062811-3357697.png?f=webp"
-                             class="mt-2 ms-3" width="50" height="50" alt="@container.Image"/>
+                        <div class="mt-2 ms-3">
+                            <img src="https://cdn.iconscout.com/icon/free/png-256/free-discord-4062811-3357697.png?f=webp"
+                                 width="50" height="50" alt="@container.Image"/>
+                        </div>
                         <a href="#!">
                             <div class="mask" style="background-color: rgba(251, 251, 251, 0.15)"></div>
                         </a>
                     </div>
                     <div class="card-body">
-                        <h5 class="card-title lead">@container.Image</h5>
-                        <p class="card-text mt-4">Container Id: @container.ContainerId</p>
-                        <p class="card-text">Created: @container.Created</p>
-                        <p class="card-text">Status: @container.Status</p>
+                        <h5 class="card-title lead">@container.Image.ToUpper()</h5>
+                        <p class="card-text mt-4" style="color: #707a91">Container Id: @container.ContainerId</p>
+                        <p class="card-text" style="color: #707a91">Created: @container.Created</p>
+                        <p class="card-text" style="color: #707a91">Status: @container.Status</p>
                     </div>
                 </div>
-                <div class="form-check form-switch position-absolute checkbox-large" style="top: 10px; right: 10px;">
-                    <input class="form-check-input" type="checkbox" id="flexSwitchCheckChecked" @onclick="() => StopImage(container.ContainerId)" checked >
+                <div class="form-check form-switch position-absolute" style="top: 10px; right: 10px;">
+                    <input class="form-check-input form-check-size" type="checkbox" id="flexSwitchCheckChecked" @onclick="() => StopImage(container.ContainerId)" checked>
                 </div>
             </div>
         </div>
@@ -48,7 +46,29 @@
 </div>
 
 <p class="text-white col-md-5">Last Fetched @Time</p>
-<button class="btn btn-dark rounded-pill mt-1 mb-3" style="background-color: #4111C6" @onclick="ListContainers">
+<button class="btn btn-dark rounded-pill mb-3 list-containers-btn p-3" @onclick="ListContainers">
     <i class="bi bi-list"></i>
     List Containers
+</button>
+
+<!-- Add custom section for running images -->
+<button class="btn btn-dark rounded-pill mb-3 list-containers-btn p-3" @onclick="() => RunImage(DockerImages.JokeBot)">
+    <i class="bi bi-robot"></i>
+    Start @DockerImages.JokeBot
+</button>
+<button class="btn btn-dark rounded-pill mb-3 list-containers-btn p-3" @onclick="() => RunImage(DockerImages.TriviaBot)">
+    <i class="bi bi-robot"></i>
+    Start @DockerImages.TriviaBot
+</button>
+<button class="btn btn-dark rounded-pill mb-3 list-containers-btn p-3" @onclick="() => RunImage(DockerImages.FactBot)">
+    <i class="bi bi-robot"></i>
+    Start @DockerImages.FactBot
+</button>
+<button class="btn btn-dark rounded-pill mb-3 list-containers-btn p-3" @onclick="() => RunImage(DockerImages.PremBot)">
+    <i class="bi bi-robot"></i>
+    Start @DockerImages.PremBot
+</button>
+<button class="btn btn-dark rounded-pill mb-3 list-containers-btn p-3" @onclick="() => RunImage(DockerImages.JamJunction)">
+    <i class="bi bi-robot"></i>
+    Start @DockerImages.JamJunction
 </button>
