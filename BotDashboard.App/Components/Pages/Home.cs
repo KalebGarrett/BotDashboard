@@ -32,4 +32,12 @@ public partial class Home
         Task.Delay(TimeSpan.FromSeconds(3));
         ListContainers();
     }
+
+    private void RunImage(string imageName)
+    {
+        DigitalOceanService.RunImage(imageName);
+        //Add locking mechanism if already running
+        Task.Delay(TimeSpan.FromSeconds(3));
+        ListContainers();
+    }
 }

@@ -50,13 +50,6 @@ h1:focus {
     border-color: #929292;
 }
 
-.checkbox-large .form-check-input {
-    width: 2.5em;
-    height: 2.5em;
-    transform: scale(1.5);
-    margin-top: 0.25em; /* Adjust vertical alignment if necessary */
-}
-
-.form-check-input:checked {
-    background-color: #3A0647;
+body{
+    background-color: #08081C;
 }
