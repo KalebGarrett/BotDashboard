@@ -1,17 +1,14 @@
-﻿using System.Diagnostics;
-using System.Globalization;
-using BotDashboard.App.Secrets;
+﻿using System.Globalization;
 using BotDashboard.App.Services;
 using BotDashboard.Models;
 using Microsoft.AspNetCore.Components;
-using Renci.SshNet;
 
 namespace BotDashboard.App.Components.Pages;
 
 public partial class Home
 {
     [Inject]
-    private DigitalOceanService DigitalOceanService { get; set; }
+    private DockerService DockerService { get; set; }
     private List<Containers> Containers { get; set; } = new List<Containers>();
     private string Time { get; set; }
 
@@ -20,24 +17,38 @@ public partial class Home
         ListContainers();
     }
     
-    private void ListContainers()
+    private void RunImage(string imageName)
     {
-        Containers = DigitalOceanService.ListContainers();
-        Time = DateTime.UtcNow.ToLocalTime().ToString(CultureInfo.CurrentCulture);
+        DockerService.RunImage(imageName);
+        //Add locking mechanism if already running
+        Task.Delay(TimeSpan.FromSeconds(3));
+        ListContainers();
     }
     
     private void StopImage(string containerId)
     {
-        DigitalOceanService.StopImage(containerId);
+        DockerService.StopImage(containerId);
         Task.Delay(TimeSpan.FromSeconds(3));
         ListContainers();
     }
 
-    private void RunImage(string imageName)
+    private void StopAllImages()
     {
-        DigitalOceanService.RunImage(imageName);
-        //Add locking mechanism if already running
+        DockerService.StopAllImages();
         Task.Delay(TimeSpan.FromSeconds(3));
         ListContainers();
+    }
+    
+    private void RestartAllImages()
+    {
+        DockerService.RestartAllImages();
+        Task.Delay(TimeSpan.FromSeconds(3));
+        ListContainers();
+    }
+    
+    private void ListContainers()
+    {
+        Containers = DockerService.ListContainers();
+        Time = DateTime.UtcNow.ToLocalTime().ToString(CultureInfo.CurrentCulture);
     }
 }

@@ -18,9 +18,8 @@
     {
         <p class="lead text-white">There are no containers currently running...</p>
     }
-    @foreach (var container in Containers.OrderBy(x => x.Status))
+    @foreach (var container in Containers.OrderBy(x => x.Image))
     {
-       
         <div class="col-md-4 mb-4">
             <div class="card container-card">
                 <div class="position-relative">
@@ -47,36 +46,56 @@
         </div>
     }
 </div>
-<p class="text-white col-md-5">Last Fetched @Time</p>
+<p class="text-white">Last Fetched @Time</p>
 
-<!-- Add custom section for running images -->
 <hr/>
 <b>
     <h2 class="text-white mt-2"><i class="bi bi-command"></i> Commands</h2>
 </b>
-<div class="command-btn-container p-3 mb-4">
-    <button class="btn btn-dark rounded-pill list-containers-btn p-3" @onclick="ListContainers">
-        <i class="bi bi-list"></i>
-        List Containers
-    </button>
-    <button class="btn btn-dark rounded-pill list-containers-btn p-3" @onclick="() => RunImage(DockerImages.JokeBot)">
-        <i class="bi bi-robot"></i>
-        Start @DockerImages.JokeBot
-    </button>
-    <button class="btn btn-dark rounded-pill list-containers-btn p-3" @onclick="() => RunImage(DockerImages.TriviaBot)">
-        <i class="bi bi-robot"></i>
-        Start @DockerImages.TriviaBot
-    </button>
-    <button class="btn btn-dark rounded-pill list-containers-btn p-3" @onclick="() => RunImage(DockerImages.FactBot)">
-        <i class="bi bi-robot"></i>
-        Start @DockerImages.FactBot
-    </button>
-    <button class="btn btn-dark rounded-pill list-containers-btn p-3" @onclick="() => RunImage(DockerImages.PremBot)">
-        <i class="bi bi-robot"></i>
-        Start @DockerImages.PremBot
-    </button>
-    <button class="btn btn-dark rounded-pill list-containers-btn p-3" @onclick="() => RunImage(DockerImages.JamJunction)">
-        <i class="bi bi-robot"></i>
-        Start @DockerImages.JamJunction
-    </button>
+
+<div class="mb-4">
+    <div class="row">
+        <div class="col-md-6 p-3 command-btn-container">
+            <button class="btn btn-dark rounded-pill list-containers-btn p-3" @onclick="ListContainers">
+                <i class="bi bi-list"></i>
+                List Containers
+            </button>
+            <!-- Add get stats btn for Ubuntu memory usage data -->
+            <button class="btn btn-dark rounded-pill list-containers-btn p-3">
+                <i class="bi bi-activity"></i>
+                Get Stats
+            </button>
+            <button class="btn btn-dark rounded-pill list-containers-btn p-3" @onclick="() => RunImage(DockerImages.JokeBot)">
+                <i class="bi bi-robot"></i>
+                Start @DockerImages.JokeBot
+            </button>
+            <button class="btn btn-dark rounded-pill list-containers-btn p-3" @onclick="() => RunImage(DockerImages.TriviaBot)">
+                <i class="bi bi-robot"></i>
+                Start @DockerImages.TriviaBot
+            </button>
+            <button class="btn btn-dark rounded-pill list-containers-btn p-3" @onclick="() => RunImage(DockerImages.FactBot)">
+                <i class="bi bi-robot"></i>
+                Start @DockerImages.FactBot
+            </button>
+            <button class="btn btn-dark rounded-pill list-containers-btn p-3" @onclick="() => RunImage(DockerImages.PremBot)">
+                <i class="bi bi-robot"></i>
+                Start @DockerImages.PremBot
+            </button>
+            <button class="btn btn-dark rounded-pill list-containers-btn p-3" @onclick="() => RunImage(DockerImages.JamJunction)">
+                <i class="bi bi-robot"></i>
+                Start @DockerImages.JamJunction
+            </button>
+            <button class="btn btn-dark rounded-pill list-containers-btn p-3" @onclick="RestartAllImages">
+                <i class="bi bi-arrow-clockwise"></i>
+                Restart All Containers
+            </button>
+            <button class="btn btn-dark rounded-pill list-containers-btn p-3" @onclick="StopAllImages">
+                <i class="bi bi-stop-fill"></i>
+                Stop All Containers
+            </button>
+        </div>
+        <div class="col-md-6">
+            <!-- Add pie chart for displaying memory -->
+        </div>
+    </div>
 </div>
