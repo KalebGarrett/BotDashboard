@@ -6,7 +6,7 @@ using Renci.SshNet;
 
 namespace BotDashboard.App.Services;
 
-public class DigitalOceanService
+public class DockerService
 {
     public void RunImage(string imageName)
     {
@@ -19,6 +19,20 @@ public class DigitalOceanService
     {
         var dockerCommand = new DockerCommand();
         var command = dockerCommand.Stop(containerId);
+        RunCommand(command);
+    }
+
+    public void StopAllImages()
+    {
+        var dockerCommand = new DockerCommand();
+        var command = dockerCommand.StopAll();
+        RunCommand(command);
+    }
+
+    public void RestartAllImages()
+    {
+        var dockerCommand = new DockerCommand();
+        var command = dockerCommand.RestartAll();
         RunCommand(command);
     }
     

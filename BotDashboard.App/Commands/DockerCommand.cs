@@ -17,6 +17,16 @@ public class DockerCommand
         return "docker stop $(docker ps -q)";
     }
 
+    public string Restart(string containerId)
+    {
+        return $"docker restart {containerId}";
+    }
+    
+    public string RestartAll()
+    {
+        return "docker restart $(docker ps -q)";
+    }
+
     public string ListImages()
     {
         return "docker images";
@@ -35,5 +45,10 @@ public class DockerCommand
     public string Pull(string imageName)
     {
         return $"docker pull {imageName}";
+    }
+
+    public string Remove(string imageId)
+    {
+        return $"docker rmi {imageId}";
     }
 }
