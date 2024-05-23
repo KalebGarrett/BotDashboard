@@ -2,12 +2,14 @@
     background-color: #7551FF;
 }
 
-.form-check-size {
-
-}
-
 .form-check-input {
     border: none;
+    transform: scale(1.3);
+}
+
+.form-check-position {
+    top: 15px;
+    right: 15px;
 }
 
 .list-containers-btn{
@@ -25,7 +27,7 @@
     border-radius: 20px;
 }
 
-.discord-logo-container {
-    background-color: #08081C;
-    border-radius: 15px;
+.command-btn-container {
+    background-color: #080E2C;
+    border-radius: 20px;
 }

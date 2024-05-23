@@ -7,7 +7,10 @@
     <img src="imgs/Bot Harbot - Logo Resized.png" alt="Bot Harbor Logo" class="img-fluid"/>
 </div>
 <b>
-    <h2 class="text-white mt-4">Containers Running</h2>
+    <h2 class="text-white mt-4">
+        <i class="bi bi-box-seam"></i>
+        Containers Running
+    </h2>
 </b>
 
 <div class="row">
@@ -15,7 +18,7 @@
     {
         <p class="lead text-white">There are no containers currently running...</p>
     }
-    @foreach (var container in Containers.OrderBy(x => x.Image))
+    @foreach (var container in Containers.OrderBy(x => x.Status))
     {
        
         <div class="col-md-4 mb-4">
@@ -37,38 +40,43 @@
                         <p class="card-text" style="color: #707a91">Status: @container.Status</p>
                     </div>
                 </div>
-                <div class="form-check form-switch position-absolute" style="top: 10px; right: 10px;">
-                    <input class="form-check-input form-check-size" type="checkbox" id="flexSwitchCheckChecked" @onclick="() => StopImage(container.ContainerId)" checked>
+                <div class="form-check form-switch position-absolute form-check-position">
+                    <input class="form-check-input" type="checkbox" id="flexSwitchCheckChecked" @onclick="() => StopImage(container.ContainerId)" checked>
                 </div>
             </div>
         </div>
     }
 </div>
-
 <p class="text-white col-md-5">Last Fetched @Time</p>
-<button class="btn btn-dark rounded-pill mb-3 list-containers-btn p-3" @onclick="ListContainers">
-    <i class="bi bi-list"></i>
-    List Containers
-</button>
 
 <!-- Add custom section for running images -->
-<button class="btn btn-dark rounded-pill mb-3 list-containers-btn p-3" @onclick="() => RunImage(DockerImages.JokeBot)">
-    <i class="bi bi-robot"></i>
-    Start @DockerImages.JokeBot
-</button>
-<button class="btn btn-dark rounded-pill mb-3 list-containers-btn p-3" @onclick="() => RunImage(DockerImages.TriviaBot)">
-    <i class="bi bi-robot"></i>
-    Start @DockerImages.TriviaBot
-</button>
-<button class="btn btn-dark rounded-pill mb-3 list-containers-btn p-3" @onclick="() => RunImage(DockerImages.FactBot)">
-    <i class="bi bi-robot"></i>
-    Start @DockerImages.FactBot
-</button>
-<button class="btn btn-dark rounded-pill mb-3 list-containers-btn p-3" @onclick="() => RunImage(DockerImages.PremBot)">
-    <i class="bi bi-robot"></i>
-    Start @DockerImages.PremBot
-</button>
-<button class="btn btn-dark rounded-pill mb-3 list-containers-btn p-3" @onclick="() => RunImage(DockerImages.JamJunction)">
-    <i class="bi bi-robot"></i>
-    Start @DockerImages.JamJunction
-</button>
+<hr/>
+<b>
+    <h2 class="text-white mt-2"><i class="bi bi-command"></i> Commands</h2>
+</b>
+<div class="command-btn-container p-3 mb-4">
+    <button class="btn btn-dark rounded-pill list-containers-btn p-3" @onclick="ListContainers">
+        <i class="bi bi-list"></i>
+        List Containers
+    </button>
+    <button class="btn btn-dark rounded-pill list-containers-btn p-3" @onclick="() => RunImage(DockerImages.JokeBot)">
+        <i class="bi bi-robot"></i>
+        Start @DockerImages.JokeBot
+    </button>
+    <button class="btn btn-dark rounded-pill list-containers-btn p-3" @onclick="() => RunImage(DockerImages.TriviaBot)">
+        <i class="bi bi-robot"></i>
+        Start @DockerImages.TriviaBot
+    </button>
+    <button class="btn btn-dark rounded-pill list-containers-btn p-3" @onclick="() => RunImage(DockerImages.FactBot)">
+        <i class="bi bi-robot"></i>
+        Start @DockerImages.FactBot
+    </button>
+    <button class="btn btn-dark rounded-pill list-containers-btn p-3" @onclick="() => RunImage(DockerImages.PremBot)">
+        <i class="bi bi-robot"></i>
+        Start @DockerImages.PremBot
+    </button>
+    <button class="btn btn-dark rounded-pill list-containers-btn p-3" @onclick="() => RunImage(DockerImages.JamJunction)">
+        <i class="bi bi-robot"></i>
+        Start @DockerImages.JamJunction
+    </button>
+</div>
