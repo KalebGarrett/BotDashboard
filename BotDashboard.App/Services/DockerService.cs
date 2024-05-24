@@ -36,7 +36,7 @@ public class DockerService
         RunCommand(command);
     }
     
-    public List<Containers> ListContainers()
+    public List<Container> ListContainers()
     {
         var dockerCommand = new DockerCommand();
         using var client = new SshClient(DigitalOcean.Host, DigitalOcean.Username, DigitalOcean.Password);
@@ -54,7 +54,7 @@ public class DockerService
             .SkipLast(1)
             .Select(str => str.Split("   ")
                 .Where(s => s != "").ToArray())
-            .Select(row => new Containers
+            .Select(row => new Container
             {
                 ContainerId = row[0].Trim(),
                 Image = row[1].Trim(),
@@ -67,7 +67,7 @@ public class DockerService
             .ToList();
     }
     
-    public List<Images> ListImages()
+    public List<DockerImage> ListImages()
     {
         var dockerCommand = new DockerCommand();
         using var client = new SshClient(DigitalOcean.Host, DigitalOcean.Username, DigitalOcean.Password);
@@ -85,7 +85,7 @@ public class DockerService
             .SkipLast(1)
             .Select(str => str.Split("   ")
                 .Where(s => s != "").ToArray())
-            .Select(row => new Images
+            .Select(row => new DockerImage
             {
                 Repository = row[0].Trim(),
                 Tag = row[1].Trim(),

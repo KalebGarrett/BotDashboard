@@ -9,7 +9,7 @@ public partial class Home
 {
     [Inject]
     private DockerService DockerService { get; set; }
-    private List<Containers> Containers { get; set; } = new List<Containers>();
+    private List<Container> Containers { get; set; } = new List<Container>();
     private string Time { get; set; }
     
     protected override async Task OnInitializedAsync()

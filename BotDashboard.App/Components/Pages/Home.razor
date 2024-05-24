@@ -49,15 +49,15 @@
     }
 </div>
 <p class="text-white">Last Fetched @Time</p>
-<hr/>
+<hr class="text-white"/>
 
 <!-- Fix btn layout -->
 <div class="row mt-2 mb-4">
-    <div class="col-md-6 p-3">
+    <div class="col-md-6">
         <b>
             <h2 class="text-white"><i class="bi bi-command"></i> Commands</h2>
         </b>
-        <div class="row mt-2 gy-3 command-btn-container">
+        <div class="row mt-3 gy-3 command-btn-container">
             <div class="col-md-4 mb-3">
                 <button class="btn btn-dark rounded-pill list-containers-btn p-3" @onclick="ListContainers">
                     <i class="bi bi-list"></i>
@@ -68,29 +68,29 @@
                     <i class="bi bi-memory"></i>
                     Get Memory Usage
                 </button>
-                <button class="btn btn-dark rounded-pill list-containers-btn p-3 mt-2" @onclick="() => RunImage(DockerImages.JokeBot)">
+                <button class="btn btn-dark rounded-pill list-containers-btn p-3 mt-2" @onclick="() => RunImage(DockerRepository.JokeBot)">
                     <i class="bi bi-robot"></i>
-                    Start @DockerImages.JokeBot
+                    Start @DockerRepository.JokeBot
                 </button>
             </div>
             <div class="col-md-4 mb-3">
-                <button class="btn btn-dark rounded-pill list-containers-btn p-3" @onclick="() => RunImage(DockerImages.TriviaBot)">
+                <button class="btn btn-dark rounded-pill list-containers-btn p-3" @onclick="() => RunImage(DockerRepository.TriviaBot)">
                     <i class="bi bi-robot"></i>
-                    Start @DockerImages.TriviaBot
+                    Start @DockerRepository.TriviaBot
                 </button>
-                <button class="btn btn-dark rounded-pill list-containers-btn p-3 mt-2" @onclick="() => RunImage(DockerImages.FactBot)">
+                <button class="btn btn-dark rounded-pill list-containers-btn p-3 mt-2" @onclick="() => RunImage(DockerRepository.FactBot)">
                     <i class="bi bi-robot"></i>
-                    Start @DockerImages.FactBot
+                    Start @DockerRepository.FactBot
                 </button>
-                <button class="btn btn-dark rounded-pill list-containers-btn p-3 mt-2" @onclick="() => RunImage(DockerImages.PremBot)">
+                <button class="btn btn-dark rounded-pill list-containers-btn p-3 mt-2" @onclick="() => RunImage(DockerRepository.PremBot)">
                     <i class="bi bi-robot"></i>
-                    Start @DockerImages.PremBot
+                    Start @DockerRepository.PremBot
                 </button>
             </div>
             <div class="col-md-4 mb-3">
-                <button class="btn btn-dark rounded-pill list-containers-btn p-3" @onclick="() => RunImage(DockerImages.JamJunction)">
+                <button class="btn btn-dark rounded-pill list-containers-btn p-3" @onclick="() => RunImage(DockerRepository.JamJunction)">
                     <i class="bi bi-robot"></i>
-                    Start @DockerImages.JamJunction
+                    Start @DockerRepository.JamJunction
                 </button>
                 <button class="btn btn-dark rounded-pill list-containers-btn p-3 mt-2" @onclick="RestartAllImages">
                     <i class="bi bi-arrow-clockwise"></i>
@@ -103,7 +103,7 @@
             </div>
         </div>
     </div>
-    <div class="col-md-6 mb-2">
+    <div class="col-md-6">
         <!-- Add pie chart for displaying memory -->
         <b>
             <h2 class="text-white"><i class="bi bi-memory"></i> Memory Usage</h2>
