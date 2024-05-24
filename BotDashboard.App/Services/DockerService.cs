@@ -67,6 +67,36 @@ public class DockerService
             .ToList();
     }
     
+    public List<Images> ListImages()
+    {
+        var dockerCommand = new DockerCommand();
+        using var client = new SshClient(DigitalOcean.Host, DigitalOcean.Username, DigitalOcean.Password);
+        client.HostKeyReceived += SshEvents.ClientOnHostKeyReceived;
+        client.Connect();
+
+        var command = client.CreateCommand(dockerCommand.ListImages());
+        var response = command.Execute();
+
+        client.HostKeyReceived -= SshEvents.ClientOnHostKeyReceived;
+        client.Disconnect();
+        
+        return response.Split("\n")
+            .Skip(1)
+            .SkipLast(1)
+            .Select(str => str.Split("   ")
+                .Where(s => s != "").ToArray())
+            .Select(row => new Images
+            {
+                Repository = row[0].Trim(),
+                Tag = row[1].Trim(),
+                ImageId = row[2].Trim(),
+                Created = row[3].Trim(),
+                Size = row[4].Trim(),
+            })
+            .OrderBy(container => container.Repository)
+            .ToList();
+    }
+    
     private void RunCommand(string command)
     {
         using var client = new SshClient(DigitalOcean.Host, DigitalOcean.Username, DigitalOcean.Password);

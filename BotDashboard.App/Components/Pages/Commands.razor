@@ -1,0 +1,34 @@
+﻿@page "/commands"
+
+<PageTitle>Commands</PageTitle>
+
+<b>
+    <h1 class="text-white">Commands</h1>
+</b>
+<hr class="text-white"/>
+
+<div class="table-responsive">
+    <table id="imagesTable" class="table table-bordered display text-light">
+        <thead>
+        <tr>
+            <th>Repository</th>
+            <th>Tag</th>
+            <th>Image Id</th>
+            <th>Created</th>
+            <th>Size</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var image in Images)
+        {
+            <tr>
+                <td>@image.Repository</td>
+                <td>@image.Tag</td>
+                <td>@image.ImageId</td>
+                <td>@image.Created</td>
+                <td>@image.Size</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>
