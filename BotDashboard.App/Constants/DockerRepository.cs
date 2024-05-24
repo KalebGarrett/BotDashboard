@@ -1,6 +1,6 @@
 ﻿namespace BotDashboard.App.Constants;
 
-public class DockerImages
+public class DockerRepository
 {
     public const string JokeBot = "kalebg08/jokebot";
     public const string TriviaBot = "kalebg08/triviabot";

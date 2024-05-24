@@ -1,6 +1,6 @@
 ﻿namespace BotDashboard.Models;
 
-public class Images
+public class DockerImage
 {
     public string Repository { get; set; }
     public string Tag { get; set; }
