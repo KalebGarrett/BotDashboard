@@ -1,34 +1,44 @@
-﻿@page "/commands"
+﻿@using MudBlazor
+@page "/commands"
 
 <PageTitle>Commands</PageTitle>
 
 <b>
-    <h1 class="text-white">Commands</h1>
+    <h1 class="text-white">
+        <i class="bi bi-command"></i>
+        Commands
+    </h1>
 </b>
 <hr class="text-white"/>
 
+<b>
+    <h1 class="text-white">
+        <i class="bi bi-tsunami"></i>
+        Images
+    </h1>
+</b>
 <div class="table-responsive">
-    <table id="imagesTable" class="table table-bordered display text-light">
-        <thead>
-        <tr>
-            <th>Repository</th>
-            <th>Tag</th>
-            <th>Image Id</th>
-            <th>Created</th>
-            <th>Size</th>
-        </tr>
-        </thead>
-        <tbody>
-        @foreach (var image in Images)
+<table class="table table-dark table-striped table-hover table-bordered table-active image-table-corner table">
+    <thead>
+    <tr>
+        @foreach (var heading in Headings)
         {
-            <tr>
-                <td>@image.Repository</td>
-                <td>@image.Tag</td>
-                <td>@image.ImageId</td>
-                <td>@image.Created</td>
-                <td>@image.Size</td>
-            </tr>
+            <th>@heading</th>
         }
-        </tbody>
-    </table>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var dockerImage in DockerImages)
+    {
+        <tr>
+
+            <td>@dockerImage.Repository</td>
+            <td>@dockerImage.Tag</td>
+            <td>@dockerImage.ImageId</td>
+            <td>@dockerImage.Created</td>
+            <td>@dockerImage.Size</td>
+        </tr>
+    }
+    </tbody>
+</table>
 </div>
