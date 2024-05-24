@@ -1,5 +1,6 @@
 ﻿@page "/"
 @using BotDashboard.App.Constants
+@using MudBlazor
 
 <PageTitle>Dashboard</PageTitle>
 
@@ -13,7 +14,7 @@
     </h2>
 </b>
 
-<div class="row">
+<div class="row gy-2">
     @if (Containers.Count == 0)
     {
         <p class="lead text-white">There are no containers currently running...</p>
@@ -52,7 +53,7 @@
 <hr class="text-white"/>
 
 <!-- Fix btn layout -->
-<div class="row mt-2 mb-4">
+<div class="row mb-4 gy-2">
     <div class="col-md-6">
         <b>
             <h2 class="text-white"><i class="bi bi-command"></i> Commands</h2>
@@ -104,11 +105,11 @@
         </div>
     </div>
     <div class="col-md-6">
-        <!-- Add pie chart for displaying memory -->
         <b>
             <h2 class="text-white"><i class="bi bi-memory"></i> Memory Usage</h2>
         </b>
-        <LineChart Width="800"/>
-
+        <div>
+            <MudChart ChartType="ChartType.Line" ChartSeries="@Series" @bind-SelectedIndex="Index" XAxisLabels="@XAxisLabels" Width="100%" Height="250px" ChartOptions="@Options"/>
+        </div>
     </div>
 </div>
