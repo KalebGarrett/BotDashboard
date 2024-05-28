@@ -1,44 +1,93 @@
-﻿@using MudBlazor
-@page "/commands"
+﻿@page "/commands"
+@using MudBlazor
+@using BotDashboard.App.Constants
 
 <PageTitle>Commands</PageTitle>
 
-<b>
-    <h1 class="text-white">
-        <i class="bi bi-command"></i>
-        Commands
-    </h1>
-</b>
-<hr class="text-white"/>
+<div class="row gy-3">
+    <div class="col-md-6">
+        <h2 class="text-white font-weight-bold">
+            <i class="bi bi-command"></i>
+            Commands
+        </h2>
+        <hr class="text-white"/>
+        <div class="container">
+            <div class="card command-container-card">
+                <div class="position-relative">
+                    <div class="bg-image hover-overlay ripple" data-mdb-ripple-color="light">
+                        <div class="mt-2 ms-3 text-center">
+                            <img src="imgs/1024px-DigitalOcean_logo.svg.png"
+                                 width="128" height="128" alt="Digital Ocean"/>
+                        </div>
+                        <a href="#!">
+                            <div class="mask" style="background-color: rgba(251, 251, 251, 0.15)"></div>
+                        </a>
+                    </div>
+                    <div class="card-body text-center">
+                        <h2 class="card-title font-weight-bold">
+                            Commands
+                        </h2>
+                        <div class="container justify-content-center">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <MudButtonGroup class="d-flex justify-content-center" Color="Color.Primary" Size="Size.Large" Variant="Variant.Outlined">
+                                        <MudButton OnClick="() => RunImage(DockerRepository.JokeBot)">Start JokeBot</MudButton>
+                                        <MudButton OnClick="() => RunImage(DockerRepository.TriviaBot)">Start TriviaBot</MudButton>
+                                        <MudButton OnClick="() => RunImage(DockerRepository.FactBot)">Start FactBot</MudButton>
+                                        <MudButton OnClick="() => RunImage(DockerRepository.PremBot)">Start PremBot</MudButton>
+                                        <MudButton OnClick="() => RunImage(DockerRepository.JamJunction)">Start JamJunction</MudButton>
+                                    </MudButtonGroup>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <MudButtonGroup class="d-flex justify-content-center" Color="Color.Tertiary" Size="Size.Large" Variant="Variant.Outlined">
+                                        <MudButton OnClick="() => PullImage(DockerRepository.JokeBot)">Pull JokeBot</MudButton>
+                                        <MudButton OnClick="() => PullImage(DockerRepository.JokeBot)">Pull TriviaBot</MudButton>
+                                        <MudButton OnClick="() => PullImage(DockerRepository.JokeBot)">Pull FactBot</MudButton>
+                                        <MudButton OnClick="() => PullImage(DockerRepository.JokeBot)">Pull PremBot</MudButton>
+                                        <MudButton OnClick="() => PullImage(DockerRepository.JokeBot)">Pull JamJunction</MudButton>
+                                    </MudButtonGroup>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <h2 class="text-white font-weight-bold">
+            <i class="bi bi-tsunami"></i>
+            Images
+        </h2>
+        <hr class="text-white"/>
+        <div class="table-responsive">
+            <table class="table table-dark table-striped table-hover table-bordered table-active image-table-corner table">
+                <thead>
+                <tr>
+                    @foreach (var heading in Headings)
+                    {
+                        <th>@heading</th>
+                    }
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var dockerImage in DockerImages)
+                {
+                    <tr>
 
-<b>
-    <h1 class="text-white">
-        <i class="bi bi-tsunami"></i>
-        Images
-    </h1>
-</b>
-<div class="table-responsive">
-<table class="table table-dark table-striped table-hover table-bordered table-active image-table-corner table">
-    <thead>
-    <tr>
-        @foreach (var heading in Headings)
-        {
-            <th>@heading</th>
-        }
-    </tr>
-    </thead>
-    <tbody>
-    @foreach (var dockerImage in DockerImages)
-    {
-        <tr>
-
-            <td>@dockerImage.Repository</td>
-            <td>@dockerImage.Tag</td>
-            <td>@dockerImage.ImageId</td>
-            <td>@dockerImage.Created</td>
-            <td>@dockerImage.Size</td>
-        </tr>
-    }
-    </tbody>
-</table>
+                        <td>@dockerImage.Repository</td>
+                        <td>@dockerImage.Tag</td>
+                        <td>@dockerImage.ImageId</td>
+                        <td>@dockerImage.Created</td>
+                        <td>@dockerImage.Size</td>
+                        <!-- Add method to remove image -->
+                        <td><i class="bi bi-trash-fill text-danger"></i></td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
