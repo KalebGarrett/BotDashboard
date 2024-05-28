@@ -96,6 +96,13 @@ public class DockerService
             .OrderBy(container => container.Repository)
             .ToList();
     }
+
+    public void PullImage(string imageName)
+    {
+        var dockerCommand = new DockerCommand();
+        var command = dockerCommand.Pull(imageName);
+        RunCommand(command);
+    }
     
     private void RunCommand(string command)
     {

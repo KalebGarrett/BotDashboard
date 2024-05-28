@@ -2,3 +2,8 @@
     border-radius: 10px;
     overflow: hidden;
 }
+
+.command-container-card {
+    background-color: #080E2C;
+    color: white;
+}
