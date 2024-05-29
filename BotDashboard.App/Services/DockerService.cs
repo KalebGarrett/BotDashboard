@@ -8,42 +8,50 @@ namespace BotDashboard.App.Services;
 
 public class DockerService
 {
+    public readonly DockerCommand _dockercommand;
+
+    public DockerService(DockerCommand dockercommand)
+    {
+        _dockercommand = dockercommand;
+    }
+
     public void RunImage(string imageName)
     {
-        var dockerCommand = new DockerCommand();
-        var command = dockerCommand.Run(imageName);
+        var command = _dockercommand.Run(imageName);
         RunCommand(command);
     }
 
-    public void StopImage(string containerId)
+    public void StopContainer(string containerId)
     {
-        var dockerCommand = new DockerCommand();
-        var command = dockerCommand.Stop(containerId);
+        var command = _dockercommand.Stop(containerId);
         RunCommand(command);
     }
 
-    public void StopAllImages()
+    public void StopAllContainers()
     {
-        var dockerCommand = new DockerCommand();
-        var command = dockerCommand.StopAll();
+        var command = _dockercommand.StopAll();
         RunCommand(command);
     }
 
-    public void RestartAllImages()
+    public void RestartContainer(string containerId)
     {
-        var dockerCommand = new DockerCommand();
-        var command = dockerCommand.RestartAll();
+        var command = _dockercommand.Restart(containerId);
+        RunCommand(command);
+    }
+    
+    public void RestartAllContainers()
+    {
+        var command = _dockercommand.RestartAll();
         RunCommand(command);
     }
     
     public List<Container> ListContainers()
     {
-        var dockerCommand = new DockerCommand();
         using var client = new SshClient(DigitalOcean.Host, DigitalOcean.Username, DigitalOcean.Password);
         client.HostKeyReceived += SshEvents.ClientOnHostKeyReceived;
         client.Connect();
 
-        var command = client.CreateCommand(dockerCommand.ListContainers());
+        var command = client.CreateCommand(_dockercommand.ListContainers());
         var response = command.Execute();
 
         client.HostKeyReceived -= SshEvents.ClientOnHostKeyReceived;
@@ -69,12 +77,11 @@ public class DockerService
     
     public List<DockerImage> ListImages()
     {
-        var dockerCommand = new DockerCommand();
         using var client = new SshClient(DigitalOcean.Host, DigitalOcean.Username, DigitalOcean.Password);
         client.HostKeyReceived += SshEvents.ClientOnHostKeyReceived;
         client.Connect();
 
-        var command = client.CreateCommand(dockerCommand.ListImages());
+        var command = client.CreateCommand(_dockercommand.ListImages());
         var response = command.Execute();
 
         client.HostKeyReceived -= SshEvents.ClientOnHostKeyReceived;
@@ -97,13 +104,36 @@ public class DockerService
             .ToList();
     }
 
-    public void PullImage(string imageName)
+    public string PullImage(string imageName)
     {
-        var dockerCommand = new DockerCommand();
-        var command = dockerCommand.Pull(imageName);
-        RunCommand(command);
+        using var client = new SshClient(DigitalOcean.Host, DigitalOcean.Username, DigitalOcean.Password);
+        client.HostKeyReceived += SshEvents.ClientOnHostKeyReceived;
+        client.Connect();
+        
+        var command = client.CreateCommand(_dockercommand.Pull(imageName));
+        var response = command.Execute();
+        
+        client.HostKeyReceived -= SshEvents.ClientOnHostKeyReceived;
+        client.Disconnect();
+
+        return response;
     }
     
+    public string RemoveImage(string imageId)
+    {
+        using var client = new SshClient(DigitalOcean.Host, DigitalOcean.Username, DigitalOcean.Password);
+        client.HostKeyReceived += SshEvents.ClientOnHostKeyReceived;
+        client.Connect();
+        
+        var command = client.CreateCommand(_dockercommand.Remove(imageId));
+        var response = command.Execute();
+        
+        client.HostKeyReceived -= SshEvents.ClientOnHostKeyReceived;
+        client.Disconnect();
+
+        return response;
+    }
+
     private void RunCommand(string command)
     {
         using var client = new SshClient(DigitalOcean.Host, DigitalOcean.Username, DigitalOcean.Password);
