@@ -1,3 +1,4 @@
+using BotDashboard.App.Commands;
 using BotDashboard.App.Components;
 using BotDashboard.App.Services;
 using MudBlazor.Services;
@@ -7,6 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddRazorComponents().AddInteractiveServerComponents();
 builder.Services.AddScoped<DockerService>();
+builder.Services.AddScoped<DockerCommand>();
 builder.Services.AddMudServices();
 
 var app = builder.Build();

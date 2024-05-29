@@ -37,11 +37,6 @@ public class DockerCommand
         return "docker ps";
     }
     
-    public string Stats()
-    {
-        return "docker stats";
-    }
-
     public string Pull(string imageName)
     {
         return $"docker pull {imageName}";
@@ -49,6 +44,11 @@ public class DockerCommand
 
     public string Remove(string imageId)
     {
-        return $"docker rmi {imageId}";
+        return $"docker rmi -f {imageId}";
+    }
+    
+    public string Stats()
+    {
+        return "docker stats";
     }
 }
