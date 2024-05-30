@@ -54,13 +54,13 @@ body{
     background-color: #08081C;
 }
 
-.container-card {
-    border-radius: 25px;
+.main-site-card {
     background-color: #080E2C;
     color: white;
 }
 
-.command-container-card {
+.container-card {
+    border-radius: 25px;
     background-color: #080E2C;
     color: white;
 }

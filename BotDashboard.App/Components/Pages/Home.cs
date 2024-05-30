@@ -13,13 +13,13 @@ public partial class Home
     private List<Container> Containers { get; set; } = new();
     private string Time { get; set; }
     private int Index { get; set; } = -1;
-    public ChartOptions Options { get; set; } = new ChartOptions();
-    public List<ChartSeries> Series { get; set;  }= new()
+    private ChartOptions Options { get; set; } = new ChartOptions();
+    private List<ChartSeries> Series { get; set;  }= new()
     {
         new ChartSeries() { Name = "Fossil", Data = new double[] { 90, 79, 72, 69, 62, 62, 55, 65, 70 } },
         new ChartSeries() { Name = "Renewable", Data = new double[] { 10, 41, 35, 51, 49, 62, 69, 91, 148 } },
     };
-    public string[] XAxisLabels { get; set; } = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep" };
+    private string[] XAxisLabels { get; set; } = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep" };
     
     protected override async Task OnInitializedAsync()
     {
@@ -29,28 +29,34 @@ public partial class Home
     private void RunImage(string imageName)
     {
         DockerService.RunImage(imageName);
-        //Add locking mechanism if already running
         Task.Delay(TimeSpan.FromSeconds(3));
         ListContainers();
     }
     
-    private void StopImage(string containerId)
+    private void StopContainer(string containerId)
     {
-        DockerService.StopImage(containerId);
+        DockerService.StopContainer(containerId);
         Task.Delay(TimeSpan.FromSeconds(3));
         ListContainers();
     }
 
-    private void StopAllImages()
+    private void StopAllContainers()
     {
-        DockerService.StopAllImages();
+        DockerService.StopAllContainers();
         Task.Delay(TimeSpan.FromSeconds(3));
         ListContainers();
     }
     
-    private void RestartAllImages()
+    private void RestartContainer(string containerId)
     {
-        DockerService.RestartAllImages();
+        DockerService.RestartContainer(containerId);
+        Task.Delay(TimeSpan.FromSeconds(3));
+        ListContainers();
+    }
+    
+    private void RestartAllContainers()
+    {
+        DockerService.RestartAllContainers();
         Task.Delay(TimeSpan.FromSeconds(3));
         ListContainers();
     }
