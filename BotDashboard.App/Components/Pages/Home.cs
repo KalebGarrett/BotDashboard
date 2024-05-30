@@ -8,31 +8,28 @@ namespace BotDashboard.App.Components.Pages;
 
 public partial class Home
 {
-    [Inject]
-    private DockerService DockerService { get; set; }
+    [Inject] private DockerService DockerService { get; set; }
+    [Inject] private UbuntuService UbuntuService { get; set; }
     private List<Container> Containers { get; set; } = new();
-    private string Time { get; set; }
-    private int Index { get; set; } = -1;
-    private ChartOptions Options { get; set; } = new ChartOptions();
-    private List<ChartSeries> Series { get; set;  }= new()
-    {
-        new ChartSeries() { Name = "Fossil", Data = new double[] { 90, 79, 72, 69, 62, 62, 55, 65, 70 } },
-        new ChartSeries() { Name = "Renewable", Data = new double[] { 10, 41, 35, 51, 49, 62, 69, 91, 148 } },
-    };
-    private string[] XAxisLabels { get; set; } = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep" };
-    
+    private string ContainerFetchTime { get; set; }
+    private string MemoryFetchTime { get; set; }
+    private static double MemoryUsagePercentage { get; set; }
+    public double[] Data { get; set; } = {MemoryUsagePercentage, 100 - MemoryUsagePercentage};
+    public string[] Labels { get; set; } = {"Used Memory", "Total Memory"};
+
     protected override async Task OnInitializedAsync()
     {
         ListContainers();
+        ListMemoryUsagePercentage();
     }
-    
+
     private void RunImage(string imageName)
     {
         DockerService.RunImage(imageName);
         Task.Delay(TimeSpan.FromSeconds(3));
         ListContainers();
     }
-    
+
     private void StopContainer(string containerId)
     {
         DockerService.StopContainer(containerId);
@@ -46,24 +43,30 @@ public partial class Home
         Task.Delay(TimeSpan.FromSeconds(3));
         ListContainers();
     }
-    
+
     private void RestartContainer(string containerId)
     {
         DockerService.RestartContainer(containerId);
         Task.Delay(TimeSpan.FromSeconds(3));
         ListContainers();
     }
-    
+
     private void RestartAllContainers()
     {
         DockerService.RestartAllContainers();
         Task.Delay(TimeSpan.FromSeconds(3));
         ListContainers();
     }
-    
+
     private void ListContainers()
     {
         Containers = DockerService.ListContainers();
-        Time = DateTime.UtcNow.ToLocalTime().ToString(CultureInfo.CurrentCulture);
+        ContainerFetchTime = DateTime.UtcNow.ToLocalTime().ToString(CultureInfo.CurrentCulture);
+    }
+
+    private void ListMemoryUsagePercentage()
+    {
+        MemoryUsagePercentage = Convert.ToDouble(UbuntuService.MemoryUsagePercentage());
+        MemoryFetchTime = DateTime.UtcNow.ToLocalTime().ToString(CultureInfo.CurrentCulture);
     }
 }
