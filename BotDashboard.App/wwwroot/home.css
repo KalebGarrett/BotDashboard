@@ -1,33 +1,4 @@
-﻿.form-check-input:checked {
-    background-color: #7551FF;
-}
-
-.form-check-input {
-    border: none;
-    transform: scale(1.3);
-}
-
-.form-check-position {
-    top: 15px;
-    right: 15px;
-}
-
-.list-containers-btn{
-    background-color: #7551FF;
-}
-
-.container-card {
-    border-radius: 25px;
-    background-color: #080E2C;
-    color: white;
-}
-
-.logo-container {
+﻿.logo-container {
     background-image: linear-gradient(90deg, rgb(5, 39, 103) 0%, #4112C7 70%);
     border-radius: 20px;
-}
-
-.command-btn-container {
-    background-color: #080E2C;
-    border-radius: 15px;
 }

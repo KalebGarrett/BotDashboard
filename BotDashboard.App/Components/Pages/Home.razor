@@ -7,12 +7,11 @@
 <div class="container-fluid logo-container text-white d-flex align-items-center justify-content-center">
     <img src="imgs/Bot Harbot - Logo Resized.png" alt="Bot Harbor Logo" class="img-fluid"/>
 </div>
-<b>
-    <h2 class="text-white mt-4">
-        <i class="bi bi-box-seam"></i>
-        Containers Running
-    </h2>
-</b>
+
+<h2 class="text-white mt-4 font-weight-bold">
+    <i class="bi bi-box-seam"></i>
+    Containers Running
+</h2>
 
 <div class="row gy-2">
     @if (Containers.Count == 0)
@@ -29,9 +28,6 @@
                             <img src="https://cdn.iconscout.com/icon/free/png-256/free-discord-4062811-3357697.png?f=webp"
                                  width="50" height="50" alt="@container.Image"/>
                         </div>
-                        <a href="#!">
-                            <div class="mask" style="background-color: rgba(251, 251, 251, 0.15)"></div>
-                        </a>
                     </div>
                     <div class="card-body">
                         <h5 class="card-title lead">
@@ -42,8 +38,11 @@
                         <p class="card-text" style="color: #8893AC">Status: @container.Status</p>
                     </div>
                 </div>
+                <div class="position-absolute restart-icon-position">
+                    <i class="bi bi-arrow-counterclockwise restart-icon" style="color: #1EC8A5"></i>
+                </div>
                 <div class="form-check form-switch position-absolute form-check-position">
-                    <input class="form-check-input" type="checkbox" id="flexSwitchCheckChecked" @onclick="() => StopImage(container.ContainerId)" checked>
+                    <input class="form-check-input" type="checkbox" id="flexSwitchCheckChecked" @onclick="() => StopContainer(container.ContainerId)" checked>
                 </div>
             </div>
         </div>
@@ -52,64 +51,59 @@
 <p class="text-white">Last Fetched @Time</p>
 <hr class="text-white"/>
 
-<!-- Fix btn layout -->
-<div class="row mb-4 gy-2">
+<div class="row mb-4 gy-3">
     <div class="col-md-6">
-        <b>
-            <h2 class="text-white"><i class="bi bi-command"></i> Commands</h2>
-        </b>
-        <div class="row mt-3 gy-3 command-btn-container">
-            <div class="col-md-4 mb-3">
-                <button class="btn btn-dark rounded-pill list-containers-btn p-3" @onclick="ListContainers">
-                    <i class="bi bi-list"></i>
-                    List Containers
-                </button>
-                <!-- Add get stats btn for Ubuntu memory usage data -->
-                <button class="btn btn-dark rounded-pill list-containers-btn p-3 mt-2">
-                    <i class="bi bi-memory"></i>
-                    Get Memory Usage
-                </button>
-                <button class="btn btn-dark rounded-pill list-containers-btn p-3 mt-2" @onclick="() => RunImage(DockerRepository.JokeBot)">
-                    <i class="bi bi-robot"></i>
-                    Start @DockerRepository.JokeBot
-                </button>
-            </div>
-            <div class="col-md-4 mb-3">
-                <button class="btn btn-dark rounded-pill list-containers-btn p-3" @onclick="() => RunImage(DockerRepository.TriviaBot)">
-                    <i class="bi bi-robot"></i>
-                    Start @DockerRepository.TriviaBot
-                </button>
-                <button class="btn btn-dark rounded-pill list-containers-btn p-3 mt-2" @onclick="() => RunImage(DockerRepository.FactBot)">
-                    <i class="bi bi-robot"></i>
-                    Start @DockerRepository.FactBot
-                </button>
-                <button class="btn btn-dark rounded-pill list-containers-btn p-3 mt-2" @onclick="() => RunImage(DockerRepository.PremBot)">
-                    <i class="bi bi-robot"></i>
-                    Start @DockerRepository.PremBot
-                </button>
-            </div>
-            <div class="col-md-4 mb-3">
-                <button class="btn btn-dark rounded-pill list-containers-btn p-3" @onclick="() => RunImage(DockerRepository.JamJunction)">
-                    <i class="bi bi-robot"></i>
-                    Start @DockerRepository.JamJunction
-                </button>
-                <button class="btn btn-dark rounded-pill list-containers-btn p-3 mt-2" @onclick="RestartAllImages">
-                    <i class="bi bi-arrow-clockwise"></i>
-                    Restart All Containers
-                </button>
-                <button class="btn btn-dark rounded-pill list-containers-btn p-3 mt-2" @onclick="StopAllImages">
-                    <i class="bi bi-stop-fill"></i>
-                    Stop All Containers
-                </button>
+        <h2 class="text-white font-weight-bold"><i class="bi bi-command"></i> Commands</h2>
+        <div class="card main-site-card">
+            <div class="position-relative">
+                <div class="bg-image hover-overlay ripple" data-mdb-ripple-color="light">
+                    <div class="mt-2 ms-3 text-center">
+                        <img src="https://cdn.iconscout.com/icon/free/png-256/free-discord-4062811-3357697.png?f=webp"
+                             width="128" height="128" alt="Discord Logo"/>
+                    </div>
+                </div>
+                <div class="card-body text-center">
+                    <h2 class="card-title font-weight-bold">
+                        Commands
+                    </h2>
+                    <div class="container justify-content-center">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <MudButtonGroup class="d-flex justify-content-center" Color="Color.Primary" Size="Size.Large" Variant="Variant.Outlined">
+                                    <MudButton>Start All Images</MudButton>
+                                    <MudButton OnClick="StopAllContainers">Stop All Containers</MudButton>
+                                    <MudButton OnClick="RestartAllContainers">Restart All Containers</MudButton>
+                                    <MudButton OnClick="ListContainers">List All Containers</MudButton>
+                                    <MudButton>Fetch Stats</MudButton>
+                                </MudButtonGroup>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <MudButtonGroup class="d-flex justify-content-center" Color="Color.Tertiary" Size="Size.Large" Variant="Variant.Outlined">
+                                    <MudButton OnClick="() => RunImage(DockerRepository.JokeBot)">Start JokeBot</MudButton>
+                                    <MudButton OnClick="() => RunImage(DockerRepository.TriviaBot)">Start TriviaBot</MudButton>
+                                    <MudButton OnClick="() => RunImage(DockerRepository.FactBot)">Start FactBot</MudButton>
+                                    <MudButton OnClick="() => RunImage(DockerRepository.PremBot)">Start PremBot</MudButton>
+                                    <MudButton OnClick="() => RunImage(DockerRepository.JamJunction)">Start JamJunction</MudButton>
+                                </MudButtonGroup>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
     <div class="col-md-6">
-        <b>
-            <h2 class="text-white"><i class="bi bi-memory"></i> Memory Usage</h2>
-        </b>
-        <div>
-            <MudChart ChartType="ChartType.Line" ChartSeries="@Series" @bind-SelectedIndex="Index" XAxisLabels="@XAxisLabels" Width="100%" Height="250px" ChartOptions="@Options"/>
+        <h2 class="text-white font-weight-bold"><i class="bi bi-memory"></i> Memory Usage</h2>
+        <div class="card main-site-card">
+            <div class="position-relative">
+                <div class="card-body">
+                    <div>
+                        <MudChart ChartType="ChartType.Line" ChartSeries="@Series" @bind-SelectedIndex="Index" XAxisLabels="@XAxisLabels" Width="100%" Height="300px" ChartOptions="@Options"/>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
