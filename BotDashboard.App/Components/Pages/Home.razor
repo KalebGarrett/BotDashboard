@@ -5,14 +5,13 @@
 <PageTitle>Dashboard</PageTitle>
 
 <div class="container-fluid logo-container text-white d-flex align-items-center justify-content-center">
-    <img src="imgs/Bot Harbot - Logo Resized.png" alt="Bot Harbor Logo" class="img-fluid"/>
+    <img src="imgs/Bot Harbor - Logo Resized.png" alt="Bot Harbor Logo" class="img-fluid"/>
 </div>
 
 <h2 class="text-white mt-4 font-weight-bold">
     <i class="bi bi-box-seam"></i>
     Containers Running
 </h2>
-
 <div class="row gy-2">
     @if (Containers.Count == 0)
     {
@@ -39,7 +38,7 @@
                     </div>
                 </div>
                 <div class="position-absolute restart-icon-position">
-                    <i class="bi bi-arrow-counterclockwise restart-icon" style="color: #1EC8A5"></i>
+                    <i class="bi bi-arrow-counterclockwise restart-icon" @onclick="() => RestartContainer(container.ContainerId)" style="color: #1EC8A5"></i>
                 </div>
                 <div class="form-check form-switch position-absolute form-check-position">
                     <input class="form-check-input" type="checkbox" id="flexSwitchCheckChecked" @onclick="() => StopContainer(container.ContainerId)" checked>
@@ -48,7 +47,8 @@
         </div>
     }
 </div>
-<p class="text-white">Last Fetched @Time</p>
+<p class="text-white">Last Fetched @ContainerFetchTime</p>
+
 <hr class="text-white"/>
 
 <div class="row mb-4 gy-3">
@@ -58,7 +58,7 @@
             <div class="position-relative">
                 <div class="bg-image hover-overlay ripple" data-mdb-ripple-color="light">
                     <div class="mt-2 ms-3 text-center">
-                        <img src="https://cdn.iconscout.com/icon/free/png-256/free-discord-4062811-3357697.png?f=webp"
+                        <img src="imgs/1024px-DigitalOcean_logo.svg.png"
                              width="128" height="128" alt="Discord Logo"/>
                     </div>
                 </div>
@@ -74,7 +74,7 @@
                                     <MudButton OnClick="StopAllContainers">Stop All Containers</MudButton>
                                     <MudButton OnClick="RestartAllContainers">Restart All Containers</MudButton>
                                     <MudButton OnClick="ListContainers">List All Containers</MudButton>
-                                    <MudButton>Fetch Stats</MudButton>
+                                    <MudButton OnClick="ListMemoryUsagePercentage">Memory Stats</MudButton>
                                 </MudButtonGroup>
                             </div>
                         </div>
@@ -95,12 +95,16 @@
         </div>
     </div>
     <div class="col-md-6">
-        <h2 class="text-white font-weight-bold"><i class="bi bi-memory"></i> Memory Usage</h2>
+        <h2 class="text-white font-weight-bold"><i class="bi bi-memory"></i> Bot Harbor Memory Usage</h2>
         <div class="card main-site-card">
             <div class="position-relative">
                 <div class="card-body">
                     <div>
-                        <MudChart ChartType="ChartType.Line" ChartSeries="@Series" @bind-SelectedIndex="Index" XAxisLabels="@XAxisLabels" Width="100%" Height="300px" ChartOptions="@Options"/>
+                       <MudChart ChartType="ChartType.Donut" Width="300px" Height="300px" InputData="@Data" InputLabels="@Labels">
+                        	<CustomGraphics>
+                        		<text class="donut-inner-text" x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="white" font-family="Helvetica" font-size="3">@MemoryUsagePercentage% / 100%</text>
+                        	</CustomGraphics>
+                        </MudChart>
                     </div>
                 </div>
             </div>
