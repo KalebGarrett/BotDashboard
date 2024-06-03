@@ -16,13 +16,7 @@ public partial class Home
     private static double MemoryUsagePercentage { get; set; }
     public double[] Data { get; set; } = {MemoryUsagePercentage, 100 - MemoryUsagePercentage};
     public string[] Labels { get; set; } = {"Used Memory", "Total Memory"};
-
-    protected override async Task OnInitializedAsync()
-    {
-        ListContainers();
-        ListMemoryUsagePercentage();
-    }
-
+    
     private void RunImage(string imageName)
     {
         DockerService.RunImage(imageName);

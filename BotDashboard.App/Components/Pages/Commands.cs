@@ -14,13 +14,7 @@ public partial class Commands
     private string ImageFetchTime { get; set; }
     private string ContainerFetchTime { get; set; }
     private List<Container> Containers { get; set; } = new();
-
-    protected override async Task OnInitializedAsync()
-    {
-        ListContainers();
-        ListImages();
-    }
-
+    
     private void RunImage(string imageName)
     {
         DockerService.RunImage(imageName);
