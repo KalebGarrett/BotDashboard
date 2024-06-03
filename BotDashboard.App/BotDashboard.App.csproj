@@ -18,6 +18,9 @@
       <Compile Update="Components\Pages\Commands.cs">
         <DependentUpon>Commands.razor</DependentUpon>
       </Compile>
+      <Compile Update="Components\Pages\Stats.cs">
+        <DependentUpon>Stats.razor</DependentUpon>
+      </Compile>
     </ItemGroup>
 
     <ItemGroup>
