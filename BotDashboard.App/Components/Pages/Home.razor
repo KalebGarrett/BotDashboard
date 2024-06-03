@@ -75,7 +75,7 @@
                                     <MudButton OnClick="StopAllContainers">Stop All Containers</MudButton>
                                     <MudButton OnClick="RestartAllContainers">Restart All Containers</MudButton>
                                     <MudButton OnClick="ListContainers">List All Containers</MudButton>
-                                    <MudButton OnClick="ListMemoryUsagePercentage">Memory Stats</MudButton>
+                                    <MudButton OnClick="ListMemoryUsagePercentage">Droplet Memory Stats</MudButton>
                                 </MudButtonGroup>
                             </div>
                         </div>
@@ -101,12 +101,12 @@
             <div class="position-relative">
                 <div class="card-body">
                     <div>
-                        <MudChart ChartType="ChartType.Donut" Width="300px" Height="300px" InputData="@Data" InputLabels="@Labels">
+                        <MudChart ChartType="ChartType.Donut" Width="255px" Height="255px" InputData="@Data" InputLabels="@Labels">
                             <CustomGraphics>
                                 <text class="donut-inner-text" x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="white" font-family="Helvetica" font-size="3">@MemoryUsagePercentage% / 100%</text>
                             </CustomGraphics>
                         </MudChart>
-                        <p class="text-white text-center">Last Fetched @MemoryFetchTime</p>
+                        <p class="text-white text-center">Last Fetched: @MemoryFetchTime</p>
                     </div>
                 </div>
             </div>

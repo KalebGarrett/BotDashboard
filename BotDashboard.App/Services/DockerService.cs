@@ -103,38 +103,7 @@ public class DockerService
             .OrderBy(container => container.Repository)
             .ToList();
     }
-
-    public List<DockerStat> ListStats()
-    {
-        using var client = new SshClient(DigitalOcean.Host, DigitalOcean.Username, DigitalOcean.Password);
-        client.HostKeyReceived += SshEvents.ClientOnHostKeyReceived;
-        client.Connect();
-
-        var command = client.CreateCommand(_dockercommand.Stats());
-        var response = command.Execute();
-
-        client.HostKeyReceived -= SshEvents.ClientOnHostKeyReceived;
-        client.Disconnect();
-        
-        return response.Split("\n")
-            .Skip(1)
-            .SkipLast(1)
-            .Select(str => str.Split("   ")
-                .Where(s => s != "").ToArray())
-            .Select(row => new DockerStat()
-            {
-                ContainerId = row[0].Trim(),
-                Name = row[1].Trim(),
-                Cpu = row[2].Trim(),
-                MemoryUsageLimit = row[3].Trim(),
-                MemoryPercentage = row[4].Trim(),
-                NetIo = row[5].Trim(),
-                BlockIo = row[6].Trim(),
-                Pids = row[7].Trim(),
-            })
-            .ToList();
-    }
-
+    
     public string PullImage(string imageName)
     {
         using var client = new SshClient(DigitalOcean.Host, DigitalOcean.Username, DigitalOcean.Password);
