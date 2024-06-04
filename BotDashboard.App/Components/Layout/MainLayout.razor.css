@@ -15,9 +15,24 @@ main {
 .top-row {
     background-color: #080E2C;
     justify-content: flex-end;
-    height: 3.5rem;
+    height: 4.0rem;
     display: flex;
     align-items: center;
+}
+
+.top-row-element-background {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: #08081C;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.top-row-element {
+    border-radius: 50%;
 }
 
     .top-row ::deep a, .top-row ::deep .btn-link {
