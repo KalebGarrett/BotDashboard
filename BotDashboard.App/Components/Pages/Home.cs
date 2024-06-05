@@ -12,11 +12,16 @@ public partial class Home
     [Inject] private UbuntuService UbuntuService { get; set; }
     private List<Container> Containers { get; set; } = new();
     private static double MemoryUsagePercentage { get; set; }
-    public double[] Data { get; set; } = {MemoryUsagePercentage, 100 - MemoryUsagePercentage};
+    public double[] Data { get; set; }
     public string[] Labels { get; set; } = {"Used Memory", "Total Memory"};
     private string ContainerFetchTime { get; set; }
     private string MemoryFetchTime { get; set; }
-    
+
+    protected override async Task OnInitializedAsync()
+    {
+        MemoryUsagePercentage = 0;
+    }
+
     private void RunImage(string imageName)
     {
         DockerService.RunImage(imageName);
@@ -61,6 +66,7 @@ public partial class Home
     private void ListMemoryUsagePercentage()
     {
         MemoryUsagePercentage = Convert.ToDouble(UbuntuService.MemoryUsagePercentage());
+        Data = new[] {MemoryUsagePercentage, 100 - MemoryUsagePercentage};
         MemoryFetchTime = DateTime.UtcNow.ToLocalTime().ToString(CultureInfo.CurrentCulture);
     }
 }

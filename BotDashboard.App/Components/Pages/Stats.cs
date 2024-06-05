@@ -11,7 +11,7 @@ public partial class Stats
     [Inject] private DockerService DockerService { get; set; }
     [Inject] private UbuntuService UbuntuService { get; set; }
     private static double MemoryUsagePercentage { get; set; }
-    private double[] DropletData { get; set; } = {MemoryUsagePercentage, 100 - MemoryUsagePercentage};
+    private double[] DropletData { get; set; }
     private string[] DropletLabels { get; set; } = {"Used Memory", "Total Memory"};
     private string DropletMemoryFetchTime { get; set; }
     private int Index = -1;
@@ -23,9 +23,15 @@ public partial class Stats
     };
     private string[] XAxisLabels { get; set; } = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep" };
     
+    protected override async Task OnInitializedAsync()
+    {
+        MemoryUsagePercentage = 0;
+    }
+    
     private void ListDropletMemoryUsagePercentage()
     {
         MemoryUsagePercentage = Convert.ToDouble(UbuntuService.MemoryUsagePercentage());
+        DropletData = new[] {MemoryUsagePercentage, 100 - MemoryUsagePercentage};
         DropletMemoryFetchTime = DateTime.UtcNow.ToLocalTime().ToString(CultureInfo.CurrentCulture);
     }
 }
