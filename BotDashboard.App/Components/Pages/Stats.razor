@@ -4,45 +4,43 @@
 
 <PageTitle>Stats</PageTitle>
 
-<div class="row gy-3">
-    <div class="col-md-7 mb-4">
+<div class="row gy-3 mb-4">
+    <div class="col-md-6">
         <h2 class="text-white font-weight-bold"><i class="bi bi-memory"></i> Droplet Memory Usage</h2>
         <div class="card main-site-card">
             <div class="position-relative">
                 <div class="card-body">
 
-                    <MudChart ChartType="ChartType.Donut" Width="350px" Height="350px" InputData="@DropletData" InputLabels="@DropletLabels">
+                    <MudChart ChartType="ChartType.Donut" Width="350px" Height="350px" InputData="@MemoryUsageData" InputLabels="@MemoryUsageLabels">
                         <CustomGraphics>
                             <text class="donut-inner-text" x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="white" font-family="Helvetica" font-size="3">@MemoryUsagePercentage% / 100%</text>
                         </CustomGraphics>
                     </MudChart>
-                    <p class="text-white text-center">Last Fetched: @DropletMemoryFetchTime</p>
+                    <p class="text-white text-center">Last Fetched: @MemoryFetchTime</p>
 
                 </div>
             </div>
             <MudButtonGroup class="d-flex justify-content-center" Color="Color.Primary" Size="Size.Large" Variant="Variant.Outlined" Style="margin-bottom: 2em">
-                <MudButton OnClick="ListDropletMemoryUsagePercentage">Droplet Memory Stats</MudButton>
+                <MudButton OnClick="ListMemoryUsagePercentage">Memory Usage</MudButton>
             </MudButtonGroup>
         </div>
     </div>
-    <div class="col-md-5 mb-4">
-        <h2 class="text-white font-weight-bold"><i class="bi bi-memory"></i> Droplet Memory Usage</h2>
+    <div class="col-md-6">
+        <h2 class="text-white font-weight-bold"><i class="bi bi-cpu"></i> Droplet CPU Usage</h2>
         <div class="card main-site-card">
             <div class="position-relative">
                 <div class="card-body">
-                    <MudChart ChartType="ChartType.Line" ChartSeries="@Series" @bind-SelectedIndex="Index" XAxisLabels="@XAxisLabels" Width="100%" Height="325px" ChartOptions="@Options"/>
-                    <MudGrid>
-                        <MudItem xs="6">
-                            <MudText Typo="Typo.body1" Class="py-3">Selected: @(Index < 0 ? "None" : Series[Index].Name)</MudText>
-                        </MudItem>
-                        <MudItem xs="6">
-                            <MudSlider @bind-Value="Options.LineStrokeWidth" Min="1" Max="10" Color="Color.Info">Line Width: @Options.LineStrokeWidth.ToString()</MudSlider>
-                        </MudItem>
-                    </MudGrid>
+
+                    <MudChart ChartType="ChartType.Donut" Width="350px" Height="350px" InputData="@CpuUsageData" InputLabels="@CpuUsageLabels">
+                        <CustomGraphics>
+                            <text class="donut-inner-text" x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="white" font-family="Helvetica" font-size="3">@CpuUsagePercentage% / 100%</text>
+                        </CustomGraphics>
+                    </MudChart>
+                    <p class="text-white text-center">Last Fetched: @CpuFetchTime</p>
                 </div>
             </div>
             <MudButtonGroup class="d-flex justify-content-center" Color="Color.Primary" Size="Size.Large" Variant="Variant.Outlined" Style="margin-bottom: 2em">
-                <MudButton OnClick="ListDropletMemoryUsagePercentage">Droplet Memory Stats</MudButton>
+                <MudButton OnClick="ListCpuUsagePercentage">Cpu Usage</MudButton>
             </MudButtonGroup>
         </div>
     </div>

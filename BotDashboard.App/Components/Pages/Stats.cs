@@ -1,37 +1,38 @@
 ﻿using System.Globalization;
 using BotDashboard.App.Services;
-using BotDashboard.Models;
 using Microsoft.AspNetCore.Components;
-using MudBlazor;
 
 namespace BotDashboard.App.Components.Pages;
 
 public partial class Stats
 {
-    [Inject] private DockerService DockerService { get; set; }
     [Inject] private UbuntuService UbuntuService { get; set; }
     private static double MemoryUsagePercentage { get; set; }
-    private double[] DropletData { get; set; }
-    private string[] DropletLabels { get; set; } = {"Used Memory", "Total Memory"};
-    private string DropletMemoryFetchTime { get; set; }
-    private int Index = -1;
-    private ChartOptions Options { get; set; } = new ChartOptions();
-    private List<ChartSeries> Series { get; set; } = new List<ChartSeries>()
-    {
-        new ChartSeries() { Name = "Fossil", Data = new double[] { 90, 79, 72, 69, 62, 62, 55, 65, 70 } },
-        new ChartSeries() { Name = "Renewable", Data = new double[] { 10, 41, 35, 51, 49, 62, 69, 91, 148 } },
-    };
-    private string[] XAxisLabels { get; set; } = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep" };
-    
+    private static double CpuUsagePercentage { get; set; }
+    private double[] MemoryUsageData { get; set; }
+    private string[] MemoryUsageLabels { get; set; } = {"Used Memory", "Total Memory"};
+    private double[] CpuUsageData { get; set; }
+    private string[] CpuUsageLabels { get; set; } = {"Used CPU", "Total CPU"};
+    private string MemoryFetchTime { get; set; }
+    private string CpuFetchTime { get; set; }
+
     protected override async Task OnInitializedAsync()
     {
         MemoryUsagePercentage = 0;
+        CpuUsagePercentage = 0;
     }
     
-    private void ListDropletMemoryUsagePercentage()
+    private void ListMemoryUsagePercentage()
     {
-        MemoryUsagePercentage = Convert.ToDouble(UbuntuService.MemoryUsagePercentage());
-        DropletData = new[] {MemoryUsagePercentage, 100 - MemoryUsagePercentage};
-        DropletMemoryFetchTime = DateTime.UtcNow.ToLocalTime().ToString(CultureInfo.CurrentCulture);
+        MemoryUsagePercentage = Math.Round(Convert.ToDouble(UbuntuService.MemoryUsagePercentage()));
+        MemoryUsageData = new[] {MemoryUsagePercentage, 100 - MemoryUsagePercentage};
+        MemoryFetchTime = DateTime.UtcNow.ToLocalTime().ToString(CultureInfo.CurrentCulture);
+    }
+
+    private void ListCpuUsagePercentage()
+    {
+        CpuUsagePercentage = Math.Round(Convert.ToDouble(UbuntuService.CpuUsagePercentage()));
+        CpuUsageData = new[] {CpuUsagePercentage, 100 - CpuUsagePercentage};
+        CpuFetchTime = DateTime.UtcNow.ToLocalTime().ToString(CultureInfo.CurrentCulture);
     }
 }

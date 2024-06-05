@@ -52,13 +52,13 @@
 
 <hr class="text-white"/>
 
-<div class="row mb-4 gy-3">
+<div class="row gy-3 mb-4">
     <div class="col-md-6">
         <h2 class="text-white font-weight-bold"><i class="bi bi-command"></i> Commands</h2>
         <div class="card main-site-card">
             <div class="position-relative">
                 <div class="bg-image hover-overlay ripple" data-mdb-ripple-color="light">
-                    <div class="mt-2 ms-3 text-center">
+                    <div class="mt-4 ms-3 text-center">
                         <img src="imgs/1024px-DigitalOcean_logo.svg.png"
                              width="128" height="128" alt="Discord Logo"/>
                     </div>
@@ -75,12 +75,12 @@
                                     <MudButton OnClick="StopAllContainers">Stop All Containers</MudButton>
                                     <MudButton OnClick="RestartAllContainers">Restart All Containers</MudButton>
                                     <MudButton OnClick="ListContainers">List All Containers</MudButton>
-                                    <MudButton OnClick="ListMemoryUsagePercentage">Droplet Memory Stats</MudButton>
+                                    <MudButton OnClick="ListMemoryUsagePercentage">Memory Usage</MudButton>
                                 </MudButtonGroup>
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-md-12">
+                            <div class="col-md-12 mb-4">
                                 <MudButtonGroup class="d-flex justify-content-center" Color="Color.Tertiary" Size="Size.Large" Variant="Variant.Outlined">
                                     <MudButton OnClick="() => RunImage(DockerRepository.JokeBot)">Start JokeBot</MudButton>
                                     <MudButton OnClick="() => RunImage(DockerRepository.TriviaBot)">Start TriviaBot</MudButton>
@@ -101,7 +101,7 @@
             <div class="position-relative">
                 <div class="card-body">
                     <div>
-                        <MudChart ChartType="ChartType.Donut" Width="255px" Height="255px" InputData="@Data" InputLabels="@Labels">
+                        <MudChart ChartType="ChartType.Donut" Width="255px" Height="253px" InputData="@Data" InputLabels="@Labels">
                             <CustomGraphics>
                                 <text class="donut-inner-text" x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="white" font-family="Helvetica" font-size="3">@MemoryUsagePercentage% / 100%</text>
                             </CustomGraphics>
