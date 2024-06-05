@@ -21,12 +21,15 @@ public class UbuntuService
         client.HostKeyReceived += SshEvents.ClientOnHostKeyReceived;
         client.Connect();
 
-        var command = client.CreateCommand(_UbuntuCommand.ListMemoryStats());
+        var command = client.CreateCommand(_UbuntuCommand.ListMemoryUsage());
         var response = command.Execute();
+        Console.WriteLine(response);
 
         client.HostKeyReceived -= SshEvents.ClientOnHostKeyReceived;
         client.Disconnect();
 
-        return response.Remove(0, 83).Substring(0,2);
+        var trimmedResponse = response.Substring(14);
+        trimmedResponse = trimmedResponse.Remove(trimmedResponse.Length - 2);
+        return trimmedResponse;
     }
 }
