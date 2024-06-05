@@ -65,7 +65,7 @@ public partial class Home
 
     private void ListMemoryUsagePercentage()
     {
-        MemoryUsagePercentage = Convert.ToDouble(UbuntuService.MemoryUsagePercentage());
+        MemoryUsagePercentage = Math.Round(Convert.ToDouble(UbuntuService.MemoryUsagePercentage()));
         Data = new[] {MemoryUsagePercentage, 100 - MemoryUsagePercentage};
         MemoryFetchTime = DateTime.UtcNow.ToLocalTime().ToString(CultureInfo.CurrentCulture);
     }
