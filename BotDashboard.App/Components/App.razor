@@ -20,11 +20,11 @@
     <link rel="manifest" href="/site.webmanifest">
     <meta name="msapplication-TileColor" content="#da532c">
     <meta name="theme-color" content="#ffffff">
-    <HeadOutlet/>
+    <HeadOutlet @rendermode="InteractiveServer"/>
 </head>
 
 <body>
-<Routes @rendermode="RenderMode.InteractiveServer" />
+<Routes @rendermode="InteractiveServer" />
 <script src="_framework/blazor.web.js"></script>
 <script src="_content/MudBlazor/MudBlazor.min.js"></script>
 </body>
