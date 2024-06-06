@@ -12,15 +12,19 @@
 
     <main>
         <div class="top-row px-4">
-            <a class="" href="https://cloud.digitalocean.com/droplets/370310729/graphs?i=8aa39c&period=hour" target="_blank">
+            <a href="https://cloud.digitalocean.com/droplets/370310729/graphs?i=8aa39c&period=hour" class="text-decoration-none" target="_blank">
                 <MudTooltip Text="Settings">
-                    <MudIconButton Color="Color.Tertiary" Icon="@Icons.Material.Filled.Settings"/>
+                    <MudIcon Color="Color.Tertiary" Icon="@Icons.Material.Filled.Settings"/>
                 </MudTooltip>
+                Settings
             </a>
+            <a class="vr vr-line mt-3"></a>
             <a href="https://github.com/Bot-Harbor" target="_blank">
                 <div class="circle-bg">
                     <MudTooltip Text="Bot Harbor">
-                         <img src="imgs/Bot Harbor - Light House.png" alt="GitHub Profile Pic" class="top-row-element" width="40" height="40"/>
+                        <MudIconButton Color="Color.Tertiary">
+                            <img src="imgs/Bot Harbor - Light House.png" alt="GitHub Profile Pic" class="top-row-element" width="40" height="40"/>
+                        </MudIconButton>
                     </MudTooltip>
                 </div>
             </a>
