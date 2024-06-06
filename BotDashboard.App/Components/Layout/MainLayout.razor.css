@@ -9,7 +9,7 @@ main {
 }
 
 .sidebar {
-    background-image: linear-gradient(180deg, rgb(5, 39, 103) 0%, #4112C7 70%);
+    background-color: #080E2C;
 }
 
 .top-row {
@@ -20,7 +20,7 @@ main {
     align-items: center;
 }
 
-.top-row-element-background {
+.circle-bg {
     width: 50px;
     height: 50px;
     border-radius: 50%;
@@ -31,7 +31,7 @@ main {
     overflow: hidden;
 }
 
-.top-row-element {
+.circle-photo {
     border-radius: 50%;
 }
 
@@ -52,7 +52,8 @@ main {
 
 @media (max-width: 640.98px) {
     .top-row {
-        justify-content: space-between;
+        justify-content: start;
+        gap: 1em;
     }
 
     .top-row ::deep a, .top-row ::deep .btn-link {

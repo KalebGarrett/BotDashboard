@@ -8,14 +8,14 @@
     <img src="imgs/Bot Harbor - Logo Resized.png" alt="Bot Harbor Logo" class="img-fluid"/>
 </div>
 
-<h2 class="text-white mt-4 font-weight-bold">
+<h2 class="text-white mt-4 fw-bold">
     <i class="bi bi-box-seam"></i>
     Containers Running
 </h2>
 <div class="row gy-2">
     @if (Containers.Count == 0)
     {
-        <p class="lead text-white">There are no containers currently running...</p>
+        <p class="text-white">There are no containers currently running...</p>
     }
     @foreach (var container in Containers.OrderBy(x => x.Image))
     {
@@ -24,16 +24,15 @@
                 <div class="position-relative">
                     <div class="bg-image hover-overlay ripple" data-mdb-ripple-color="light">
                         <div class="mt-2 ms-3">
-                            <img src="https://cdn.iconscout.com/icon/free/png-256/free-discord-4062811-3357697.png?f=webp"
+                            <img src="https://www.svgviewer.dev/static-svgs/13822/discord-icon.svg"
                                  width="50" height="50" alt="@container.Image"/>
                         </div>
                     </div>
                     <div class="card-body">
-                        <h5 class="card-title lead">
+                        <h5 class="card-title fw-bold">
                             @container.Image.Replace("kalebg08/", "").ToUpper()
                         </h5>
                         <p class="card-text mt-4" style="color: #8893AC">Container Id: @container.ContainerId</p>
-                        <p class="card-text mt-4" style="color: #8893AC">Container Name: @container.Names</p>
                         <p class="card-text" style="color: #8893AC">Created: @container.Created</p>
                         <p class="card-text" style="color: #8893AC">Status: @container.Status</p>
                     </div>
@@ -48,13 +47,13 @@
         </div>
     }
 </div>
-<p class="text-white">Last Fetched @ContainerFetchTime</p>
+<p class="text-white">Last Fetched: @ContainerFetchTime</p>
 
 <hr class="text-white"/>
 
 <div class="row gy-3 mb-4">
     <div class="col-md-6">
-        <h2 class="text-white font-weight-bold"><i class="bi bi-command"></i> Commands</h2>
+        <h2 class="text-white fw-bold"><i class="bi bi-command"></i> Commands</h2>
         <div class="card main-site-card">
             <div class="position-relative">
                 <div class="bg-image hover-overlay ripple" data-mdb-ripple-color="light">
@@ -96,7 +95,7 @@
         </div>
     </div>
     <div class="col-md-6">
-        <h2 class="text-white font-weight-bold"><i class="bi bi-memory"></i> Droplet Memory Usage</h2>
+        <h2 class="text-white fw-bold"><i class="bi bi-memory"></i> Droplet Memory Usage</h2>
         <div class="card main-site-card">
             <div class="position-relative">
                 <div class="card-body">
