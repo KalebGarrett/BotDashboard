@@ -22,7 +22,10 @@ A personal project for managing my Discord bots through a web-based dashboard. T
    ```plaintext
    https://www.digitalocean.com
    ```
-   
+
+## Stats
+![Alt](https://repobeats.axiom.co/api/embed/7be079b55ec3c0da14d57536b4ec1d585e7f0076.svg "Repobeats analytics image")
+
 ## Screenshots
 
 ![image](/Documentation/Images/Dashboard.png)
