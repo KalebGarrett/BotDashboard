@@ -21,3 +21,8 @@ A personal project for managing my Discord bots through a web-based dashboard. T
 **Host Your Own Bots:**
    ```plaintext
    https://www.digitalocean.com
+   ```
+   
+## Screenshots
+
+![image](/Documentation/Images/Dashboard.png)
