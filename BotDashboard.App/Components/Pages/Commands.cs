@@ -1,4 +1,5 @@
 ﻿using System.Globalization;
+using BotDashboard.App.Constants;
 using BotDashboard.App.Services;
 using BotDashboard.Models;
 using Microsoft.AspNetCore.Components;
@@ -14,12 +15,23 @@ public partial class Commands
     private string ImageFetchTime { get; set; }
     private string ContainerFetchTime { get; set; }
     private List<Container> Containers { get; set; } = new();
-    
+
+    private void StartAllImages()
+    {
+        DockerService.RunImage(DockerRepository.JokeBot);
+        DockerService.RunImage(DockerRepository.TriviaBot);
+        DockerService.RunImage(DockerRepository.FactBot);
+        DockerService.RunImage(DockerRepository.PremBot);
+        DockerService.RunImage(DockerRepository.JamJunction);
+        Task.Delay(TimeSpan.FromSeconds(3));
+        ListContainers();
+    }
+
     private void RunImage(string imageName)
     {
         DockerService.RunImage(imageName);
     }
-    
+
     private void StopContainer(string containerId)
     {
         DockerService.StopContainer(containerId);
@@ -60,13 +72,13 @@ public partial class Commands
         Task.Delay(TimeSpan.FromSeconds(5));
         ListImages();
     }
-    
+
     private void ListImages()
     {
         DockerImages = DockerService.ListImages();
         ImageFetchTime = DateTime.UtcNow.ToLocalTime().ToString(CultureInfo.CurrentCulture);
     }
-    
+
     private void ListContainers()
     {
         Containers = DockerService.ListContainers();
