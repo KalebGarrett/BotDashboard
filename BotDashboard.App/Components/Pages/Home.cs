@@ -1,4 +1,5 @@
 ﻿using System.Globalization;
+using BotDashboard.App.Constants;
 using BotDashboard.App.Services;
 using BotDashboard.Models;
 using Microsoft.AspNetCore.Components;
@@ -22,6 +23,17 @@ public partial class Home
         MemoryUsagePercentage = 0;
     }
 
+    private void StartAllImages()
+    {
+        DockerService.RunImage(DockerRepository.JokeBot);
+        DockerService.RunImage(DockerRepository.TriviaBot);
+        DockerService.RunImage(DockerRepository.FactBot);
+        DockerService.RunImage(DockerRepository.PremBot);
+        DockerService.RunImage(DockerRepository.JamJunction);
+        Task.Delay(TimeSpan.FromSeconds(3));
+        ListContainers();
+    }
+    
     private void RunImage(string imageName)
     {
         DockerService.RunImage(imageName);
