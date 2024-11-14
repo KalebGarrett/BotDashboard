@@ -21,6 +21,8 @@ public partial class Home
     protected override async Task OnInitializedAsync()
     {
         MemoryUsagePercentage = 0;
+        ListContainers();
+        ListMemoryUsagePercentage();
     }
 
     private void StartAllImages()
@@ -30,42 +32,36 @@ public partial class Home
         DockerService.RunImage(DockerRepository.FactBot);
         DockerService.RunImage(DockerRepository.PremBot);
         DockerService.RunImage(DockerRepository.JamJunction);
-        Task.Delay(TimeSpan.FromSeconds(3));
         ListContainers();
     }
     
     private void RunImage(string imageName)
     {
         DockerService.RunImage(imageName);
-        Task.Delay(TimeSpan.FromSeconds(3));
         ListContainers();
     }
 
     private void StopContainer(string containerId)
     {
         DockerService.StopContainer(containerId);
-        Task.Delay(TimeSpan.FromSeconds(3));
         ListContainers();
     }
 
     private void StopAllContainers()
     {
         DockerService.StopAllContainers();
-        Task.Delay(TimeSpan.FromSeconds(3));
         ListContainers();
     }
 
     private void RestartContainer(string containerId)
     {
         DockerService.RestartContainer(containerId);
-        Task.Delay(TimeSpan.FromSeconds(3));
         ListContainers();
     }
 
     private void RestartAllContainers()
     {
         DockerService.RestartAllContainers();
-        Task.Delay(TimeSpan.FromSeconds(3));
         ListContainers();
     }
 
@@ -77,8 +73,8 @@ public partial class Home
 
     private void ListMemoryUsagePercentage()
     {
-        MemoryUsagePercentage = Math.Round(Convert.ToDouble(UbuntuService.MemoryUsagePercentage()));
-        Data = new[] {MemoryUsagePercentage, 100 - MemoryUsagePercentage};
+        MemoryUsagePercentage = UbuntuService.MemoryUsagePercentage();
+        Data = [MemoryUsagePercentage, 100 - MemoryUsagePercentage];
         MemoryFetchTime = DateTime.UtcNow.ToLocalTime().ToString(CultureInfo.CurrentCulture);
     }
 }
