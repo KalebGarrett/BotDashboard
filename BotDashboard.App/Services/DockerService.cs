@@ -1,5 +1,4 @@
 ﻿using BotDashboard.App.Commands;
-using BotDashboard.App.Events;
 using BotDashboard.App.Secrets;
 using BotDashboard.Models;
 using Renci.SshNet;
@@ -48,13 +47,11 @@ public class DockerService
     public List<Container> ListContainers()
     {
         using var client = new SshClient(DigitalOcean.Host, DigitalOcean.Username, DigitalOcean.Password);
-        client.HostKeyReceived += SshEvents.ClientOnHostKeyReceived;
         client.Connect();
 
         var command = client.CreateCommand(_dockercommand.ListContainers());
         var response = command.Execute();
 
-        client.HostKeyReceived -= SshEvents.ClientOnHostKeyReceived;
         client.Disconnect();
         
         return response.Split("\n")
@@ -78,13 +75,11 @@ public class DockerService
     public List<DockerImage> ListImages()
     {
         using var client = new SshClient(DigitalOcean.Host, DigitalOcean.Username, DigitalOcean.Password);
-        client.HostKeyReceived += SshEvents.ClientOnHostKeyReceived;
         client.Connect();
 
         var command = client.CreateCommand(_dockercommand.ListImages());
         var response = command.Execute();
 
-        client.HostKeyReceived -= SshEvents.ClientOnHostKeyReceived;
         client.Disconnect();
         
         return response.Split("\n")
@@ -107,13 +102,11 @@ public class DockerService
     public string PullImage(string imageName)
     {
         using var client = new SshClient(DigitalOcean.Host, DigitalOcean.Username, DigitalOcean.Password);
-        client.HostKeyReceived += SshEvents.ClientOnHostKeyReceived;
         client.Connect();
         
         var command = client.CreateCommand(_dockercommand.Pull(imageName));
         var response = command.Execute();
         
-        client.HostKeyReceived -= SshEvents.ClientOnHostKeyReceived;
         client.Disconnect();
 
         return response;
@@ -122,13 +115,11 @@ public class DockerService
     public string RemoveImage(string imageId)
     {
         using var client = new SshClient(DigitalOcean.Host, DigitalOcean.Username, DigitalOcean.Password);
-        client.HostKeyReceived += SshEvents.ClientOnHostKeyReceived;
         client.Connect();
         
         var command = client.CreateCommand(_dockercommand.Remove(imageId));
         var response = command.Execute();
         
-        client.HostKeyReceived -= SshEvents.ClientOnHostKeyReceived;
         client.Disconnect();
 
         return response;
@@ -137,10 +128,8 @@ public class DockerService
     private void RunCommand(string command)
     {
         using var client = new SshClient(DigitalOcean.Host, DigitalOcean.Username, DigitalOcean.Password);
-        client.HostKeyReceived += SshEvents.ClientOnHostKeyReceived;
         client.Connect();
         client.RunCommand(command);
-        client.HostKeyReceived -= SshEvents.ClientOnHostKeyReceived;
         client.Disconnect();
     }
 }

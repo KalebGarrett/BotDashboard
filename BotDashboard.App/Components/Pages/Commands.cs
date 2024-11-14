@@ -15,7 +15,13 @@ public partial class Commands
     private string ImageFetchTime { get; set; }
     private string ContainerFetchTime { get; set; }
     private List<Container> Containers { get; set; } = new();
-
+    
+    protected override async Task OnInitializedAsync()
+    {
+        ListContainers();
+        ListImages();
+    }
+    
     private void StartAllImages()
     {
         DockerService.RunImage(DockerRepository.JokeBot);
@@ -41,35 +47,30 @@ public partial class Commands
     private void StopAllContainers()
     {
         DockerService.StopAllContainers();
-        Task.Delay(TimeSpan.FromSeconds(3));
         ListContainers();
     }
 
     private void RestartContainer(string containerId)
     {
         DockerService.RestartContainer(containerId);
-        Task.Delay(TimeSpan.FromSeconds(3));
         ListContainers();
     }
 
     private void RestartAllContainers()
     {
         DockerService.RestartAllContainers();
-        Task.Delay(TimeSpan.FromSeconds(3));
         ListContainers();
     }
 
     private void PullImage(string imageName)
     {
         CommandResult = DockerService.PullImage(imageName);
-        Task.Delay(TimeSpan.FromSeconds(10));
         ListImages();
     }
 
     private void RemoveImage(string imageId)
     {
         CommandResult = DockerService.RemoveImage(imageId);
-        Task.Delay(TimeSpan.FromSeconds(5));
         ListImages();
     }
 
