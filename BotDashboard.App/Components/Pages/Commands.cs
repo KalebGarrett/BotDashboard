@@ -10,7 +10,7 @@ public partial class Commands
 {
     [Inject] public DockerService DockerService { get; set; }
     private List<DockerImage> DockerImages { get; set; } = new();
-    private string[] Headings { get; set; } = {"Repository", "Tag", "Image Id", "Created", "Size", "Actions"};
+    private string[] Headings { get; set; } = ["Repository", "Tag", "Image Id", "Created", "Size", "Actions"];
     private string CommandResult { get; set; }
     private string ImageFetchTime { get; set; }
     private string ContainerFetchTime { get; set; }
@@ -29,13 +29,13 @@ public partial class Commands
         DockerService.RunImage(DockerRepository.FactBot);
         DockerService.RunImage(DockerRepository.PremBot);
         DockerService.RunImage(DockerRepository.JamJunction);
-        Task.Delay(TimeSpan.FromSeconds(3));
         ListContainers();
     }
 
     private void RunImage(string imageName)
     {
         DockerService.RunImage(imageName);
+        ListContainers();
     }
 
     private void StopContainer(string containerId)
