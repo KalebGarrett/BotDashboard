@@ -9,6 +9,6 @@ public class UbuntuCommand
 
     public string ListCpuUsage()
     {
-        return "wmic cpu get loadpercentage | findstr /R \"[0-9]\"";
+        return "top -bn1 | grep \"Cpu(s)\" | awk '{print \"CPU Usage: \" 100 - $8 \"%\"}'\n";
     }
 }

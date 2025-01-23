@@ -39,9 +39,10 @@ public class UbuntuService
         var response = command.Execute();
 
         client.Disconnect();
-
-        var usedCpu = double.Parse(response);
         
-        return usedCpu;
+        var trimmedResponse = response.Substring(10).Trim();
+        var usedCpu = trimmedResponse.Remove(trimmedResponse.LastIndexOf('%'));
+        
+        return Convert.ToDouble(usedCpu);
     }
 }
