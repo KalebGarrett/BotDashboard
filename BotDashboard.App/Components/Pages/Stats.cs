@@ -18,8 +18,6 @@ public partial class Stats
 
     protected override async Task OnInitializedAsync()
     {
-        MemoryUsagePercentage = 0;
-        CpuUsagePercentage = 0;
         ListMemoryUsagePercentage();
         ListCpuUsagePercentage();
     }
@@ -34,6 +32,7 @@ public partial class Stats
     private void ListCpuUsagePercentage()
     {
         CpuUsagePercentage = UbuntuService.CpuUsagePercentage();
+        Console.WriteLine($"Ass: {CpuUsagePercentage}");
         CpuUsageData = [CpuUsagePercentage, 100 - CpuUsagePercentage];
         CpuFetchTime = DateTime.UtcNow.ToLocalTime().ToString(CultureInfo.CurrentCulture);
     }
