@@ -4,7 +4,7 @@ public class UbuntuCommand
 {
     public string ListMemoryUsage()
     {
-        return "wmic OS get FreePhysicalMemory /value | findstr /R \"[0-9]\"";
+        return "free | awk '/Mem:/ {printf(\"Memory Usage: %.2f%%\\n\", $3/$2 * 100.0)}'\n";
     }
 
     public string ListCpuUsage()

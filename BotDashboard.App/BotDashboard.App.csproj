@@ -4,6 +4,7 @@
         <TargetFramework>net8.0</TargetFramework>
         <Nullable>disable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
+        <ApplicationIcon>Bot Harbor - Light House.ico</ApplicationIcon>
     </PropertyGroup>
 
     <ItemGroup>
