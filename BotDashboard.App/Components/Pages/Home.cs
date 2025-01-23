@@ -23,16 +23,6 @@ public partial class Home
         ListContainers();
         ListMemoryUsagePercentage();
     }
-
-    private void StartAllImages()
-    {
-        DockerService.RunImage(DockerRepository.JokeBot);
-        DockerService.RunImage(DockerRepository.TriviaBot);
-        DockerService.RunImage(DockerRepository.FactBot);
-        DockerService.RunImage(DockerRepository.PremBot);
-        DockerService.RunImage(DockerRepository.JamJunction);
-        ListContainers();
-    }
     
     private void RunImage(string imageName)
     {
