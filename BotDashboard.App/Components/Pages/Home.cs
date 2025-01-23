@@ -20,7 +20,6 @@ public partial class Home
 
     protected override async Task OnInitializedAsync()
     {
-        MemoryUsagePercentage = 0;
         ListContainers();
         ListMemoryUsagePercentage();
     }
