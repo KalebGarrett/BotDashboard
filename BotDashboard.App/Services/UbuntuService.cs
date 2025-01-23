@@ -23,13 +23,11 @@ public class UbuntuService
         var response = command.Execute();
 
         client.Disconnect();
+
+        var trimmedResponse = response.Substring(14).Trim();
+        var usedMemory = trimmedResponse.Remove(trimmedResponse.LastIndexOf('%'));
         
-        var trimmedResponse = double.Parse(response.Substring(19).Trim());
-        var installedMemory = 8270224;
-        var freeMemory = trimmedResponse / installedMemory * 100;
-        var usedMemory = Math.Round(100 - freeMemory);
-        
-        return usedMemory;
+        return Convert.ToDouble(usedMemory);
     }
 
     public double CpuUsagePercentage()

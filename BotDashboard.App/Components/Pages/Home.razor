@@ -58,7 +58,7 @@
             <div class="position-relative">
                 <div class="bg-image hover-overlay ripple" data-mdb-ripple-color="light">
                     <div class="mt-4 ms-3 text-center">
-                        <img src="imgs/Dell_Logo.svg.png"
+                        <img src="imgs/1024px-DigitalOcean_logo.svg.png"
                              width="128" height="128" alt="Discord Logo"/>
                     </div>
                 </div>
@@ -102,7 +102,7 @@
                     <div>
                         <MudChart ChartType="ChartType.Donut" Width="255px" Height="253px" InputData="@Data" InputLabels="@Labels">
                             <CustomGraphics>
-                                <text class="donut-inner-text" x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="white" font-family="Helvetica" font-size="3">@MemoryUsagePercentage% / 100%</text>
+                                <text class="donut-inner-text" x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="white" font-family="Helvetica" font-size="3">@Math.Round(MemoryUsagePercentage)% / 100%</text>
                             </CustomGraphics>
                         </MudChart>
                         <p class="text-white text-center">Last Fetched: @MemoryFetchTime</p>
