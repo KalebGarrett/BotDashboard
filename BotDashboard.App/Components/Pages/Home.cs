@@ -1,9 +1,7 @@
 ﻿using System.Globalization;
-using BotDashboard.App.Constants;
 using BotDashboard.App.Services;
 using BotDashboard.Models;
 using Microsoft.AspNetCore.Components;
-using MudBlazor;
 
 namespace BotDashboard.App.Components.Pages;
 
@@ -20,8 +18,15 @@ public partial class Home
 
     protected override async Task OnInitializedAsync()
     {
-        ListContainers();
-        ListMemoryUsagePercentage();
+      if (Switch.OnInitialized == false)
+      {
+          MemoryUsagePercentage = 0;
+          await Task.CompletedTask;
+          return;
+      }
+      
+      ListContainers();
+      ListMemoryUsagePercentage();
     }
     
     private void RunImage(string imageName)

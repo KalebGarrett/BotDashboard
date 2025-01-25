@@ -12,22 +12,21 @@
 
     <main class="d-flex flex-column min-vh-100 justify-content-between">
         <div class="top-row px-4">
-            <a href="https://cloud.digitalocean.com/droplets/471774739/terminal/ui/" class="text-decoration-none" target="_blank">
-                <MudTooltip Text="Settings">
+            <div class="pl-6 pr-2 d-flex align-items-center " style="background-color: #08081C; border-radius: 25px;">
+                <MudSwitch T="bool" Size="Size.Small" @bind-Value="Switch.OnInitialized" @onclick="Switch.ToggleOnInitialized" Color="Color.Tertiary"></MudSwitch>
+                <a href="https://cloud.digitalocean.com/droplets/471774739/terminal/ui/" class="text-decoration-none" target="_blank">
                     <MudIcon Color="Color.Tertiary" Icon="@Icons.Material.Filled.Settings"/>
-                </MudTooltip>
-                Settings
-            </a>
-            <a class="vr vr-line mt-3"></a>
-            <a href="https://github.com/Bot-Harbor" target="_blank">
-                <div class="circle-bg">
-                    <MudTooltip Text="Bot Harbor">
-                        <MudIconButton Color="Color.Tertiary">
-                            <img src="imgs/Bot Harbor - Light House.png" alt="GitHub Profile Pic" class="top-row-element" width="40" height="40"/>
-                        </MudIconButton>
-                    </MudTooltip>
-                </div>
-            </a>
+                </a>
+                <a href="https://github.com/Bot-Harbor" target="_blank">
+                    <div class="circle-bg">
+                        <MudTooltip Text="Bot Harbor">
+                            <MudIconButton Color="Color.Tertiary">
+                                <img src="imgs/Bot Harbor - Light House.png" alt="GitHub Profile Pic" class="top-row-element" width="40" height="40"/>
+                            </MudIconButton>
+                        </MudTooltip>
+                    </div>
+                </a>
+            </div>
         </div>
 
         <article class="content px-4">
@@ -37,7 +36,7 @@
     </main>
 </div>
 
-<div id="blazor-error-ui">
+<div id="blazor-error-ui" class="text-black">
     An unhandled error has occurred.
     <a href="" class="reload">Reload</a>
     <a class="dismiss">🗙</a>
