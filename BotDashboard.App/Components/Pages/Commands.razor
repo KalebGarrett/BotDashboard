@@ -20,45 +20,48 @@
                     </div>
                 </div>
                 <div class="card-body text-center">
-                    <h2 class="card-title font-weight-bold">
-                        Commands
-                    </h2>
                     <div class="container justify-content-center">
                         <div class="row">
                             <div class="col-md-12">
-                                <MudButtonGroup class="d-flex justify-content-center" Color="Color.Primary" Size="Size.Large" Variant="Variant.Outlined">
-                                    <MudButton OnClick="StartAllImages">Start All Images</MudButton>
-                                    <MudButton OnClick="StopAllContainers">Stop All Containers</MudButton>
-                                    <MudButton OnClick="RestartAllContainers">Restart All Containers</MudButton>
-                                    <MudButton OnClick="ListImages">List All Images</MudButton>
-                                    <MudButton OnClick="ListContainers">List All Containers</MudButton>
+                                <MudButtonGroup Class="d-flex justify-content-center gap-2" Color="Color.Primary" Size="Size.Large" Variant="Variant.Outlined">
+                                    <MudButton Class="text-white" OnClick="StopAllContainers">Stop All Containers</MudButton>
+                                    <MudButton Class="text-white" OnClick="RestartAllContainers">Restart All Containers</MudButton>
+                                    <MudButton Class="text-white" OnClick="ListImages">List All Images</MudButton>
+                                    <MudButton Class="text-white" OnClick="ListContainers">List All Containers</MudButton>
                                 </MudButtonGroup>
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-md-12">
-                                <MudButtonGroup class="d-flex justify-content-center" Color="Color.Tertiary" Size="Size.Large" Variant="Variant.Outlined">
-                                    <MudButton OnClick="() => RunImage(DockerRepository.JokeBot)">Start JokeBot</MudButton>
-                                    <MudButton OnClick="() => RunImage(DockerRepository.TriviaBot)">Start TriviaBot</MudButton>
-                                    <MudButton OnClick="() => RunImage(DockerRepository.FactBot)">Start FactBot</MudButton>
-                                    <MudButton OnClick="() => RunImage(DockerRepository.PremBot)">Start PremBot</MudButton>
-                                    <MudButton OnClick="() => RunImage(DockerRepository.JamJunction)">Start JamJunction</MudButton>
+                            <div class="col-md-12 mt-2">
+                                <MudButtonGroup Class="d-flex justify-content-center gap-2" Color="Color.Tertiary" Size="Size.Large" Variant="Variant.Outlined">
+                                    <MudButton Class="text-white" OnClick="() => RunImage(DockerRepository.JokeBot)">Start JokeBot</MudButton>
+                                    <MudButton Class="text-white" OnClick="() => RunImage(DockerRepository.TriviaBot)">Start TriviaBot</MudButton>
+                                    <MudButton Class="text-white" OnClick="() => RunImage(DockerRepository.FactBot)">Start FactBot</MudButton>
+                                    <MudButton Class="text-white" OnClick="() => RunImage(DockerRepository.PremBot)">Start PremBot</MudButton>
+                                    <MudButton Class="text-white" OnClick="() => RunImage(DockerRepository.JamJunction)">Start JamJunction</MudButton>
                                 </MudButtonGroup>
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-md-12">
-                                <MudButtonGroup class="d-flex justify-content-center" Color="Color.Primary" Size="Size.Large" Variant="Variant.Outlined">
-                                    <MudButton OnClick="() => PullImage(DockerRepository.JokeBot)">Pull JokeBot</MudButton>
-                                    <MudButton OnClick="() => PullImage(DockerRepository.TriviaBot)">Pull TriviaBot</MudButton>
-                                    <MudButton OnClick="() => PullImage(DockerRepository.FactBot)">Pull FactBot</MudButton>
-                                    <MudButton OnClick="() => PullImage(DockerRepository.PremBot)">Pull PremBot</MudButton>
-                                    <MudButton OnClick="() => PullImage(DockerRepository.JamJunction)">Pull JamJunction</MudButton>
+                            <div class="col-md-12 mt-2">
+                                <MudButtonGroup Class="d-flex justify-content-center gap-2" Color="Color.Primary" Size="Size.Large" Variant="Variant.Outlined">
+                                    <MudButton Class="text-white" OnClick="() => PullImage(DockerRepository.JokeBot)">Pull JokeBot</MudButton>
+                                    <MudButton Class="text-white" OnClick="() => PullImage(DockerRepository.TriviaBot)">Pull TriviaBot</MudButton>
+                                    <MudButton Class="text-white" OnClick="() => PullImage(DockerRepository.FactBot)">Pull FactBot</MudButton>
+                                    <MudButton Class="text-white" OnClick="() => PullImage(DockerRepository.PremBot)">Pull PremBot</MudButton>
+                                    <MudButton Class="text-white" OnClick="() => PullImage(DockerRepository.JamJunction)">Pull JamJunction</MudButton>
                                 </MudButtonGroup>
                             </div>
                         </div>
                     </div>
-                    <p class="text-white text-start mt-4">Output: @CommandResult</p>
+                    @if (CommandResult == null)
+                    {
+                        <p class="text-white text-start mt-4">Output: @CommandResult</p>
+                    }
+                    else
+                    {
+                        <p class="text-white text-start mt-4">Output: @CommandResult.Substring(0, 200)</p>
+                    }
                 </div>
             </div>
         </div>
@@ -70,7 +73,7 @@
         </h2>
         <div class="card main-site-card">
             <div class="position-relative">
-                <div class="card-body">
+                <div class="card-body m-4">
                     <div class="table-responsive">
                         <table class="table table-dark table-striped table-hover table-bordered table-active image-table-corner table">
                             <thead>
@@ -131,9 +134,9 @@
                         <h5 class="card-title fw-bold">
                             @container.Image.Replace("kalebg08/", "").ToUpper()
                         </h5>
-                        <p class="card-text mt-4" style="color: #8893AC">Container Id: @container.ContainerId</p>
-                        <p class="card-text" style="color: #8893AC">Created: @container.Created</p>
-                        <p class="card-text" style="color: #8893AC">Status: @container.Status</p>
+                        <p class="card-text text-white mt-4" style="color: #8893AC">Container Id: @container.ContainerId</p>
+                        <p class="card-text text-white" style="color: #8893AC">Created: @container.Created</p>
+                        <p class="card-text text-white" style="color: #8893AC">Status: @container.Status</p>
                     </div>
                 </div>
                 <div class="position-absolute restart-icon-position">
