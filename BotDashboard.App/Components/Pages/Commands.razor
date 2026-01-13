@@ -23,45 +23,74 @@
                     <div class="container justify-content-center">
                         <div class="row">
                             <div class="col-md-12">
-                                <MudButtonGroup Class="d-flex justify-content-center gap-2" Color="Color.Primary" Size="Size.Large" Variant="Variant.Outlined">
-                                    <MudButton Class="text-white" OnClick="StopAllContainers">Stop All Containers</MudButton>
-                                    <MudButton Class="text-white" OnClick="RestartAllContainers">Restart All Containers</MudButton>
+                                <MudButtonGroup Class="d-flex justify-content-center gap-2" Color="Color.Primary"
+                                                Size="Size.Large" Variant="Variant.Outlined">
+                                    <MudButton Class="text-white" OnClick="StopAllContainers">Stop All Containers
+                                    </MudButton>
+                                    <MudButton Class="text-white" OnClick="RestartAllContainers">Restart All
+                                        Containers
+                                    </MudButton>
                                     <MudButton Class="text-white" OnClick="ListImages">List All Images</MudButton>
-                                    <MudButton Class="text-white" OnClick="ListContainers">List All Containers</MudButton>
+                                    <MudButton Class="text-white" OnClick="ListContainers">List All Containers
+                                    </MudButton>
                                 </MudButtonGroup>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-md-12 mt-2">
-                                <MudButtonGroup Class="d-flex justify-content-center gap-2" Color="Color.Tertiary" Size="Size.Large" Variant="Variant.Outlined">
-                                    <MudButton Class="text-white" OnClick="() => RunImage(DockerRepository.JokeBot)">Start JokeBot</MudButton>
-                                    <MudButton Class="text-white" OnClick="() => RunImage(DockerRepository.TriviaBot)">Start TriviaBot</MudButton>
-                                    <MudButton Class="text-white" OnClick="() => RunImage(DockerRepository.FactBot)">Start FactBot</MudButton>
-                                    <MudButton Class="text-white" OnClick="() => RunImage(DockerRepository.PremBot)">Start PremBot</MudButton>
-                                    <MudButton Class="text-white" OnClick="() => RunImage(DockerRepository.JamJunction)">Start JamJunction</MudButton>
+                                <MudButtonGroup Class="d-flex justify-content-center gap-2" Color="Color.Tertiary"
+                                                Size="Size.Large" Variant="Variant.Outlined">
+                                    <MudButton Class="text-white" OnClick="() => RunImage(DockerRepository.JokeBot)">
+                                        Start JokeBot
+                                    </MudButton>
+                                    <MudButton Class="text-white" OnClick="() => RunImage(DockerRepository.TriviaBot)">
+                                        Start TriviaBot
+                                    </MudButton>
+                                    <MudButton Class="text-white" OnClick="() => RunImage(DockerRepository.FactBot)">
+                                        Start FactBot
+                                    </MudButton>
+                                    <MudButton Class="text-white" OnClick="() => RunImage(DockerRepository.PremBot)">
+                                        Start PremBot
+                                    </MudButton>
+                                    <MudButton Class="text-white"
+                                               OnClick="() => RunImage(DockerRepository.JamJunction)">Start JamJunction
+                                    </MudButton>
                                 </MudButtonGroup>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-md-12 mt-2">
-                                <MudButtonGroup Class="d-flex justify-content-center gap-2" Color="Color.Primary" Size="Size.Large" Variant="Variant.Outlined">
-                                    <MudButton Class="text-white" OnClick="() => PullImage(DockerRepository.JokeBot)">Pull JokeBot</MudButton>
-                                    <MudButton Class="text-white" OnClick="() => PullImage(DockerRepository.TriviaBot)">Pull TriviaBot</MudButton>
-                                    <MudButton Class="text-white" OnClick="() => PullImage(DockerRepository.FactBot)">Pull FactBot</MudButton>
-                                    <MudButton Class="text-white" OnClick="() => PullImage(DockerRepository.PremBot)">Pull PremBot</MudButton>
-                                    <MudButton Class="text-white" OnClick="() => PullImage(DockerRepository.JamJunction)">Pull JamJunction</MudButton>
+                                <MudButtonGroup Class="d-flex justify-content-center gap-2" Color="Color.Primary"
+                                                Size="Size.Large" Variant="Variant.Outlined">
+                                    <MudButton Class="text-white" OnClick="() => PullImage(DockerRepository.JokeBot)">
+                                        Pull JokeBot
+                                    </MudButton>
+                                    <MudButton Class="text-white" OnClick="() => PullImage(DockerRepository.TriviaBot)">
+                                        Pull TriviaBot
+                                    </MudButton>
+                                    <MudButton Class="text-white" OnClick="() => PullImage(DockerRepository.FactBot)">
+                                        Pull FactBot
+                                    </MudButton>
+                                    <MudButton Class="text-white" OnClick="() => PullImage(DockerRepository.PremBot)">
+                                        Pull PremBot
+                                    </MudButton>
+                                    <MudButton Class="text-white"
+                                               OnClick="() => PullImage(DockerRepository.JamJunction)">Pull JamJunction
+                                    </MudButton>
                                 </MudButtonGroup>
                             </div>
                         </div>
                     </div>
-                    @if (CommandResult == null)
-                    {
-                        <p class="text-white text-start mt-4">Output: @CommandResult</p>
-                    }
-                    else
-                    {
-                        <p class="text-white text-start mt-4">Output: @CommandResult.Substring(0, 200)</p>
-                    }
+                    <div class="container rounded-3 p-2 mt-3" style="background-color: #08081C">
+                        @if (CommandResult == null)
+                        {
+                            <p class="text-white text-start mt-4">Output: @CommandResult</p>
+                        }
+                        else
+                        {
+                            <p class="text-white text-start mt-4">Output: @CommandResult.Substring(0, 200)</p>
+                        }
+                    </div>
                 </div>
             </div>
         </div>
@@ -75,7 +104,8 @@
             <div class="position-relative">
                 <div class="card-body m-4">
                     <div class="table-responsive">
-                        <table class="table table-dark table-striped table-hover table-bordered table-active image-table-corner table">
+                        <table
+                            class="table table-dark table-striped table-hover table-bordered table-active image-table-corner table">
                             <thead>
                             <tr>
                                 @foreach (var heading in Headings)
@@ -95,7 +125,8 @@
                                     <td>@dockerImage.Created</td>
                                     <td>@dockerImage.Size</td>
                                     <td>
-                                        <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" OnClick="() => RemoveImage(dockerImage.ImageId)"></MudIconButton>
+                                        <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error"
+                                                       OnClick="() => RemoveImage(dockerImage.ImageId)"></MudIconButton>
                                     </td>
                                 </tr>
                             }
@@ -134,16 +165,19 @@
                         <h5 class="card-title fw-bold">
                             @container.Image.Replace("kalebg08/", "").ToUpper()
                         </h5>
-                        <p class="card-text text-white mt-4" style="color: #8893AC">Container Id: @container.ContainerId</p>
+                        <p class="card-text text-white mt-4" style="color: #8893AC">Container
+                            Id: @container.ContainerId</p>
                         <p class="card-text text-white" style="color: #8893AC">Created: @container.Created</p>
                         <p class="card-text text-white" style="color: #8893AC">Status: @container.Status</p>
                     </div>
                 </div>
                 <div class="position-absolute restart-icon-position">
-                    <i class="bi bi-arrow-counterclockwise restart-icon" @onclick="() => RestartContainer(container.ContainerId)"></i>
+                    <i class="bi bi-arrow-counterclockwise restart-icon"
+                       @onclick="() => RestartContainer(container.ContainerId)"></i>
                 </div>
                 <div class="form-check form-switch position-absolute form-check-position">
-                    <input class="form-check-input" type="checkbox" id="flexSwitchCheckChecked" @onclick="() => StopContainer(container.ContainerId)" checked>
+                    <input class="form-check-input" type="checkbox" id="flexSwitchCheckChecked"
+                           @onclick="() => StopContainer(container.ContainerId)" checked>
                 </div>
             </div>
         </div>
