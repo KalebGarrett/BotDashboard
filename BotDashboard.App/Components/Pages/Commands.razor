@@ -24,7 +24,7 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <MudButtonGroup Class="d-flex justify-content-center gap-2" Color="Color.Primary"
-                                                Size="Size.Large" Variant="Variant.Outlined">
+                                                Size="Size.Large" Variant="Variant.Filled">
                                     <MudButton Class="text-white" OnClick="StopAllContainers">Stop All Containers
                                     </MudButton>
                                     <MudButton Class="text-white" OnClick="RestartAllContainers">Restart All
@@ -39,7 +39,7 @@
                         <div class="row">
                             <div class="col-md-12 mt-2">
                                 <MudButtonGroup Class="d-flex justify-content-center gap-2" Color="Color.Tertiary"
-                                                Size="Size.Large" Variant="Variant.Outlined">
+                                                Size="Size.Large" Variant="Variant.Filled">
                                     <MudButton Class="text-white" OnClick="() => RunImage(DockerRepository.JokeBot)">
                                         Start JokeBot
                                     </MudButton>
@@ -61,7 +61,7 @@
                         <div class="row">
                             <div class="col-md-12 mt-2">
                                 <MudButtonGroup Class="d-flex justify-content-center gap-2" Color="Color.Primary"
-                                                Size="Size.Large" Variant="Variant.Outlined">
+                                                Size="Size.Large" Variant="Variant.Filled">
                                     <MudButton Class="text-white" OnClick="() => PullImage(DockerRepository.JokeBot)">
                                         Pull JokeBot
                                     </MudButton>
@@ -88,7 +88,8 @@
                         }
                         else
                         {
-                            <p class="text-white text-start mt-4">Output: @CommandResult.Substring(0, 200)</p>
+                            <!--<p class="text-white text-start mt-4">Output: @CommandResult.Substring(0, 200)</p>-->
+                            <p class="text-white text-start mt-4">Output: @CommandResult</p>
                         }
                     </div>
                 </div>
@@ -155,29 +156,44 @@
         <div class="col-md-4 mb-4">
             <div class="card container-card">
                 <div class="position-relative">
-                    <div class="bg-image hover-overlay ripple" data-mdb-ripple-color="light">
-                        <div class="mt-2 ms-3">
-                            <img src="https://www.svgviewer.dev/static-svgs/13822/discord-icon.svg"
-                                 width="50" height="50" alt="@container.Image"/>
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="bg-image hover-overlay ripple" data-mdb-ripple-color="light">
+                                <div class="mt-2 ms-3">
+                                    <img src="https://www.svgviewer.dev/static-svgs/13822/discord-icon.svg"
+                                         width="50" height="50" alt="@container.Image"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="d-flex flex-row justify-content-end mt-3">
+                                <MudButton OnClick="() => RestartContainer(container.ContainerId)" Class="mr-1"
+                                           Color="Color.Tertiary" Variant="Variant.Filled">Restart
+                                </MudButton>
+                                <MudButton OnClick="() => StopContainer(container.ContainerId)" Class="mr-4"
+                                           Color="Color.Error" Variant="Variant.Filled">Stop
+                                </MudButton>
+                            </div>
                         </div>
                     </div>
                     <div class="card-body">
-                        <h5 class="card-title fw-bold">
-                            @container.Image.Replace("kalebg08/", "").ToUpper()
-                        </h5>
+                        @if (container.Image.Contains("kalebg08"))
+                        {
+                            <h5 class="card-title fw-bold">
+                                @container.Image.Replace("kalebg08/", "").ToUpper()
+                            </h5>
+                        }
+                        else
+                        {
+                            <h5 class="card-title fw-bold">
+                                @container.Image.Replace("ghcr.io/kikkia/", "").Replace(":master", "").ToUpper()
+                            </h5>
+                        }
                         <p class="card-text text-white mt-4" style="color: #8893AC">Container
                             Id: @container.ContainerId</p>
                         <p class="card-text text-white" style="color: #8893AC">Created: @container.Created</p>
                         <p class="card-text text-white" style="color: #8893AC">Status: @container.Status</p>
                     </div>
-                </div>
-                <div class="position-absolute restart-icon-position">
-                    <i class="bi bi-arrow-counterclockwise restart-icon"
-                       @onclick="() => RestartContainer(container.ContainerId)"></i>
-                </div>
-                <div class="form-check form-switch position-absolute form-check-position">
-                    <input class="form-check-input" type="checkbox" id="flexSwitchCheckChecked"
-                           @onclick="() => StopContainer(container.ContainerId)" checked>
                 </div>
             </div>
         </div>
