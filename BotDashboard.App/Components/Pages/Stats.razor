@@ -1,6 +1,7 @@
 ﻿@page "/stats"
 @attribute [StreamRendering]
 @using MudBlazor
+@inject ISnackbar Snackbar
 
 <PageTitle>Stats</PageTitle>
 
@@ -19,8 +20,8 @@
 
                 </div>
             </div>
-            <MudButtonGroup Class="d-flex justify-content-center" Color="Color.Primary" Size="Size.Large" Variant="Variant.Outlined" Style="margin-bottom: 2em">
-                <MudButton Class="text-white" OnClick="ListMemoryUsagePercentage">Memory Usage</MudButton>
+            <MudButtonGroup Class="d-flex justify-content-center" Color="Color.Primary" Size="Size.Large" Variant="Variant.Filled" Style="margin-bottom: 2em">
+                <MudButton Class="text-white" OnClick="() => ListMemoryUsagePercentage()">Memory Usage</MudButton>
             </MudButtonGroup>
         </div>
     </div>
@@ -38,8 +39,8 @@
                     <p class="text-white text-center">Last Fetched: @CpuFetchTime</p>
                 </div>
             </div>
-            <MudButtonGroup Class="d-flex justify-content-center" Color="Color.Primary" Size="Size.Large" Variant="Variant.Outlined" Style="margin-bottom: 2em">
-                <MudButton Class="text-white" OnClick="ListCpuUsagePercentage">Cpu Usage</MudButton>
+            <MudButtonGroup Class="d-flex justify-content-center" Color="Color.Primary" Size="Size.Large" Variant="Variant.Filled" Style="margin-bottom: 2em">
+                <MudButton Class="text-white" OnClick="() => ListCpuUsagePercentage()">Cpu Usage</MudButton>
             </MudButtonGroup>
         </div>
     </div>

@@ -2,6 +2,7 @@
 using BotDashboard.App.Services;
 using BotDashboard.Models;
 using Microsoft.AspNetCore.Components;
+using MudBlazor;
 
 namespace BotDashboard.App.Components.Pages;
 
@@ -28,50 +29,71 @@ public partial class Home
           return;
       }
       
-      ListContainers();
-      ListMemoryUsagePercentage();
+      ListContainers(showSnackbar: false);
+      ListMemoryUsagePercentage(showSnackbar: false);
     }
     
     private void RunImage(string imageName)
     {
         DockerService.RunImage(imageName);
-        ListContainers();
+        ListContainers(showSnackbar: false);
+        CreateSnackbarMessage("Successfully ran image!", Severity.Success);
     }
 
     private void StopContainer(string containerId)
     {
         DockerService.StopContainer(containerId);
-        ListContainers();
+        ListContainers(showSnackbar: false);
+        CreateSnackbarMessage("Successfully stopped container!", Severity.Success);
     }
 
     private void StopAllContainers()
     {
         DockerService.StopAllContainers();
-        ListContainers();
+        ListContainers(showSnackbar: false);
+        CreateSnackbarMessage("Successfully stopped all containers!", Severity.Success);
     }
 
     private void RestartContainer(string containerId)
     {
         DockerService.RestartContainer(containerId);
-        ListContainers();
+        ListContainers(showSnackbar: false);
+        CreateSnackbarMessage("Successfully restarted container!", Severity.Success);
     }
 
     private void RestartAllContainers()
     {
         DockerService.RestartAllContainers();
-        ListContainers();
+        ListContainers(showSnackbar: false);
+        CreateSnackbarMessage("Successfully restarted all containers!", Severity.Success);
     }
 
-    private void ListContainers()
+    private void ListContainers(bool showSnackbar = true)
     {
         Containers = DockerService.ListContainers();
         ContainerFetchTime = DateTime.UtcNow.ToLocalTime().ToString(CultureInfo.CurrentCulture);
+
+        if (showSnackbar)
+        {
+            CreateSnackbarMessage("Successfully listed containers!", Severity.Success);
+        }
     }
 
-    private void ListMemoryUsagePercentage()
+    private void ListMemoryUsagePercentage(bool showSnackbar = true)
     {
         MemoryUsagePercentage = UbuntuService.MemoryUsagePercentage();
         Data = [MemoryUsagePercentage, 100 - MemoryUsagePercentage];
         MemoryFetchTime = DateTime.UtcNow.ToLocalTime().ToString(CultureInfo.CurrentCulture);
+        
+        if (showSnackbar)
+        {
+            CreateSnackbarMessage("Successfully listed memory usage!", Severity.Success);
+        }
+    }
+    
+    private void CreateSnackbarMessage(string message, Severity severity)
+    {
+        Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomRight;
+        Snackbar.Add(message, severity);
     }
 }

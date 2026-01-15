@@ -1,6 +1,7 @@
 ﻿@page "/"
 @using BotDashboard.App.Constants
 @using MudBlazor
+@inject ISnackbar Snackbar
 
 <PageTitle>Dashboard</PageTitle>
 
@@ -94,9 +95,9 @@
                                     <MudButton Class="text-white" OnClick="RestartAllContainers">Restart All
                                         Containers
                                     </MudButton>
-                                    <MudButton Class="text-white" OnClick="ListContainers">List All Containers
+                                    <MudButton Class="text-white" OnClick="() => ListContainers()">List All Containers
                                     </MudButton>
-                                    <MudButton Class="text-white" OnClick="ListMemoryUsagePercentage">Memory Usage
+                                    <MudButton Class="text-white" OnClick="() => ListMemoryUsagePercentage()">Memory Usage
                                     </MudButton>
                                 </MudButtonGroup>
                             </div>

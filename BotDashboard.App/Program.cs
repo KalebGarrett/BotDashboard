@@ -13,7 +13,11 @@ builder.Services.AddScoped<DockerCommand>();
 builder.Services.AddScoped<UbuntuService>();
 builder.Services.AddScoped<UbuntuCommand>();
 
-builder.Services.AddMudServices();
+builder.Services.AddMudServices(config =>
+{
+    config.SnackbarConfiguration.MaxDisplayedSnackbars = 5;
+    config.SnackbarConfiguration.ShowCloseIcon = true;
+});
 
 var app = builder.Build();
 

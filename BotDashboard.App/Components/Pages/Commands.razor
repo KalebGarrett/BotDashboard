@@ -1,6 +1,7 @@
 ﻿@page "/commands"
 @using MudBlazor
 @using BotDashboard.App.Constants
+@inject ISnackbar Snackbar
 
 <PageTitle>Commands</PageTitle>
 
@@ -30,8 +31,8 @@
                                     <MudButton Class="text-white" OnClick="RestartAllContainers">Restart All
                                         Containers
                                     </MudButton>
-                                    <MudButton Class="text-white" OnClick="ListImages">List All Images</MudButton>
-                                    <MudButton Class="text-white" OnClick="ListContainers">List All Containers
+                                    <MudButton Class="text-white" OnClick="() => ListImages()">List All Images</MudButton>
+                                    <MudButton Class="text-white" OnClick="() => ListContainers()">List All Containers
                                     </MudButton>
                                 </MudButtonGroup>
                             </div>
@@ -84,10 +85,11 @@
                     @if (Output != null)
                     {
                         <div class="container rounded-3 p-3 mt-3"
-                             style="background-color: #08081C; max-height: 300px;overflow-y: auto;">
+                             style="background-color: #08081C; max-height: 200px;overflow-y: auto;">
                             <p class="text-white text-start" style="white-space: pre-wrap; margin: 0;">
                                 @Output
                             </p>
+                            <p class="text-white mt-5 text-start">Last Fetched: @ContainerFetchTime</p>
                         </div>
                     }
                 </div>
