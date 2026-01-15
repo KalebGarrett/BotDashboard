@@ -7,13 +7,15 @@ namespace BotDashboard.App.Components.Pages;
 public partial class Stats
 {
     [Inject] private UbuntuService UbuntuService { get; set; }
+    
     private static double MemoryUsagePercentage { get; set; }
-    private static double CpuUsagePercentage { get; set; }
     private double[] MemoryUsageData { get; set; }
     private string[] MemoryUsageLabels { get; set; } = {"Used Memory", "Total Memory"};
+    private string MemoryFetchTime { get; set; }
+    
+    private static double CpuUsagePercentage { get; set; }
     private double[] CpuUsageData { get; set; }
     private string[] CpuUsageLabels { get; set; } = {"Used CPU", "Total CPU"};
-    private string MemoryFetchTime { get; set; }
     private string CpuFetchTime { get; set; }
 
     protected override async Task OnInitializedAsync()

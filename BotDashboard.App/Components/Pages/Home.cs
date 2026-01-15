@@ -9,11 +9,14 @@ public partial class Home
 {
     [Inject] private DockerService DockerService { get; set; }
     [Inject] private UbuntuService UbuntuService { get; set; }
+   
     private List<Container> Containers { get; set; } = new();
-    private static double MemoryUsagePercentage { get; set; }
+    private string ContainerFetchTime { get; set; }
+    
     public double[] Data { get; set; }
     public string[] Labels { get; set; } = {"Used Memory", "Total Memory"};
-    private string ContainerFetchTime { get; set; }
+    
+    private static double MemoryUsagePercentage { get; set; }
     private string MemoryFetchTime { get; set; }
 
     protected override async Task OnInitializedAsync()
