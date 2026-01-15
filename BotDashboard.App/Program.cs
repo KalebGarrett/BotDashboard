@@ -9,8 +9,10 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents().AddInteractiveServerComponents();
 builder.Services.AddScoped<DockerService>();
 builder.Services.AddScoped<DockerCommand>();
+
 builder.Services.AddScoped<UbuntuService>();
 builder.Services.AddScoped<UbuntuCommand>();
+
 builder.Services.AddMudServices();
 
 var app = builder.Build();

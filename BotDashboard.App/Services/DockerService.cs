@@ -125,6 +125,19 @@ public class DockerService
         return response;
     }
 
+    public string LogContainerCommand(string containerId)
+    {
+        using var client = new SshClient(DigitalOcean.Host, DigitalOcean.Username, DigitalOcean.Password);
+        client.Connect();
+        
+        var command = client.CreateCommand(_dockercommand.Log(containerId));
+        var response = command.Execute();
+        
+        client.Disconnect();
+
+        return response;
+    }
+    
     private void RunCommand(string command)
     {
         using var client = new SshClient(DigitalOcean.Host, DigitalOcean.Username, DigitalOcean.Password);

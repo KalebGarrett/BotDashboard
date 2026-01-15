@@ -81,17 +81,15 @@
                             </div>
                         </div>
                     </div>
-                    <div class="container rounded-3 p-2 mt-3" style="background-color: #08081C">
-                        @if (CommandResult == null)
-                        {
-                            <p class="text-white text-start mt-4">Output: @CommandResult</p>
-                        }
-                        else
-                        {
-                            <!--<p class="text-white text-start mt-4">Output: @CommandResult.Substring(0, 200)</p>-->
-                            <p class="text-white text-start mt-4">Output: @CommandResult</p>
-                        }
-                    </div>
+                    @if (Output != null)
+                    {
+                        <div class="container rounded-3 p-3 mt-3"
+                             style="background-color: #08081C; max-height: 300px;overflow-y: auto;">
+                            <p class="text-white text-start" style="white-space: pre-wrap; margin: 0;">
+                                @Output
+                            </p>
+                        </div>
+                    }
                 </div>
             </div>
         </div>
@@ -192,7 +190,18 @@
                         <p class="card-text text-white mt-4" style="color: #8893AC">Container
                             Id: @container.ContainerId</p>
                         <p class="card-text text-white" style="color: #8893AC">Created: @container.Created</p>
-                        <p class="card-text text-white" style="color: #8893AC">Status: @container.Status</p>
+                        <div class="row">
+                            <div class="col-6">
+                                <p class="card-text text-white" style="color: #8893AC">Status: @container.Status</p>
+                            </div>
+                            <div class="col-6">
+                                <div class="d-flex flex-row justify-content-end">
+                                    <MudIconButton OnClick="() => LogContainer(container.ContainerId)"
+                                                   Size="Size.Medium" Style="color: white"
+                                                   Icon="@Icons.Material.Filled.Info"></MudIconButton>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

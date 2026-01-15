@@ -46,6 +46,11 @@ public class DockerCommand
     {
         return $"docker rmi -f {imageId}";
     }
+
+    public string Log(string containerId)
+    {
+        return $"docker logs --timestamps {containerId}";
+    }
     
     public string Stats()
     {

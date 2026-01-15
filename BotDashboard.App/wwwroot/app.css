@@ -71,28 +71,3 @@ body {
     background-color: #080E2C;
     color: white;
 }
-
-.form-check-input:checked {
-    background-color: #7551FF;
-}
-
-.form-check-input {
-    border: none;
-    transform: scale(1.3);
-}
-
-.form-check-position {
-    top: 15px;
-    right: 15px;
-}
-
-.restart-icon {
-    color: #1EC8A5;
-    font-size: 18px;
-}
-
-.restart-icon-position {
-    top: 15px;
-    right: 65px;
-    transform: scale(1.4);
-}
