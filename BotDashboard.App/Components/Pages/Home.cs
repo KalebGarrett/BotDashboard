@@ -14,11 +14,15 @@ public partial class Home
     private List<Container> Containers { get; set; } = new();
     private string ContainerFetchTime { get; set; }
     
-    public double[] Data { get; set; }
-    public string[] Labels { get; set; } = {"Used Memory", "Total Memory"};
-    
+    public double[] MemoryUsageData { get; set; }
+    public string[] MemoryUsageLabels { get; set; } = ["Used Memory", "Total Memory"];
     private static double MemoryUsagePercentage { get; set; }
-    private string MemoryFetchTime { get; set; }
+    
+    private double[] CpuUsageData { get; set; }
+    private string[] CpuUsageLabels { get; set; } = ["Used CPU", "Total CPU"];
+    private static double CpuUsagePercentage { get; set; }
+    
+    private string StatFetchTime { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -30,7 +34,7 @@ public partial class Home
       }
       
       ListContainers(showSnackbar: false);
-      ListMemoryUsagePercentage(showSnackbar: false);
+      ListStats(showSnackbar: false);
     }
     
     private void RunImage(string imageName)
@@ -78,16 +82,20 @@ public partial class Home
             CreateSnackbarMessage("Successfully listed containers!", Severity.Success);
         }
     }
-
-    private void ListMemoryUsagePercentage(bool showSnackbar = true)
+    
+    private void ListStats(bool showSnackbar = true)
     {
         MemoryUsagePercentage = UbuntuService.MemoryUsagePercentage();
-        Data = [MemoryUsagePercentage, 100 - MemoryUsagePercentage];
-        MemoryFetchTime = DateTime.UtcNow.ToLocalTime().ToString(CultureInfo.CurrentCulture);
+        MemoryUsageData = [MemoryUsagePercentage, 100 - MemoryUsagePercentage];
+        
+        CpuUsagePercentage = UbuntuService.CpuUsagePercentage();
+        CpuUsageData = [CpuUsagePercentage, 100 - CpuUsagePercentage];
+        
+        StatFetchTime = DateTime.UtcNow.ToLocalTime().ToString(CultureInfo.CurrentCulture);
         
         if (showSnackbar)
         {
-            CreateSnackbarMessage("Successfully listed memory usage!", Severity.Success);
+            CreateSnackbarMessage("Successfully listed stats!", Severity.Success);
         }
     }
     

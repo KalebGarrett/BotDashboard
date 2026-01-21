@@ -97,7 +97,7 @@
                                     </MudButton>
                                     <MudButton Class="text-white" OnClick="() => ListContainers()">List All Containers
                                     </MudButton>
-                                    <MudButton Class="text-white" OnClick="() => ListMemoryUsagePercentage()">Memory Usage
+                                    <MudButton Class="text-white" OnClick="() => ListStats()">List Stats
                                     </MudButton>
                                 </MudButtonGroup>
                             </div>
@@ -130,24 +130,70 @@
         </div>
     </div>
     <div class="col-md-6">
-        <h2 class="text-white fw-bold"><i class="bi bi-memory"></i> Droplet Memory Usage</h2>
-        <div class="card main-site-card">
-            <div class="position-relative">
-                <div class="card-body m-1">
-                    <div>
-                        <MudChart ChartType="ChartType.Donut" Width="255px" Height="253px" InputData="@Data"
-                                  InputLabels="@Labels">
-                            <CustomGraphics>
-                                <text class="donut-inner-text" x="50%" y="50%" dominant-baseline="middle"
-                                      text-anchor="middle" fill="white" font-family="Helvetica"
-                                      font-size="3">@Math.Round(MemoryUsagePercentage)% / 100%
-                                </text>
-                            </CustomGraphics>
-                        </MudChart>
-                        <p class="text-white text-center">Last Fetched: @MemoryFetchTime</p>
+        <div class="row">
+            <h2 class="text-white fw-bold">
+                <i class="bi bi-activity"></i> Droplet Stats
+            </h2>
+            <div class="col-md-12">
+                <div class="card main-site-card">
+                    <div class="position-relative">
+                        <div class="card-body m-1">
+                            <div class="row">
+
+                                <div class="col-md-6">
+                                    <div>
+                                        <MudChart ChartType="ChartType.Donut"
+                                                  Width="255px"
+                                                  Height="253px"
+                                                  InputData="@MemoryUsageData"
+                                                  InputLabels="@MemoryUsageLabels">
+                                            <CustomGraphics>
+                                                <text class="donut-inner-text"
+                                                      x="50%"
+                                                      y="50%"
+                                                      dominant-baseline="middle"
+                                                      text-anchor="middle"
+                                                      fill="white"
+                                                      font-family="Helvetica"
+                                                      font-size="3">
+                                                    @Math.Round(MemoryUsagePercentage)% / 100%
+                                                </text>
+                                            </CustomGraphics>
+                                        </MudChart>
+                                    </div>
+                                </div>
+                                <div class="col-md-6"> <!-- CHANGE THIS TO BE FOR CPU STATS -->
+                                    <div>
+                                        <MudChart ChartType="ChartType.Donut"
+                                                  Width="255px"
+                                                  Height="253px"
+                                                  InputData="@CpuUsageData"
+                                                  InputLabels="@CpuUsageLabels">
+                                            <CustomGraphics>
+                                                <text class="donut-inner-text"
+                                                      x="50%"
+                                                      y="50%"
+                                                      dominant-baseline="middle"
+                                                      text-anchor="middle"
+                                                      fill="white"
+                                                      font-family="Helvetica"
+                                                      font-size="3">
+                                                    @Math.Round(CpuUsagePercentage)% / 100%
+                                                </text>
+                                            </CustomGraphics>
+                                        </MudChart>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
                     </div>
+                    <p class="text-white text-center">
+                        Last Fetched: @StatFetchTime
+                    </p>
                 </div>
             </div>
         </div>
+        
     </div>
 </div>
