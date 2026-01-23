@@ -6,137 +6,156 @@
 <PageTitle>Commands</PageTitle>
 
 <div class="row gy-3">
-    <div class="col-md-6">
-        <h2 class="text-white fw-bold">
-            <i class="bi bi-command"></i>
-            Commands
-        </h2>
-
-        <div class="card main-site-card">
-            <div class="position-relative">
-                <div class="bg-image hover-overlay ripple" data-mdb-ripple-color="light">
-                    <div class="mt-2 ms-3 text-center">
-                        <img src="imgs/1024px-DigitalOcean_logo.svg.png"
-                             width="128" height="128" alt="Digital Ocean"/>
+    <div class="col-md-6 d-flex flex-column">
+        <div class="col-md-12">
+            <h2 class="text-white fw-bold">
+                <i class="bi bi-command"></i>
+                Commands
+            </h2>
+            <div class="card main-site-card">
+                <div class="position-relative">
+                    <div class="bg-image hover-overlay ripple" data-mdb-ripple-color="light">
+                        <div class="mt-2 ms-3 text-center">
+                            <img src="imgs/1024px-DigitalOcean_logo.svg.png"
+                                 width="128" height="128" alt="Digital Ocean"/>
+                        </div>
+                    </div>
+                    <div class="card-body text-center">
+                        <div class="container justify-content-center">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <MudButtonGroup Class="d-flex justify-content-center gap-2" Color="Color.Primary"
+                                                    Size="Size.Large" Variant="Variant.Filled">
+                                        <MudButton Class="text-white" OnClick="StopAllContainers">Stop All Containers
+                                        </MudButton>
+                                        <MudButton Class="text-white" OnClick="RestartAllContainers">Restart All
+                                            Containers
+                                        </MudButton>
+                                        <MudButton Class="text-white" OnClick="() => ListImages()">List All Images
+                                        </MudButton>
+                                        <MudButton Class="text-white" OnClick="() => ListContainers()">List All
+                                            Containers
+                                        </MudButton>
+                                    </MudButtonGroup>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12 mt-2">
+                                    <MudButtonGroup Class="d-flex justify-content-center gap-2" Color="Color.Tertiary"
+                                                    Size="Size.Large" Variant="Variant.Filled">
+                                        <MudButton Class="text-white"
+                                                   OnClick="() => RunImage(DockerRepository.JokeBot)">
+                                            Start JokeBot
+                                        </MudButton>
+                                        <MudButton Class="text-white"
+                                                   OnClick="() => RunImage(DockerRepository.TriviaBot)">
+                                            Start TriviaBot
+                                        </MudButton>
+                                        <MudButton Class="text-white"
+                                                   OnClick="() => RunImage(DockerRepository.FactBot)">
+                                            Start FactBot
+                                        </MudButton>
+                                        <MudButton Class="text-white"
+                                                   OnClick="() => RunImage(DockerRepository.PremBot)">
+                                            Start PremBot
+                                        </MudButton>
+                                        <MudButton Class="text-white"
+                                                   OnClick="() => RunImage(DockerRepository.JamJunction)">Start
+                                            JamJunction
+                                        </MudButton>
+                                    </MudButtonGroup>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12 mt-2">
+                                    <MudButtonGroup Class="d-flex justify-content-center gap-2" Color="Color.Primary"
+                                                    Size="Size.Large" Variant="Variant.Filled">
+                                        <MudButton Class="text-white"
+                                                   OnClick="() => PullImage(DockerRepository.JokeBot)">
+                                            Pull JokeBot
+                                        </MudButton>
+                                        <MudButton Class="text-white"
+                                                   OnClick="() => PullImage(DockerRepository.TriviaBot)">
+                                            Pull TriviaBot
+                                        </MudButton>
+                                        <MudButton Class="text-white"
+                                                   OnClick="() => PullImage(DockerRepository.FactBot)">
+                                            Pull FactBot
+                                        </MudButton>
+                                        <MudButton Class="text-white"
+                                                   OnClick="() => PullImage(DockerRepository.PremBot)">
+                                            Pull PremBot
+                                        </MudButton>
+                                        <MudButton Class="text-white"
+                                                   OnClick="() => PullImage(DockerRepository.JamJunction)">Pull
+                                            JamJunction
+                                        </MudButton>
+                                    </MudButtonGroup>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div class="card-body text-center">
-                    <div class="container justify-content-center">
-                        <div class="row">
-                            <div class="col-md-12">
-                                <MudButtonGroup Class="d-flex justify-content-center gap-2" Color="Color.Primary"
-                                                Size="Size.Large" Variant="Variant.Filled">
-                                    <MudButton Class="text-white" OnClick="StopAllContainers">Stop All Containers
-                                    </MudButton>
-                                    <MudButton Class="text-white" OnClick="RestartAllContainers">Restart All
-                                        Containers
-                                    </MudButton>
-                                    <MudButton Class="text-white" OnClick="() => ListImages()">List All Images</MudButton>
-                                    <MudButton Class="text-white" OnClick="() => ListContainers()">List All Containers
-                                    </MudButton>
-                                </MudButtonGroup>
+            </div>
+            <div class="col-md-12 mt-4">
+                <h2 class="text-white font-weight-bold fw-bold">
+                    <i class="bi bi-tsunami"></i>
+                    Images
+                </h2>
+                <div class="card main-site-card">
+                    <div class="position-relative">
+                        <div class="card-body m-4">
+                            <div class="table-responsive">
+                                <table
+                                    class="table table-dark table-striped table-hover table-bordered table-active image-table-corner table">
+                                    <thead>
+                                    <tr>
+                                        @foreach (var heading in Headings)
+                                        {
+                                            <th>@heading</th>
+                                        }
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    @foreach (var dockerImage in DockerImages)
+                                    {
+                                        <tr>
+
+                                            <td>@dockerImage.Repository</td>
+                                            <td>@dockerImage.Tag</td>
+                                            <td>@dockerImage.ImageId</td>
+                                            <td>@dockerImage.Created</td>
+                                            <td>@dockerImage.Size</td>
+                                            <td>
+                                                <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error"
+                                                               OnClick="() => RemoveImage(dockerImage.ImageId)"></MudIconButton>
+                                            </td>
+                                        </tr>
+                                    }
+                                    </tbody>
+                                </table>
                             </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-12 mt-2">
-                                <MudButtonGroup Class="d-flex justify-content-center gap-2" Color="Color.Tertiary"
-                                                Size="Size.Large" Variant="Variant.Filled">
-                                    <MudButton Class="text-white" OnClick="() => RunImage(DockerRepository.JokeBot)">
-                                        Start JokeBot
-                                    </MudButton>
-                                    <MudButton Class="text-white" OnClick="() => RunImage(DockerRepository.TriviaBot)">
-                                        Start TriviaBot
-                                    </MudButton>
-                                    <MudButton Class="text-white" OnClick="() => RunImage(DockerRepository.FactBot)">
-                                        Start FactBot
-                                    </MudButton>
-                                    <MudButton Class="text-white" OnClick="() => RunImage(DockerRepository.PremBot)">
-                                        Start PremBot
-                                    </MudButton>
-                                    <MudButton Class="text-white"
-                                               OnClick="() => RunImage(DockerRepository.JamJunction)">Start JamJunction
-                                    </MudButton>
-                                </MudButtonGroup>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-12 mt-2">
-                                <MudButtonGroup Class="d-flex justify-content-center gap-2" Color="Color.Primary"
-                                                Size="Size.Large" Variant="Variant.Filled">
-                                    <MudButton Class="text-white" OnClick="() => PullImage(DockerRepository.JokeBot)">
-                                        Pull JokeBot
-                                    </MudButton>
-                                    <MudButton Class="text-white" OnClick="() => PullImage(DockerRepository.TriviaBot)">
-                                        Pull TriviaBot
-                                    </MudButton>
-                                    <MudButton Class="text-white" OnClick="() => PullImage(DockerRepository.FactBot)">
-                                        Pull FactBot
-                                    </MudButton>
-                                    <MudButton Class="text-white" OnClick="() => PullImage(DockerRepository.PremBot)">
-                                        Pull PremBot
-                                    </MudButton>
-                                    <MudButton Class="text-white"
-                                               OnClick="() => PullImage(DockerRepository.JamJunction)">Pull JamJunction
-                                    </MudButton>
-                                </MudButtonGroup>
-                            </div>
+                            <p class="text-white">Last Fetched: @ImageFetchTime</p>
                         </div>
                     </div>
-                    @if (Output != null)
-                    {
-                        <div class="container rounded-3 p-3 mt-3"
-                             style="background-color: #08081C; max-height: 200px;overflow-y: auto;">
-                            <p class="text-white text-start" style="white-space: pre-wrap; margin: 0;">
-                                @Output
-                            </p>
-                            <p class="text-white mt-5 text-start">Last Fetched: @ContainerFetchTime</p>
-                        </div>
-                    }
                 </div>
             </div>
         </div>
-    </div>
-    <div class="col-md-6">
-        <h2 class="text-white font-weight-bold fw-bold">
-            <i class="bi bi-tsunami"></i>
-            Images
-        </h2>
-        <div class="card main-site-card">
-            <div class="position-relative">
-                <div class="card-body m-4">
-                    <div class="table-responsive">
-                        <table
-                            class="table table-dark table-striped table-hover table-bordered table-active image-table-corner table">
-                            <thead>
-                            <tr>
-                                @foreach (var heading in Headings)
-                                {
-                                    <th>@heading</th>
-                                }
-                            </tr>
-                            </thead>
-                            <tbody>
-                            @foreach (var dockerImage in DockerImages)
-                            {
-                                <tr>
 
-                                    <td>@dockerImage.Repository</td>
-                                    <td>@dockerImage.Tag</td>
-                                    <td>@dockerImage.ImageId</td>
-                                    <td>@dockerImage.Created</td>
-                                    <td>@dockerImage.Size</td>
-                                    <td>
-                                        <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error"
-                                                       OnClick="() => RemoveImage(dockerImage.ImageId)"></MudIconButton>
-                                    </td>
-                                </tr>
-                            }
-                            </tbody>
-                        </table>
-                    </div>
-                    <p class="text-white">Last Fetched: @ImageFetchTime</p>
+    </div>
+    <div class="col-md-6 d-flex flex-column">
+        <h2 class="text-white fw-bold"><i class="bi bi-card-text"></i> Logs</h2>
+        <div class="card main-site-card flex-fill p-2">
+            @if (Output != null)
+            {
+                <div class="container rounded-3 p-2 mt-1"
+                     style="background-color: #08081C; overflow-y: auto;">
+                    <pre class="text-white text-start" style="white-space: pre-wrap; max-height: 900px; margin: 0;">
+                        @Output
+                    </pre>
+                    <p class="text-white mt-5 text-start">Last Fetched: @ContainerFetchTime</p>
                 </div>
-            </div>
+            }
         </div>
     </div>
 </div>
