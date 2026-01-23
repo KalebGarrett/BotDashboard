@@ -20,6 +20,12 @@ public class DockerService
         RunCommand(command);
     }
 
+    public void RunYtCipher()
+    {
+        var command = _dockercommand.RunYtCipher();
+        RunCommand(command);
+    }
+
     public void StopContainer(string containerId)
     {
         var command = _dockercommand.Stop(containerId);
@@ -101,39 +107,24 @@ public class DockerService
     
     public string PullImage(string imageName)
     {
-        using var client = new SshClient(DigitalOcean.Host, DigitalOcean.Username, DigitalOcean.Password);
-        client.Connect();
-        
-        var command = client.CreateCommand(_dockercommand.Pull(imageName));
-        var response = command.Execute();
-        
-        client.Disconnect();
+        var command = _dockercommand.Pull(imageName);
+        var response = RunCommandWithResponse(command);
 
         return response;
     }
     
     public string RemoveImage(string imageId)
     {
-        using var client = new SshClient(DigitalOcean.Host, DigitalOcean.Username, DigitalOcean.Password);
-        client.Connect();
-        
-        var command = client.CreateCommand(_dockercommand.Remove(imageId));
-        var response = command.Execute();
-        
-        client.Disconnect();
+        var command = _dockercommand.Remove(imageId);
+        var response = RunCommandWithResponse(command);
 
         return response;
     }
 
     public string LogContainerCommand(string containerId)
     {
-        using var client = new SshClient(DigitalOcean.Host, DigitalOcean.Username, DigitalOcean.Password);
-        client.Connect();
-        
-        var command = client.CreateCommand(_dockercommand.Log(containerId));
-        var response = command.Execute();
-        
-        client.Disconnect();
+        var command = _dockercommand.Log(containerId);
+        var response = RunCommandWithResponse(command);
 
         return response;
     }
@@ -144,5 +135,17 @@ public class DockerService
         client.Connect();
         client.RunCommand(command);
         client.Disconnect();
+    }
+
+    private string RunCommandWithResponse(string command)
+    {
+        using var client = new SshClient(DigitalOcean.Host, DigitalOcean.Username, DigitalOcean.Password);
+        client.Connect();
+         
+        var response = client.RunCommand(command).Execute();
+        
+        client.Disconnect();
+
+        return response;
     }
 }
