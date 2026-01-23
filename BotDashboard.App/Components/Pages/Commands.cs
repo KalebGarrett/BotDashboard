@@ -21,6 +21,8 @@ public partial class Commands
 
     private string Output { get; set; }
     private string OutputFetchTime { get; set; }
+    
+    private bool Locked { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -30,86 +32,176 @@ public partial class Commands
             return;
         }
 
-        ListContainers(showSnackbar: false);
-        ListImages(showSnackbar: false);
+        await ListContainers(isInternalCall: true);
+        await ListImages(isInternalCall: true);
     }
 
-    private void RunImage(string imageName)
+   private async Task RunImage(string imageName)
     {
+        Locked = true;
+        await InvokeAsync(StateHasChanged);
+        await Task.Yield();
+
         DockerService.RunImage(imageName);
-        ListContainers(showSnackbar: false);
+        await ListContainers(isInternalCall: true);
         CreateSnackbarMessage("Successfully ran image!", Severity.Success);
+
+        Locked = false;
+        await InvokeAsync(StateHasChanged);
+    }
+    
+    private async Task RunYtCipher()
+    {
+        Locked = true;
+        await InvokeAsync(StateHasChanged);
+        await Task.Yield();
+        
+        DockerService.RunYtCipher();
+        await ListContainers(isInternalCall: true);
+        CreateSnackbarMessage("Successfully ran image!", Severity.Success);
+
+        Locked = false;
+        await InvokeAsync(StateHasChanged);
     }
 
-    private void StopContainer(string containerId)
+    private async Task StopContainer(string containerId)
     {
+        Locked = true;
+        await InvokeAsync(StateHasChanged);
+        await Task.Yield();
+
         DockerService.StopContainer(containerId);
-        ListContainers(showSnackbar: false);
+        await ListContainers(isInternalCall: true);
         CreateSnackbarMessage("Successfully stopped container!", Severity.Success);
+
+        Locked = false;
+        await InvokeAsync(StateHasChanged);
     }
 
-    private void StopAllContainers()
+    private async Task StopAllContainers()
     {
+        Locked = true;
+        await InvokeAsync(StateHasChanged);
+        await Task.Yield();
+
         DockerService.StopAllContainers();
-        ListContainers(showSnackbar: false);
+        await ListContainers(isInternalCall: true);
         CreateSnackbarMessage("Successfully stopped all containers!", Severity.Success);
+
+        Locked = false;
+        await InvokeAsync(StateHasChanged);
     }
 
-    private void RestartContainer(string containerId)
+    private async Task RestartContainer(string containerId)
     {
+        Locked = true;
+        await InvokeAsync(StateHasChanged);
+        await Task.Yield();
+
         DockerService.RestartContainer(containerId);
-        ListContainers(showSnackbar: false);
+        await ListContainers(isInternalCall: true);
         CreateSnackbarMessage("Successfully restarted container!", Severity.Success);
+
+        Locked = false;
+        await InvokeAsync(StateHasChanged);
     }
 
-    private void RestartAllContainers()
+    private async Task RestartAllContainers()
     {
+        Locked = true;
+        await InvokeAsync(StateHasChanged);
+        await Task.Yield();
+
         DockerService.RestartAllContainers();
-        ListContainers(showSnackbar: false);
+        await ListContainers(isInternalCall: true);
         CreateSnackbarMessage("Successfully restarted all containers!", Severity.Success);
+
+        Locked = false;
+        await InvokeAsync(StateHasChanged);
     }
 
-    private void PullImage(string imageName)
+    private async Task PullImage(string imageName)
     {
+        Locked = true;
+        await InvokeAsync(StateHasChanged);
+        await Task.Yield();
+        
         Output = DockerService.PullImage(imageName);
-        ListImages();
+        await ListImages(isInternalCall: true);
         CreateSnackbarMessage("Successfully pulled image!", Severity.Success);
+        
+        Locked = false;
+        await InvokeAsync(StateHasChanged);
     }
 
-    private void RemoveImage(string imageId)
+    private async Task RemoveImage(string imageId)
     {
+        Locked = true;
+        await InvokeAsync(StateHasChanged);
+        await Task.Yield();
+        
         Output = DockerService.RemoveImage(imageId);
-        ListImages();
+        await ListImages(isInternalCall: true);
         CreateSnackbarMessage("Successfully removed image!", Severity.Success);
+        
+        Locked = false;
+        await InvokeAsync(StateHasChanged);
     }
 
-    private void ListImages(bool showSnackbar = true)
+    private async Task ListImages(bool isInternalCall = false)
     {
+        if (!isInternalCall)
+        {
+            Locked = true;
+            await InvokeAsync(StateHasChanged);
+            await Task.Yield();
+        }
+        
         DockerImages = DockerService.ListImages();
         ImageFetchTime = DateTime.UtcNow.ToLocalTime().ToString(CultureInfo.CurrentCulture);
         
-        if (showSnackbar)
+        if (!isInternalCall)
         {
             CreateSnackbarMessage("Successfully listed images!", Severity.Success);
         }
+        
+        Locked = false;
+        await InvokeAsync(StateHasChanged);
     }
 
-    private void ListContainers(bool showSnackbar = true)
+    private async Task ListContainers(bool isInternalCall = false)
     {
+        if (!isInternalCall)
+        {
+            Locked = true;
+            await InvokeAsync(StateHasChanged);
+            await Task.Yield();
+        }
+
         Containers = DockerService.ListContainers();
         ContainerFetchTime = DateTime.UtcNow.ToLocalTime().ToString(CultureInfo.CurrentCulture);
-        
-        if (showSnackbar)
+
+        if (!isInternalCall)
         {
             CreateSnackbarMessage("Successfully listed containers!", Severity.Success);
         }
+
+        Locked = false;
+        await InvokeAsync(StateHasChanged);
     }
 
-    private void LogContainer(string containerId)
+    private async Task LogContainer(string containerId)
     {
+        Locked = true;
+        await InvokeAsync(StateHasChanged);
+        await Task.Yield();
+        
         Output = DockerService.LogContainerCommand(containerId);
         OutputFetchTime = DateTime.UtcNow.ToLocalTime().ToString(CultureInfo.CurrentCulture);
         CreateSnackbarMessage("Successfully logged container!", Severity.Success);
+        
+        Locked = false;
+        await InvokeAsync(StateHasChanged);
     }
 
     private void CreateSnackbarMessage(string message, Severity severity)

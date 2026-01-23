@@ -75,7 +75,7 @@ public partial class Home
         await Task.Yield();
 
         DockerService.StopContainer(containerId);
-        await ListContainers(isInternalCall: false);
+        await ListContainers(isInternalCall: true);
         CreateSnackbarMessage("Successfully stopped container!", Severity.Success);
 
         Locked = false;
@@ -89,7 +89,7 @@ public partial class Home
         await Task.Yield();
 
         DockerService.StopAllContainers();
-        await ListContainers(isInternalCall: false);
+        await ListContainers(isInternalCall: true);
         CreateSnackbarMessage("Successfully stopped all containers!", Severity.Success);
 
         Locked = false;
@@ -103,7 +103,7 @@ public partial class Home
         await Task.Yield();
 
         DockerService.RestartContainer(containerId);
-        await ListContainers(isInternalCall: false);
+        await ListContainers(isInternalCall: true);
         CreateSnackbarMessage("Successfully restarted container!", Severity.Success);
 
         Locked = false;
@@ -117,7 +117,7 @@ public partial class Home
         await Task.Yield();
 
         DockerService.RestartAllContainers();
-        await ListContainers(isInternalCall: false);
+        await ListContainers(isInternalCall: true);
         CreateSnackbarMessage("Successfully restarted all containers!", Severity.Success);
 
         Locked = false;

@@ -26,14 +26,14 @@
                                 <div class="col-md-12">
                                     <MudButtonGroup Class="d-flex justify-content-center gap-2" Color="Color.Primary"
                                                     Size="Size.Large" Variant="Variant.Filled">
-                                        <MudButton Class="text-white" OnClick="StopAllContainers">Stop All Containers
+                                        <MudButton Disabled="Locked" Class="text-white" OnClick="StopAllContainers">Stop All Containers
                                         </MudButton>
-                                        <MudButton Class="text-white" OnClick="RestartAllContainers">Restart All
+                                        <MudButton Disabled="Locked" Class="text-white" OnClick="RestartAllContainers">Restart All
                                             Containers
                                         </MudButton>
-                                        <MudButton Class="text-white" OnClick="() => ListImages()">List All Images
+                                        <MudButton Disabled="Locked" Class="text-white" OnClick="() => ListImages()">List All Images
                                         </MudButton>
-                                        <MudButton Class="text-white" OnClick="() => ListContainers()">List All
+                                        <MudButton Disabled="Locked" Class="text-white" OnClick="() => ListContainers()">List All
                                             Containers
                                         </MudButton>
                                     </MudButtonGroup>
@@ -43,25 +43,29 @@
                                 <div class="col-md-12 mt-2">
                                     <MudButtonGroup Class="d-flex justify-content-center gap-2" Color="Color.Tertiary"
                                                     Size="Size.Large" Variant="Variant.Filled">
-                                        <MudButton Class="text-white"
+                                        <MudButton Disabled="Locked" Class="text-white"
                                                    OnClick="() => RunImage(DockerRepository.JokeBot)">
                                             Start JokeBot
                                         </MudButton>
-                                        <MudButton Class="text-white"
+                                        <MudButton Disabled="Locked" Class="text-white"
                                                    OnClick="() => RunImage(DockerRepository.TriviaBot)">
                                             Start TriviaBot
                                         </MudButton>
-                                        <MudButton Class="text-white"
+                                        <MudButton Disabled="Locked" Class="text-white"
                                                    OnClick="() => RunImage(DockerRepository.FactBot)">
                                             Start FactBot
                                         </MudButton>
-                                        <MudButton Class="text-white"
+                                        <MudButton Disabled="Locked" Class="text-white"
                                                    OnClick="() => RunImage(DockerRepository.PremBot)">
                                             Start PremBot
                                         </MudButton>
-                                        <MudButton Class="text-white"
+                                        <MudButton Disabled="Locked" Class="text-white"
                                                    OnClick="() => RunImage(DockerRepository.JamJunction)">Start
                                             JamJunction
+                                        </MudButton>
+                                        <MudButton Disabled="Locked" Class="text-white"
+                                                   OnClick="RunYtCipher">Start
+                                            Youtube Cipher
                                         </MudButton>
                                     </MudButtonGroup>
                                 </div>
@@ -70,25 +74,29 @@
                                 <div class="col-md-12 mt-2">
                                     <MudButtonGroup Class="d-flex justify-content-center gap-2" Color="Color.Primary"
                                                     Size="Size.Large" Variant="Variant.Filled">
-                                        <MudButton Class="text-white"
+                                        <MudButton Disabled="Locked" Class="text-white"
                                                    OnClick="() => PullImage(DockerRepository.JokeBot)">
                                             Pull JokeBot
                                         </MudButton>
-                                        <MudButton Class="text-white"
+                                        <MudButton Disabled="Locked" Class="text-white"
                                                    OnClick="() => PullImage(DockerRepository.TriviaBot)">
                                             Pull TriviaBot
                                         </MudButton>
-                                        <MudButton Class="text-white"
+                                        <MudButton Disabled="Locked" Class="text-white"
                                                    OnClick="() => PullImage(DockerRepository.FactBot)">
                                             Pull FactBot
                                         </MudButton>
-                                        <MudButton Class="text-white"
+                                        <MudButton Disabled="Locked" Class="text-white"
                                                    OnClick="() => PullImage(DockerRepository.PremBot)">
                                             Pull PremBot
                                         </MudButton>
-                                        <MudButton Class="text-white"
+                                        <MudButton Disabled="Locked" Class="text-white"
                                                    OnClick="() => PullImage(DockerRepository.JamJunction)">Pull
                                             JamJunction
+                                        </MudButton>
+                                        <MudButton Disabled="Locked" Class="text-white"
+                                                   OnClick="() => PullImage(DockerRepository.YtCipher)">Pull
+                                            Youtube Cipher
                                         </MudButton>
                                     </MudButtonGroup>
                                 </div>
@@ -127,7 +135,7 @@
                                             <td>@dockerImage.Created</td>
                                             <td>@dockerImage.Size</td>
                                             <td>
-                                                <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error"
+                                                <MudIconButton Disabled="Locked" Icon="@Icons.Material.Filled.Delete" Color="Color.Error"
                                                                OnClick="() => RemoveImage(dockerImage.ImageId)"></MudIconButton>
                                             </td>
                                         </tr>
@@ -150,7 +158,7 @@
             {
                 <div class="container rounded-3 p-2 mt-1"
                      style="background-color: #08081C; overflow-y: auto;">
-                    <pre class="text-white text-start" style="white-space: pre-wrap; max-height: 900px; margin: 0;">
+                    <pre class="text-white text-start" style="white-space: pre-wrap; max-height: 950px; margin: 0;">
                         @Output
                     </pre>
                     <p class="text-white mt-5 text-start">Last Fetched: @ContainerFetchTime</p>
@@ -186,10 +194,10 @@
                         </div>
                         <div class="col-6">
                             <div class="d-flex flex-row justify-content-end mt-3">
-                                <MudButton OnClick="() => RestartContainer(container.ContainerId)" Class="mr-1"
+                                <MudButton Disabled="Locked" OnClick="() => RestartContainer(container.ContainerId)" Class="mr-1"
                                            Color="Color.Tertiary" Variant="Variant.Filled">Restart
                                 </MudButton>
-                                <MudButton OnClick="() => StopContainer(container.ContainerId)" Class="mr-4"
+                                <MudButton Disabled="Locked" OnClick="() => StopContainer(container.ContainerId)" Class="mr-4"
                                            Color="Color.Error" Variant="Variant.Filled">Stop
                                 </MudButton>
                             </div>
@@ -217,7 +225,7 @@
                             </div>
                             <div class="col-6">
                                 <div class="d-flex flex-row justify-content-end">
-                                    <MudIconButton OnClick="() => LogContainer(container.ContainerId)"
+                                    <MudIconButton Disabled="Locked" OnClick="() => LogContainer(container.ContainerId)"
                                                    Size="Size.Medium" Style="color: white"
                                                    Icon="@Icons.Material.Filled.Info"></MudIconButton>
                                 </div>
