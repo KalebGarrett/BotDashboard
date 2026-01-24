@@ -158,8 +158,16 @@
                         <div class="col-6">
                             <div class="bg-image hover-overlay ripple" data-mdb-ripple-color="light">
                                 <div class="mt-2 ms-3">
-                                    <img src="https://www.svgviewer.dev/static-svgs/13822/discord-icon.svg"
-                                         width="50" height="50" alt="@container.Image"/>
+                                    @if (container.Image.Contains("ghcr.io/kikkia/yt-cipher"))
+                                    {
+                                        <img src="https://www.svgviewer.dev/static-svgs/405425/youtube"
+                                             width="50" height="50" alt="@container.Image"/>
+                                    }
+                                    else
+                                    {
+                                        <img src="https://www.svgviewer.dev/static-svgs/13822/discord-icon.svg"
+                                             width="50" height="50" alt="@container.Image"/>
+                                    }
                                 </div>
                             </div>
                         </div>
