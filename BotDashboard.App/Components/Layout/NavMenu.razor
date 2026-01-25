@@ -1,32 +1,23 @@
-﻿<div class="top-row ps-3 navbar navbar-dark">
-    <div class="container-fluid">
-        <a class="navbar-brand fs-3 fw-bold" href="">Bot Harbor</a>
-    </div>
-</div>
+﻿<MudPaper Style="background-color: #080E2C;" Elevation="0">
+    <MudNavMenu Bordered="true" Rounded="true" Margin="Margin.Normal" Color="Color.Tertiary" Class="text-white pa-2">
+        <MudImage class="mt-2 ml-8" Width="150" Height="75" Src="imgs\Bot Harbor - Landscape.png"
+                  Alt="FSL Investing"></MudImage>
+        <MudDivider Class="my-3"/>
+        <MudNavLink IconColor="Color.Tertiary" Class="mud-link-item" Icon="@Icons.Material.Filled.Dashboard" Href=""
+                    Match="NavLinkMatch.All">Dashboard
+        </MudNavLink>
+        <MudNavLink IconColor="Color.Tertiary" Class="mud-link-item" Icon="@Icons.Material.Filled.KeyboardCommandKey" Href="commands"
+                    Match="NavLinkMatch.Prefix">Commands
+        </MudNavLink>
+        <MudNavLink IconColor="Color.Tertiary" Class="mud-link-item" Icon="@Icons.Material.Filled.QueryStats"
+                    Href="stats" Match="NavLinkMatch.Prefix">Stats
+        </MudNavLink>
+    </MudNavMenu>
+</MudPaper>
 
-<input type="checkbox" title="Navigation menu" class="navbar-toggler"/>
-
-<div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
-    <nav class="flex-column">
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <i class="bi bi-grid-1x2-fill mb-6 nav-menu-icon"></i>
-                Dashboard
-            </NavLink>
-        </div>
-
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="commands">
-                <i class="bi bi-command mb-6 nav-menu-icon"></i>
-                Commands
-            </NavLink>
-        </div>
-
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="stats">
-                <i class="bi bi-activity mb-6 nav-menu-icon"></i>
-                Stats
-            </NavLink>
-        </div>
-    </nav>
-</div>
+<style>
+    .mud-link-item :hover {
+        color: #ffffff !important;
+        font-weight: bold;
+    }
+</style>

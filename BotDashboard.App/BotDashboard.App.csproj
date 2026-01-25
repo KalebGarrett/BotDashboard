@@ -22,6 +22,9 @@
       <Compile Update="Components\Pages\Stats.cs">
         <DependentUpon>Stats.razor</DependentUpon>
       </Compile>
+      <Compile Update="Components\Layout\MainLayout.cs">
+        <DependentUpon>MainLayout.razor</DependentUpon>
+      </Compile>
     </ItemGroup>
 
     <ItemGroup>
