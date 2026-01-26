@@ -82,12 +82,11 @@
             <div class="position-relative">
                 <div class="card-body m-1">
                     <div class="row">
-
-                        <div class="col-md-6">
+                        <div class="col-md-6 d-flex justify-content-center">
                             <div>
                                 <MudChart ChartType="ChartType.Donut"
                                           Width="255px"
-                                          Height="253px"
+                                          Height="255px"
                                           InputData="@MemoryUsageData"
                                           InputLabels="@MemoryUsageLabels">
                                     <CustomGraphics>
@@ -97,19 +96,18 @@
                                               dominant-baseline="middle"
                                               text-anchor="middle"
                                               fill="white"
-                                              font-family="Helvetica"
-                                              font-size="3">
+                                              font-size="20">
                                             @Math.Round(MemoryUsagePercentage)% / 100%
                                         </text>
                                     </CustomGraphics>
                                 </MudChart>
                             </div>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-6 d-flex justify-content-center">
                             <div>
                                 <MudChart ChartType="ChartType.Donut"
                                           Width="255px"
-                                          Height="253px"
+                                          Height="255px"
                                           InputData="@CpuUsageData"
                                           InputLabels="@CpuUsageLabels">
                                     <CustomGraphics>
@@ -119,8 +117,7 @@
                                               dominant-baseline="middle"
                                               text-anchor="middle"
                                               fill="white"
-                                              font-family="Helvetica"
-                                              font-size="3">
+                                              font-size="20">
                                             @Math.Round(CpuUsagePercentage)% / 100%
                                         </text>
                                     </CustomGraphics>
