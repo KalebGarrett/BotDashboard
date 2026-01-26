@@ -24,7 +24,9 @@ public partial class Stats
     private double FreeDisk { get; set; }
     private static double FreeDiskPercentage { get; set; }
     private string DiskFetchTime { get; set; }
-
+    
+    private bool Locked { get; set; }
+    
     private List<SankeyChartNode> Nodes { get; } =
     [
         new("Droplet", 0),
@@ -81,13 +83,17 @@ public partial class Stats
             return;
         }
 
-        ListMemoryUsagePercentage(showSnackbar: false);
-        ListCpuUsagePercentage(showSnackbar: false);
-        ListDiskUsage(showSnackbar: false);
+        await ListMemoryUsagePercentage(showSnackbar: false);
+        await ListCpuUsagePercentage(showSnackbar: false);
+        await ListDiskUsage(showSnackbar: false);
     }
 
-    private void ListMemoryUsagePercentage(bool showSnackbar = true)
+    private async Task ListMemoryUsagePercentage(bool showSnackbar = true)
     {
+        Locked = true;
+        await InvokeAsync(StateHasChanged);
+        await Task.Yield();
+        
         MemoryUsagePercentage = UbuntuService.MemoryUsagePercentage();
         MemoryUsageData = [MemoryUsagePercentage, 100 - MemoryUsagePercentage];
         MemoryFetchTime = DateTime.UtcNow.ToLocalTime().ToString(CultureInfo.CurrentCulture);
@@ -96,10 +102,17 @@ public partial class Stats
         {
             CreateSnackbarMessage("Successfully listed memory usage!", Severity.Success);
         }
+        
+        Locked = false;
+        await InvokeAsync(StateHasChanged);
     }
 
-    private void ListCpuUsagePercentage(bool showSnackbar = true)
+    private async Task ListCpuUsagePercentage(bool showSnackbar = true)
     {
+        Locked = true;
+        await InvokeAsync(StateHasChanged);
+        await Task.Yield();
+        
         CpuUsagePercentage = UbuntuService.CpuUsagePercentage();
         CpuUsageData = [CpuUsagePercentage, 100 - CpuUsagePercentage];
         CpuFetchTime = DateTime.UtcNow.ToLocalTime().ToString(CultureInfo.CurrentCulture);
@@ -108,10 +121,17 @@ public partial class Stats
         {
             CreateSnackbarMessage("Successfully listed CPU usage!", Severity.Success);
         }
+        
+        Locked = false;
+        await InvokeAsync(StateHasChanged);
     }
 
-    private void ListDiskUsage(bool showSnackbar = true)
+    private async Task ListDiskUsage(bool showSnackbar = true)
     {
+        Locked = true;
+        await InvokeAsync(StateHasChanged);
+        await Task.Yield();
+        
         DiskUsed = UbuntuService.DiskUsage();
         DiskUsedPercentage = (DiskUsed / 25) * 100;
 
@@ -124,6 +144,9 @@ public partial class Stats
         {
             CreateSnackbarMessage("Successfully listed Disk usage!", Severity.Success);
         }
+        
+        Locked = false;
+        await InvokeAsync(StateHasChanged);
     }
 
     private void CreateSnackbarMessage(string message, Severity severity)
