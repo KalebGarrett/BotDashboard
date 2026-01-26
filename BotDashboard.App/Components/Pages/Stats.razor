@@ -1,6 +1,5 @@
 ﻿@page "/stats"
 @attribute [StreamRendering]
-@using MudBlazor
 @inject ISnackbar Snackbar
 
 <PageTitle>Stats</PageTitle>
@@ -11,17 +10,34 @@
         <div class="card main-site-card">
             <div class="position-relative">
                 <div class="card-body">
-                    <MudChart ChartType="ChartType.Donut" Width="350px" Height="350px" InputData="@MemoryUsageData" InputLabels="@MemoryUsageLabels">
-                        <CustomGraphics>
-                            <text class="donut-inner-text" x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="white" font-family="Helvetica" font-size="3">@Math.Round(MemoryUsagePercentage)% / 100%</text>
-                        </CustomGraphics>
-                    </MudChart>
-                    <p class="text-white text-center">Last Fetched: @MemoryFetchTime</p>
+                    <div class="d-flex justify-content-center">
+                        <MudChart ChartType="ChartType.Donut"
+                                  Width="200px"
+                                  Height="200px"
+                                  InputData="@MemoryUsageData"
+                                  InputLabels="@MemoryUsageLabels">
+                            <CustomGraphics>
+                                <text class="donut-inner-text"
+                                      x="50%"
+                                      y="50%"
+                                      dominant-baseline="middle"
+                                      text-anchor="middle"
+                                      fill="white"
+                                      font-size="20">
+                                    @Math.Round(MemoryUsagePercentage)% / 100%
+                                </text>
+                            </CustomGraphics>
+                        </MudChart>
+                    </div>
                 </div>
             </div>
-            <MudButtonGroup Class="d-flex justify-content-center" Color="Color.Primary" Size="Size.Large" Variant="Variant.Filled" Style="margin-bottom: 2em">
-                <MudButton Class="text-white" OnClick="() => ListMemoryUsagePercentage()">Memory Usage</MudButton>
-            </MudButtonGroup>
+            <div class="d-flex justify-content-center">
+                <MudButton Variant="Variant.Filled" Color="Color.Tertiary" Style="margin-bottom: 2em"
+                           Class="text-white"
+                           OnClick="() => ListMemoryUsagePercentage()">Memory Usage
+                </MudButton>
+            </div>
+            <p class="text-white text-center">Last Fetched: @MemoryFetchTime</p>
         </div>
     </div>
     <div class="col-md-6">
@@ -29,18 +45,70 @@
         <div class="card main-site-card">
             <div class="position-relative">
                 <div class="card-body">
-
-                    <MudChart ChartType="ChartType.Donut" Width="350px" Height="350px" InputData="@CpuUsageData" InputLabels="@CpuUsageLabels">
-                        <CustomGraphics>
-                            <text class="donut-inner-text" x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="white" font-family="Helvetica" font-size="3">@Math.Round(CpuUsagePercentage)% / 100%</text>
-                        </CustomGraphics>
-                    </MudChart>
-                    <p class="text-white text-center">Last Fetched: @CpuFetchTime</p>
+                    <div class="d-flex justify-content-center">
+                        <MudChart ChartType="ChartType.Donut"
+                                  Width="200px"
+                                  Height="200px"
+                                  InputData="@CpuUsageData"
+                                  InputLabels="@CpuUsageLabels">
+                            <CustomGraphics>
+                                <text class="donut-inner-text"
+                                      x="50%"
+                                      y="50%"
+                                      dominant-baseline="middle"
+                                      text-anchor="middle"
+                                      fill="white"
+                                      font-size="20">
+                                    @Math.Round(CpuUsagePercentage)% / 100%
+                                </text>
+                            </CustomGraphics>
+                        </MudChart>
+                    </div>
                 </div>
             </div>
-            <MudButtonGroup Class="d-flex justify-content-center" Color="Color.Primary" Size="Size.Large" Variant="Variant.Filled" Style="margin-bottom: 2em">
-                <MudButton Class="text-white" OnClick="() => ListCpuUsagePercentage()">Cpu Usage</MudButton>
-            </MudButtonGroup>
+            <div class="d-flex justify-content-center">
+                <MudButton Variant="Variant.Filled" Color="Color.Tertiary" Style="margin-bottom: 2em"
+                           Class="text-white"
+                           OnClick="() => ListCpuUsagePercentage()">Cpu Usage
+                </MudButton>
+            </div>
+            <p class="text-white text-center">Last Fetched: @CpuFetchTime</p>
         </div>
     </div>
 </div>
+
+<div class="col-md-12">
+    <h2 class="text-white fw-bold"><i class="bi bi-floppy"></i> Droplet Disk Usage</h2>
+    <div class="card main-site-card">
+        <div class="row p-3">
+            <div class="col-md-6 mt-2 d-flex justify-content-center">
+                <MudChart ChartType="ChartType.Sankey" Nodes="@Nodes" Edges="@Edges" Width="300px" Height="300px"/>
+            </div>
+            <div class="col-md-6 mt-2">
+                <MudText Class="mt-10">Disk Used: @($"{DiskUsed}GB") / 25GB</MudText>
+                <div class="d-flex justify-content-center">
+                    <MudProgressLinear Color="Color.Tertiary" Striped="true" Size="Size.Large" Value="DiskUsedPercentage"
+                                       Class="my-3"/>
+                </div>
+                <MudDivider Class="my-10"></MudDivider>
+                <MudText Class="mt-10">Free Disk: @($"{FreeDisk}GB") / 25GB</MudText>
+                <div class="d-flex justify-content-center">
+                    <MudProgressLinear Color="Color.Info" Striped="true" Size="Size.Large" Value="FreeDiskPercentage"
+                                       Class="my-3"/>
+                </div>
+            </div>
+        </div>
+        <div class="d-flex justify-content-center">
+            <MudButton Variant="Variant.Filled" Color="Color.Tertiary" Style="margin-bottom: 2em"
+                       Class="text-white my-5" OnClick="() => ListDiskUsage()">Disk Usage
+            </MudButton>
+        </div>
+        <p class="text-white text-center">Last Fetched: @DiskFetchTime</p>
+    </div>
+</div>
+
+<style>
+    .mud-chart-sankey text {
+        fill: #9CA3AF;
+    }
+</style>

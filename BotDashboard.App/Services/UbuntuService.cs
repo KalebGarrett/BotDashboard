@@ -45,4 +45,17 @@ public class UbuntuService
         
         return Convert.ToDouble(usedCpu);
     }
+    
+    public double DiskUsage()
+    {
+        using var client = new SshClient(DigitalOcean.Host, DigitalOcean.Username, DigitalOcean.Password);
+        client.Connect();
+
+        var command = client.CreateCommand(_UbuntuCommand.ListDiskUsage());
+        var response = command.Execute();
+
+        client.Disconnect();
+        
+        return Convert.ToDouble(response);
+    }
 }
