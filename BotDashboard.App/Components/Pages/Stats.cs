@@ -95,8 +95,7 @@ public partial class Stats
 
             FreeDisk = 0;
             FreeDiskPercentage = 0;
-
-
+            
             await Task.CompletedTask;
             return;
         }
