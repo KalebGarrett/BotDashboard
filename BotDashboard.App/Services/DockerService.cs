@@ -7,7 +7,7 @@ namespace BotDashboard.App.Services;
 
 public class DockerService
 {
-    public readonly DockerCommand _dockercommand;
+    private readonly DockerCommand _dockercommand;
 
     public DockerService(DockerCommand dockercommand)
     {

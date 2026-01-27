@@ -14,11 +14,11 @@ public partial class Home
     private List<Container> Containers { get; set; } = new();
     private string ContainerFetchTime { get; set; }
 
-    public double[] MemoryUsageData { get; set; }
+    public double[] MemoryUsageData { get; set; } = [0, 100];
     public string[] MemoryUsageLabels { get; set; } = ["Used Memory", "Total Memory"];
     private static double MemoryUsagePercentage { get; set; }
 
-    private double[] CpuUsageData { get; set; }
+    private double[] CpuUsageData { get; set; } = [0, 100];
     private string[] CpuUsageLabels { get; set; } = ["Used CPU", "Total CPU"];
     private static double CpuUsagePercentage { get; set; }
 
