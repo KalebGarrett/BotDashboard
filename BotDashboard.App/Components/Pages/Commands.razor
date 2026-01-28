@@ -147,6 +147,10 @@
                                     }
                                     </tbody>
                                 </table>
+                                @if (DockerImages.Count == 0)
+                                {
+                                    <p class="text-white">There are no images currently available...</p>
+                                }
                             </div>
                             <p class="text-white">Last Fetched: @ImageFetchTime</p>
                         </div>
@@ -154,21 +158,25 @@
                 </div>
             </div>
         </div>
-
     </div>
     <div class="col-md-6 d-flex flex-column">
         <h2 class="text-white fw-bold"><i class="bi bi-card-text"></i> Logs</h2>
         <div class="card main-site-card flex-fill p-2">
-            @if (Output != null)
-            {
-                <div class="container rounded-3 p-2 mt-1"
-                     style="background-color: #08081C; overflow-y: auto;">
+
+            <div class="container rounded-3 p-2 mt-1"
+                 style="background-color: #08081C; overflow-y: auto;">
+                @if (Output != null)
+                {
                     <pre class="text-white text-start" style="white-space: pre-wrap; max-height: 950px; margin: 0;">
                         @Output
                     </pre>
-                    <p class="text-white mt-5 text-start">Last Fetched: @ContainerFetchTime</p>
-                </div>
-            }
+                }
+                else
+                {
+                    <pre class="text-white" style="white-space: pre-wrap; max-height: 950px; margin: 0;">There are no logs currently available...</pre>
+                }
+                <p class="text-white mt-5 text-start">Last Fetched: @ContainerFetchTime</p>
+            </div>
         </div>
     </div>
 </div>
