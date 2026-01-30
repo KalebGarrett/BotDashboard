@@ -1,0 +1,6 @@
+@BotHarbor.API_HostAddress = http://localhost:5063
+
+GET {{BotHarbor.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

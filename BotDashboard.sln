@@ -4,6 +4,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BotDashboard.App", "BotDash
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BotDashboard.Models", "BotDashboard.Models\BotDashboard.Models.csproj", "{988D5D03-65E0-4C5E-953C-43632AE69125}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BotHarbor.API", "BotHarbor.API\BotHarbor.API.csproj", "{F81C69D6-3C9F-4427-84E6-3A1001196C8F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +20,9 @@ Global
 		{988D5D03-65E0-4C5E-953C-43632AE69125}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{988D5D03-65E0-4C5E-953C-43632AE69125}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{988D5D03-65E0-4C5E-953C-43632AE69125}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F81C69D6-3C9F-4427-84E6-3A1001196C8F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F81C69D6-3C9F-4427-84E6-3A1001196C8F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F81C69D6-3C9F-4427-84E6-3A1001196C8F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F81C69D6-3C9F-4427-84E6-3A1001196C8F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
