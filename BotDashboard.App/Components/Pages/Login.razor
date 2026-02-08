@@ -1,0 +1,31 @@
+﻿@using BotDashboard.App.Components.Layout
+
+@page "/login"
+
+@layout NotAuthorizedLayout
+
+<PageTitle>Login</PageTitle>
+
+<MudContainer Class="justify-content-center">
+    <EditForm Model="UserLogin" OnInvalidSubmit="OnValidSubmit">
+        <DataAnnotationsValidator/>
+        <MudGrid>
+            <MudItem xs="12" sm="7">
+                <MudCard>
+                    <MudCardContent>
+                        <MudTextField T="string" @bind-Value="UserLogin.Email" Label="Email" Class="mt-3"
+                                      InputType="InputType.Email"/>
+                        <MudTextField T="string" @bind-Value="UserLogin.Password" Label="Password" Class="mt-3)"
+                                      InputType="InputType.Password"/>
+                    </MudCardContent>
+                    <MudCardActions>
+                        <MudButton OnClick="Authenticate" ButtonType="ButtonType.Submit" Variant="Variant.Filled"
+                                   Color="Color.Tertiary"
+                                   Class="ml-auto text-center col-md-6">Login
+                        </MudButton>
+                    </MudCardActions>
+                </MudCard>
+            </MudItem>
+        </MudGrid>
+    </EditForm>
+</MudContainer>
