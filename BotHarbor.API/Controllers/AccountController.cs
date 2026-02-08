@@ -17,7 +17,7 @@ public class AccountController : ControllerBase
     }
     
     [HttpGet]
-    public IActionResult Welcome()
+    public IActionResult CheckUserAccess()
     {
         if (User.Identity == null || !User.Identity.IsAuthenticated)
         {
@@ -25,27 +25,5 @@ public class AccountController : ControllerBase
         }
 
         return Ok("You are authenticated");
-    }
-    
-    [Authorize] 
-    [HttpGet("Profile")]
-    public async Task<IActionResult> Profile()
-    {
-        var currentUser = await _userManager.GetUserAsync(User);
-
-        if (currentUser == null)
-        {
-            return BadRequest();
-        }
-
-        var userProfile = new UserProfile
-        {
-            Id = currentUser.Id,
-            Name = currentUser.UserName,
-            Email = currentUser.Email,
-            PhoneNumber = currentUser.PhoneNumber
-        };
-
-        return Ok(userProfile);
     }
 }
