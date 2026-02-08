@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using BotDashboard.App.Services;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor;
 
@@ -8,6 +9,8 @@ public partial class MainLayout
 {
     private bool Open { get; set; } = true;
     private ErrorBoundary ErrorBoundary { get; set; } = new();
+    
+    [Inject] private NavigationManager NavigationManager { get; set; }
 
     private RenderFragment GetErrorContent()
     {
@@ -27,5 +30,10 @@ public partial class MainLayout
     private void ToggleDrawer()
     {
         Open = !Open;
+    }
+
+    private void NavigateToLogin()
+    {
+        NavigationManager.NavigateTo("/login");
     }
 }
