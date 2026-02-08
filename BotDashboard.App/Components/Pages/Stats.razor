@@ -4,174 +4,184 @@
 
 <PageTitle>Stats</PageTitle>
 
-<div class="row gy-3 mb-4">
-    <div class="col-md-6">
-        <h2 class="text-white fw-bold"><i class="bi bi-memory"></i> Droplet Memory Usage</h2>
-        <div class="card main-site-card">
-            <div class="position-relative">
-                <div class="card-body">
-                    <div class="d-flex justify-content-center">
-                        <MudChart ChartType="ChartType.Donut"
-                                  Width="200px"
-                                  Height="200px"
-                                  InputData="@MemoryUsageData"
-                                  InputLabels="@MemoryUsageLabels">
-                            <CustomGraphics>
-                                <text class="donut-inner-text"
-                                      x="50%"
-                                      y="50%"
-                                      dominant-baseline="middle"
-                                      text-anchor="middle"
-                                      fill="white"
-                                      font-size="20">
-                                    @Math.Round(MemoryUsagePercentage)% / 100%
-                                </text>
-                            </CustomGraphics>
-                        </MudChart>
+<AuthorizeView>
+    <Authorized>
+        <div class="row gy-3 mb-4">
+            <div class="col-md-6">
+                <h2 class="text-white fw-bold"><i class="bi bi-memory"></i> Droplet Memory Usage</h2>
+                <div class="card main-site-card">
+                    <div class="position-relative">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-center">
+                                <MudChart ChartType="ChartType.Donut"
+                                          Width="200px"
+                                          Height="200px"
+                                          InputData="@MemoryUsageData"
+                                          InputLabels="@MemoryUsageLabels">
+                                    <CustomGraphics>
+                                        <text class="donut-inner-text"
+                                              x="50%"
+                                              y="50%"
+                                              dominant-baseline="middle"
+                                              text-anchor="middle"
+                                              fill="white"
+                                              font-size="20">
+                                            @Math.Round(MemoryUsagePercentage)% / 100%
+                                        </text>
+                                    </CustomGraphics>
+                                </MudChart>
+                            </div>
+                        </div>
                     </div>
+                    <div class="d-flex justify-content-center">
+                        <MudButton Disabled="Locked" Variant="Variant.Filled" Color="Color.Tertiary"
+                                   Style="margin-bottom: 2em"
+                                   Class="text-white"
+                                   OnClick="() => ListMemoryUsagePercentage()">Memory Usage
+                        </MudButton>
+                    </div>
+                    <p class="text-white text-center">Last Fetched: @MemoryFetchTime</p>
                 </div>
             </div>
-            <div class="d-flex justify-content-center">
-                <MudButton Disabled="Locked" Variant="Variant.Filled" Color="Color.Tertiary" Style="margin-bottom: 2em"
-                           Class="text-white"
-                           OnClick="() => ListMemoryUsagePercentage()">Memory Usage
-                </MudButton>
-            </div>
-            <p class="text-white text-center">Last Fetched: @MemoryFetchTime</p>
-        </div>
-    </div>
-    <div class="col-md-6">
-        <h2 class="text-white fw-bold"><i class="bi bi-cpu"></i> Droplet CPU Usage</h2>
-        <div class="card main-site-card">
-            <div class="position-relative">
-                <div class="card-body">
-                    <div class="d-flex justify-content-center">
-                        <MudChart ChartType="ChartType.Donut"
-                                  Width="200px"
-                                  Height="200px"
-                                  InputData="@CpuUsageData"
-                                  InputLabels="@CpuUsageLabels">
-                            <CustomGraphics>
-                                <text class="donut-inner-text"
-                                      x="50%"
-                                      y="50%"
-                                      dominant-baseline="middle"
-                                      text-anchor="middle"
-                                      fill="white"
-                                      font-size="20">
-                                    @Math.Round(CpuUsagePercentage)% / 100%
-                                </text>
-                            </CustomGraphics>
-                        </MudChart>
+            <div class="col-md-6">
+                <h2 class="text-white fw-bold"><i class="bi bi-cpu"></i> Droplet CPU Usage</h2>
+                <div class="card main-site-card">
+                    <div class="position-relative">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-center">
+                                <MudChart ChartType="ChartType.Donut"
+                                          Width="200px"
+                                          Height="200px"
+                                          InputData="@CpuUsageData"
+                                          InputLabels="@CpuUsageLabels">
+                                    <CustomGraphics>
+                                        <text class="donut-inner-text"
+                                              x="50%"
+                                              y="50%"
+                                              dominant-baseline="middle"
+                                              text-anchor="middle"
+                                              fill="white"
+                                              font-size="20">
+                                            @Math.Round(CpuUsagePercentage)% / 100%
+                                        </text>
+                                    </CustomGraphics>
+                                </MudChart>
+                            </div>
+                        </div>
                     </div>
+                    <div class="d-flex justify-content-center">
+                        <MudButton Disabled="Locked" Variant="Variant.Filled" Color="Color.Tertiary"
+                                   Style="margin-bottom: 2em"
+                                   Class="text-white"
+                                   OnClick="() => ListCpuUsagePercentage()">Cpu Usage
+                        </MudButton>
+                    </div>
+                    <p class="text-white text-center">Last Fetched: @CpuFetchTime</p>
                 </div>
             </div>
-            <div class="d-flex justify-content-center">
-                <MudButton Disabled="Locked" Variant="Variant.Filled" Color="Color.Tertiary" Style="margin-bottom: 2em"
-                           Class="text-white"
-                           OnClick="() => ListCpuUsagePercentage()">Cpu Usage
-                </MudButton>
-            </div>
-            <p class="text-white text-center">Last Fetched: @CpuFetchTime</p>
         </div>
-    </div>
-</div>
 
-<div class="row gy-3 mb-4">
-    <div class="col-md-12">
-        <h2 class="text-white fw-bold"><i class="bi bi-floppy"></i> Droplet Disk Usage</h2>
-        <div class="card main-site-card">
-            <div class="row p-3">
-                <div class="col-md-6 mt-2 d-flex justify-content-center">
-                    <MudChart ChartType="ChartType.Sankey" Nodes="@Nodes" Edges="@Edges" Width="300px" Height="300px"/>
-                </div>
-                <div class="col-md-6 mt-2">
-                    <MudText Class="mt-10">Disk Used: @($"{DiskUsed}GB") / 25GB</MudText>
-                    <div class="d-flex justify-content-center">
-                        <MudProgressLinear Color="Color.Tertiary" Striped="true" Size="Size.Large"
-                                           Value="DiskUsedPercentage"
-                                           Class="my-3"/>
+        <div class="row gy-3 mb-4">
+            <div class="col-md-12">
+                <h2 class="text-white fw-bold"><i class="bi bi-floppy"></i> Droplet Disk Usage</h2>
+                <div class="card main-site-card">
+                    <div class="row p-3">
+                        <div class="col-md-6 mt-2 d-flex justify-content-center">
+                            <MudChart ChartType="ChartType.Sankey" Nodes="@Nodes" Edges="@Edges" Width="300px"
+                                      Height="300px"/>
+                        </div>
+                        <div class="col-md-6 mt-2">
+                            <MudText Class="mt-10">Disk Used: @($"{DiskUsed}GB") / 25GB</MudText>
+                            <div class="d-flex justify-content-center">
+                                <MudProgressLinear Color="Color.Tertiary" Striped="true" Size="Size.Large"
+                                                   Value="DiskUsedPercentage"
+                                                   Class="my-3"/>
+                            </div>
+                            <MudDivider Class="my-10"></MudDivider>
+                            <MudText Class="mt-10">Free Disk: @($"{FreeDisk}GB") / 25GB</MudText>
+                            <div class="d-flex justify-content-center">
+                                <MudProgressLinear Color="Color.Info" Striped="true" Size="Size.Large"
+                                                   Value="FreeDiskPercentage"
+                                                   Class="my-3"/>
+                            </div>
+                        </div>
                     </div>
-                    <MudDivider Class="my-10"></MudDivider>
-                    <MudText Class="mt-10">Free Disk: @($"{FreeDisk}GB") / 25GB</MudText>
                     <div class="d-flex justify-content-center">
-                        <MudProgressLinear Color="Color.Info" Striped="true" Size="Size.Large"
-                                           Value="FreeDiskPercentage"
-                                           Class="my-3"/>
+                        <MudButton Disabled="Locked" Variant="Variant.Filled" Color="Color.Tertiary"
+                                   Style="margin-bottom: 2em"
+                                   Class="text-white my-5" OnClick="() => ListDiskUsage()">Disk Usage
+                        </MudButton>
                     </div>
+                    <p class="text-white text-center">Last Fetched: @DiskFetchTime</p>
                 </div>
             </div>
-            <div class="d-flex justify-content-center">
-                <MudButton Disabled="Locked" Variant="Variant.Filled" Color="Color.Tertiary" Style="margin-bottom: 2em"
-                           Class="text-white my-5" OnClick="() => ListDiskUsage()">Disk Usage
-                </MudButton>
-            </div>
-            <p class="text-white text-center">Last Fetched: @DiskFetchTime</p>
         </div>
-    </div>
-</div>
 
-<div class="row gy-3 mb-4">
-    <div class="col-md-6 d-flex flex-column">
-        <h2 class="text-white fw-bold"><i class="bi bi-clock"></i> Droplet Uptime</h2>
-        <div class="card main-site-card flex-fill">
-            <div class="position-relative">
-                <div class="card-body">
-                    <div class="d-flex justify-content-center">
-                        <MudStack Spacing="2" AlignItems="AlignItems.Center">
-                            <MudDatePicker Label="Started"
-                                           Date="@BootTime"
-                                           Disabled="true"
-                                           Color="Color.Tertiary"
-                                           Variant="Variant.Outlined"
-                                           PickerVariant="PickerVariant.Static"/>
-                            <MudChip Class="my-9" T="string" Size="Size.Large" Color="Color.Info"
-                                     Icon="@Icons.Material.Filled.Schedule">
-                                <MudText Typo="Typo.h5">@Uptime</MudText>
-                            </MudChip>
-                        </MudStack>
+        <div class="row gy-3 mb-4">
+            <div class="col-md-6 d-flex flex-column">
+                <h2 class="text-white fw-bold"><i class="bi bi-clock"></i> Droplet Uptime</h2>
+                <div class="card main-site-card flex-fill">
+                    <div class="position-relative">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-center">
+                                <MudStack Spacing="2" AlignItems="AlignItems.Center">
+                                    <MudDatePicker Label="Started"
+                                                   Date="@BootTime"
+                                                   Disabled="true"
+                                                   Color="Color.Tertiary"
+                                                   Variant="Variant.Outlined"
+                                                   PickerVariant="PickerVariant.Static"/>
+                                    <MudChip Class="my-9" T="string" Size="Size.Large" Color="Color.Info"
+                                             Icon="@Icons.Material.Filled.Schedule">
+                                        <MudText Typo="Typo.h5">@Uptime</MudText>
+                                    </MudChip>
+                                </MudStack>
+                            </div>
+                        </div>
                     </div>
+                    <div class="d-flex justify-content-center">
+                        <MudButton Disabled="Locked" Variant="Variant.Filled" Color="Color.Tertiary"
+                                   Style="margin-bottom: 2em"
+                                   Class="text-white"
+                                   OnClick="() => ListUptime()">Uptime
+                        </MudButton>
+                    </div>
+                    <p class="text-white text-center">Last Fetched: @UptimeFetchTime</p>
                 </div>
             </div>
-            <div class="d-flex justify-content-center">
-                <MudButton Disabled="Locked" Variant="Variant.Filled" Color="Color.Tertiary" Style="margin-bottom: 2em"
-                           Class="text-white"
-                           OnClick="() => ListUptime()">Uptime
-                </MudButton>
-            </div>
-            <p class="text-white text-center">Last Fetched: @UptimeFetchTime</p>
-        </div>
-    </div>
-    <div class="col-md-6 d-flex flex-column">
-        <h2 class="text-white fw-bold"><i class="bi bi-box-arrow-in-right"></i> Droplet SSH Logins</h2>
-        <div class="card main-site-card flex-fill">
-            <div class="position-relative">
-                <div class="card-body">
-                    <div class="d-flex justify-content-center">
-                        <MudChart Class="mt-10 mb-20" ChartType="ChartType.Bar" ChartSeries="@SshLoginsSeries"
-                                  @bind-SelectedIndex="Index"
-                                  XAxisLabels="@SshLoginsXAxisLabels" Width="100%" Height="350px"
-                                  AxisChartOptions="AxisChartOptions"></MudChart>
+            <div class="col-md-6 d-flex flex-column">
+                <h2 class="text-white fw-bold"><i class="bi bi-box-arrow-in-right"></i> Droplet SSH Logins</h2>
+                <div class="card main-site-card flex-fill">
+                    <div class="position-relative">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-center">
+                                <MudChart Class="mt-10 mb-20" ChartType="ChartType.Bar" ChartSeries="@SshLoginsSeries"
+                                          @bind-SelectedIndex="Index"
+                                          XAxisLabels="@SshLoginsXAxisLabels" Width="100%" Height="350px"
+                                          AxisChartOptions="AxisChartOptions"></MudChart>
+                            </div>
+                        </div>
                     </div>
+                    <div class="d-flex justify-content-center">
+                        <MudButton Disabled="Locked" Variant="Variant.Filled" Color="Color.Tertiary"
+                                   Style="margin-bottom: 2em"
+                                   Class="text-white"
+                                   OnClick="() => ListSshLogins()">SSH Logins
+                        </MudButton>
+                    </div>
+                    <p class="text-white text-center">Last Fetched: @SshLoginsFetchTime</p>
                 </div>
             </div>
-            <div class="d-flex justify-content-center">
-                <MudButton Disabled="Locked" Variant="Variant.Filled" Color="Color.Tertiary" Style="margin-bottom: 2em"
-                           Class="text-white"
-                           OnClick="() => ListSshLogins()">SSH Logins
-                </MudButton>
-            </div>
-            <p class="text-white text-center">Last Fetched: @SshLoginsFetchTime</p>
         </div>
-    </div>
-</div>
 
-<style>
-    .mud-chart-sankey text {
-        fill: #9CA3AF;
-    }
+        <style>
+            .mud-chart-sankey text {
+                fill: #9CA3AF;
+            }
 
-    .mud-chart text {
-        fill: #ffffff;
-    }
-</style>
+            .mud-chart text {
+                fill: #ffffff;
+            }
+        </style>
+    </Authorized>
+</AuthorizeView>
