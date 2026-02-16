@@ -15,9 +15,9 @@ public partial class MainLayout
     {
         return _ =>
         {
-            //Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomRight;
-            //Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomRight;
-            //Snackbar.Add("Oops… something went wrong. Please try again.", Severity.Error);
+            Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomRight;
+            Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomRight;
+            Snackbar.Add("Oops… something went wrong. Please try again.", Severity.Error);
         };
     }
     
