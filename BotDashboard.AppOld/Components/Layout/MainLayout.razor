@@ -32,6 +32,7 @@
                 <MudText>Welcome, Kaleb!</MudText>
                 <MudSwitch Class="pa-4" T="bool" Size="Size.Small" @bind-Value="Switch.OnInitialized"
                            @onclick="Switch.ToggleOnInitialized" Color="Color.Tertiary"></MudSwitch>
+                <MudText>Auto Load</MudText>
                 <MudMenu DropShadow="true" AnchorOrigin="Origin.BottomRight">
                     <ActivatorContent>
                         <MudAvatar>
@@ -65,61 +66,6 @@
         </MudLayout>
     </Authorized>
     <NotAuthorized>
-        <MudLayout>
-            <MudAppBar Style="background-color: #02194C" Elevation="1">
-                <MudHidden Breakpoint="Breakpoint.SmAndDown">
-                    @if (Open)
-                    {
-                        <MudIconButton Icon="@Icons.Material.Filled.ArrowBackIos" Class="text-white" Edge="Edge.Start"
-                                       OnClick="@((e) => ToggleDrawer())"/>
-                    }
-                    else
-                    {
-                        <MudIconButton Icon="@Icons.Material.Filled.ArrowForwardIos" Class="text-white"
-                                       Edge="Edge.Start"
-                                       OnClick="@((e) => ToggleDrawer())"/>
-                    }
-                </MudHidden>
-                <MudHidden Breakpoint="Breakpoint.MdAndUp">
-                    <MudIconButton Class="visible-md d-flex justify-content-end text-white"
-                                   Icon="@Icons.Material.Filled.Menu"
-                                   OnClick="@((e) => ToggleDrawer())"/>
-                </MudHidden>
-                <MudSpacer/>
-                <MudText>Welcome, Kaleb!</MudText>
-                <MudSwitch Class="pa-4" T="bool" Size="Size.Small" @bind-Value="Switch.OnInitialized"
-                           @onclick="Switch.ToggleOnInitialized" Color="Color.Tertiary"></MudSwitch>
-                <MudMenu DropShadow="true" AnchorOrigin="Origin.BottomRight">
-                    <ActivatorContent>
-                        <MudAvatar>
-                            <MudImage Src="imgs/Bot Harbor - Light House.png" Alt="Bot Harbor Logo"/>
-                        </MudAvatar>
-                    </ActivatorContent>
-                    <ChildContent>
-                        <MudMenuItem Icon="@Icons.Material.Filled.Logout">Logout</MudMenuItem>
-                    </ChildContent>
-                </MudMenu>
-            </MudAppBar>
-            <MudDrawer Style="background-color: #080E2C" @bind-Open="@Open" Elevation="1">
-                <MudNavMenu>
-                    <NavMenu/>
-                </MudNavMenu>
-            </MudDrawer>
-            <MudMainContent>
-                <article class="content px-4">
-                    <ErrorBoundary @ref="ErrorBoundary">
-                        <ChildContent>
-                            @Body
-                        </ChildContent>
-                        <ErrorContent Context="_">
-                            @Body
-                            @GetErrorContent()
-                        </ErrorContent>
-                    </ErrorBoundary>
-                </article>
-                <_Footer/>
-            </MudMainContent>
-        </MudLayout>
         @{ NavigateToLogin(); }
     </NotAuthorized>
 </AuthorizeView>

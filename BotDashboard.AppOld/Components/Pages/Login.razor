@@ -6,22 +6,22 @@
 
 <PageTitle>Login</PageTitle>
 
-<MudContainer Class="justify-content-center mt-4">
-    <EditForm Model="//UserLogin" OnInvalidSubmit="OnValidSubmit">
+<!-- <MudContainer Class="justify-content-center mt-4">
+    <EditForm Model="LoginModel" OnInvalidSubmit="OnValidSubmit">
         <DataAnnotationsValidator/>
         <MudGrid>
             <MudItem xs="12" sm="7">
                 <MudCard>
                     <MudCardContent>
-                        <MudTextField T="string" Required="true" @bind-Value="//UserLogin.Email" Label="Email"
+                        <MudTextField T="string" Required="true" @bind-Value="LoginDTO.Email" Label="Email"
                                       Class="mt-3"
                                       InputType="InputType.Email"/>
-                        <MudTextField T="string" Required="true" @bind-Value="//UserLogin.Password" Label="Password"
+                        <MudTextField T="string" Required="true" @bind-Value="LoginDTO.Password" Label="Password"
                                       Class="mt-3)"
                                       InputType="InputType.Password"/>
                     </MudCardContent>
                     <MudCardActions>
-                        <MudButton OnClick="Authenticate" ButtonType="ButtonType.Submit" Variant="Variant.Filled"
+                        <MudButton OnClick="HandleLogin" ButtonType="ButtonType.Submit" Variant="Variant.Filled"
                                    Color="Color.Tertiary"
                                    Class="ml-auto text-center col-md-6">Login
                         </MudButton>
@@ -30,4 +30,17 @@
             </MudItem>
         </MudGrid>
     </EditForm>
-</MudContainer>
+</MudContainer> -->
+
+<input @bind="userIdentifier" />
+<button class="btn btn-primary" @onclick="SignIn">Sign in</button>
+
+
+<AuthorizeView>
+    <Authorized>
+        <p>Hello, @context.User.Identity?.Name!</p>
+    </Authorized>
+    <NotAuthorized>
+        <p>You're not authorized.</p>
+    </NotAuthorized>
+</AuthorizeView>

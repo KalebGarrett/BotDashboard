@@ -1,0 +1,279 @@
+﻿@page "/commands"
+@using MudBlazor
+@using BotDashboard.App.Constants
+@inject ISnackbar Snackbar
+
+<PageTitle>Commands</PageTitle>
+
+<AuthorizeView>
+    <Authorized>
+        <div class="row gy-3">
+            <div class="col-md-6 d-flex flex-column">
+                <div class="col-md-12">
+                    <h2 class="text-white fw-bold">
+                        <i class="bi bi-command"></i>
+                        Commands
+                    </h2>
+                    <div class="card main-site-card">
+                        <div class="position-relative">
+                            <div class="bg-image hover-overlay ripple" data-mdb-ripple-color="light">
+                                <div class="mt-2 ms-3 text-center">
+                                    <img src="imgs/1024px-DigitalOcean_logo.svg.png"
+                                         width="128" height="128" alt="Digital Ocean"/>
+                                </div>
+                            </div>
+                            <div class="card-body text-center">
+                                <div class="container justify-content-center">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <MudButtonGroup Class="d-flex justify-content-center gap-2"
+                                                            Color="Color.Primary"
+                                                            Size="Size.Large" Variant="Variant.Filled">
+                                                <MudButton Disabled="Locked" Class="text-white"
+                                                           OnClick="StopAllContainers">Stop
+                                                    All Containers
+                                                </MudButton>
+                                                <MudButton Disabled="Locked" Class="text-white"
+                                                           OnClick="RestartAllContainers">
+                                                    Restart All
+                                                    Containers
+                                                </MudButton>
+                                                <MudButton Disabled="Locked" Class="text-white"
+                                                           OnClick="() => ListImages()">
+                                                    List All Images
+                                                </MudButton>
+                                                <MudButton Disabled="Locked" Class="text-white"
+                                                           OnClick="() => ListContainers()">List All
+                                                    Containers
+                                                </MudButton>
+                                            </MudButtonGroup>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-12 mt-2">
+                                            <MudButtonGroup Class="d-flex justify-content-center gap-2"
+                                                            Color="Color.Tertiary"
+                                                            Size="Size.Large" Variant="Variant.Filled">
+                                                <MudButton Disabled="Locked" Class="text-white"
+                                                           OnClick="() => RunImage(DockerRepository.JokeBot)">
+                                                    Start JokeBot
+                                                </MudButton>
+                                                <MudButton Disabled="Locked" Class="text-white"
+                                                           OnClick="() => RunImage(DockerRepository.TriviaBot)">
+                                                    Start TriviaBot
+                                                </MudButton>
+                                                <MudButton Disabled="Locked" Class="text-white"
+                                                           OnClick="() => RunImage(DockerRepository.FactBot)">
+                                                    Start FactBot
+                                                </MudButton>
+                                                <MudButton Disabled="Locked" Class="text-white"
+                                                           OnClick="() => RunImage(DockerRepository.PremBot)">
+                                                    Start PremBot
+                                                </MudButton>
+                                                <MudButton Disabled="Locked" Class="text-white"
+                                                           OnClick="() => RunImage(DockerRepository.JamJunction)">Start
+                                                    JamJunction
+                                                </MudButton>
+                                                <MudButton Disabled="Locked" Class="text-white"
+                                                           OnClick="RunYtCipher">Start
+                                                    Youtube Cipher
+                                                </MudButton>
+                                            </MudButtonGroup>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-12 mt-2">
+                                            <MudButtonGroup Class="d-flex justify-content-center gap-2"
+                                                            Color="Color.Primary"
+                                                            Size="Size.Large" Variant="Variant.Filled">
+                                                <MudButton Disabled="Locked" Class="text-white"
+                                                           OnClick="() => PullImage(DockerRepository.JokeBot)">
+                                                    Pull JokeBot
+                                                </MudButton>
+                                                <MudButton Disabled="Locked" Class="text-white"
+                                                           OnClick="() => PullImage(DockerRepository.TriviaBot)">
+                                                    Pull TriviaBot
+                                                </MudButton>
+                                                <MudButton Disabled="Locked" Class="text-white"
+                                                           OnClick="() => PullImage(DockerRepository.FactBot)">
+                                                    Pull FactBot
+                                                </MudButton>
+                                                <MudButton Disabled="Locked" Class="text-white"
+                                                           OnClick="() => PullImage(DockerRepository.PremBot)">
+                                                    Pull PremBot
+                                                </MudButton>
+                                                <MudButton Disabled="Locked" Class="text-white"
+                                                           OnClick="() => PullImage(DockerRepository.JamJunction)">Pull
+                                                    JamJunction
+                                                </MudButton>
+                                                <MudButton Disabled="Locked" Class="text-white"
+                                                           OnClick="() => PullImage(DockerRepository.YtCipher)">Pull
+                                                    Youtube Cipher
+                                                </MudButton>
+                                            </MudButtonGroup>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12 mt-4">
+                        <h2 class="text-white font-weight-bold fw-bold">
+                            <i class="bi bi-tsunami"></i>
+                            Images
+                        </h2>
+                        <div class="card main-site-card">
+                            <div class="position-relative">
+                                <div class="card-body m-4">
+                                    <div class="table-responsive">
+                                        <table
+                                            class="table table-dark table-striped table-hover table-bordered table-active image-table-corner table">
+                                            <thead>
+                                            <tr>
+                                                @foreach (var heading in Headings)
+                                                {
+                                                    <th>@heading</th>
+                                                }
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            @foreach (var dockerImage in DockerImages)
+                                            {
+                                                <tr>
+
+                                                    <td>@dockerImage.Repository</td>
+                                                    <td>@dockerImage.Tag</td>
+                                                    <td>@dockerImage.ImageId</td>
+                                                    <td>@dockerImage.Created</td>
+                                                    <td>@dockerImage.Size</td>
+                                                    <td>
+                                                        <MudIconButton Disabled="Locked"
+                                                                       Icon="@Icons.Material.Filled.Delete"
+                                                                       Color="Color.Error"
+                                                                       OnClick="() => RemoveImage(dockerImage.ImageId)"></MudIconButton>
+                                                    </td>
+                                                </tr>
+                                            }
+                                            </tbody>
+                                        </table>
+                                        @if (DockerImages.Count == 0)
+                                        {
+                                            <p class="text-white">There are no images currently available...</p>
+                                        }
+                                    </div>
+                                    <p class="text-white">Last Fetched: @ImageFetchTime</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 d-flex flex-column">
+                <h2 class="text-white fw-bold"><i class="bi bi-card-text"></i> Logs</h2>
+                <div class="card main-site-card flex-fill p-2">
+
+                    <div class="container rounded-3 p-2 mt-1"
+                         style="background-color: #08081C; overflow-y: auto;">
+                        @if (Output != null)
+                        {
+                            <pre class="text-white text-start"
+                                 style="white-space: pre-wrap; max-height: 950px; margin: 0;">
+                        @Output
+                    </pre>
+                        }
+                        else
+                        {
+                            <pre class="text-white" style="white-space: pre-wrap; max-height: 950px; margin: 0;">There are no logs currently available...</pre>
+                        }
+                        <p class="text-white mt-5 text-start">Last Fetched: @ContainerFetchTime</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <hr class="text-white"/>
+        <h2 class="text-white mt-4 fw-bold">
+            <i class="bi bi-box-seam"></i>
+            Containers Running
+        </h2>
+        <div class="row gy-2">
+            @if (Containers.Count == 0)
+            {
+                <p class="lead text-white">There are no containers currently running...</p>
+            }
+            @foreach (var container in Containers.OrderBy(x => x.Image))
+            {
+                <div class="col-md-4 mb-4">
+                    <div class="card container-card">
+                        <div class="position-relative">
+                            <div class="row">
+                                <div class="col-6">
+                                    <div class="bg-image hover-overlay ripple" data-mdb-ripple-color="light">
+                                        <div class="mt-2 ms-3">
+                                            @if (container.Image.Contains("ghcr.io/kikkia/yt-cipher"))
+                                            {
+                                                <img src="https://www.svgviewer.dev/static-svgs/405425/youtube"
+                                                     width="50" height="50" alt="@container.Image"/>
+                                            }
+                                            else
+                                            {
+                                                <img src="https://www.svgviewer.dev/static-svgs/13822/discord-icon.svg"
+                                                     width="50" height="50" alt="@container.Image"/>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="d-flex flex-row justify-content-end mt-3">
+                                        <MudButton Disabled="Locked"
+                                                   OnClick="() => RestartContainer(container.ContainerId)"
+                                                   Class="mr-1"
+                                                   Color="Color.Tertiary" Variant="Variant.Filled">Restart
+                                        </MudButton>
+                                        <MudButton Disabled="Locked"
+                                                   OnClick="() => StopContainer(container.ContainerId)"
+                                                   Class="mr-4"
+                                                   Color="Color.Error" Variant="Variant.Filled">Stop
+                                        </MudButton>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                @if (container.Image.Contains("kalebg08"))
+                                {
+                                    <h5 class="card-title fw-bold">
+                                        @container.Image.Replace("kalebg08/", "").ToUpper()
+                                    </h5>
+                                }
+                                else
+                                {
+                                    <h5 class="card-title fw-bold">
+                                        @container.Image.Replace("ghcr.io/kikkia/", "").Replace(":master", "").ToUpper()
+                                    </h5>
+                                }
+                                <p class="card-text text-white mt-4" style="color: #8893AC">Container
+                                    Id: @container.ContainerId</p>
+                                <p class="card-text text-white" style="color: #8893AC">Created: @container.Created</p>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <p class="card-text text-white" style="color: #8893AC">
+                                            Status: @container.Status</p>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="d-flex flex-row justify-content-end">
+                                            <MudIconButton Disabled="Locked"
+                                                           OnClick="() => LogContainer(container.ContainerId)"
+                                                           Size="Size.Medium" Style="color: white"
+                                                           Icon="@Icons.Material.Filled.Info"></MudIconButton>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+        <p class="text-white">Last Fetched: @ContainerFetchTime</p>
+    </Authorized>
+</AuthorizeView>

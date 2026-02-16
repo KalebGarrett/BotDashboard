@@ -1,9 +1,8 @@
-﻿using BotDashboard.App.Services;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor;
 
-namespace BotDashboard.App.Components.Layout;
+namespace BotHarbor.App2.Components.Layout;
 
 public partial class MainLayout
 {
@@ -16,9 +15,9 @@ public partial class MainLayout
     {
         return _ =>
         {
-            Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomRight;
-            Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomRight;
-            Snackbar.Add("Oops… something went wrong. Please try again.", Severity.Error);
+            //Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomRight;
+            //Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomRight;
+            //Snackbar.Add("Oops… something went wrong. Please try again.", Severity.Error);
         };
     }
     
@@ -32,6 +31,11 @@ public partial class MainLayout
         Open = !Open;
     }
 
+    private void Logout()
+    {
+        NavigationManager.NavigateTo("/logout", true);
+    }
+    
     private void NavigateToLogin()
     {
         NavigationManager.NavigateTo("/login");

@@ -5,9 +5,13 @@
         <Nullable>disable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
         <ApplicationIcon>Bot Harbor - Light House.ico</ApplicationIcon>
+        <RootNamespace>BotDashboard.App</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
+      <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.23" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.23" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.23" />
       <PackageReference Include="MudBlazor" Version="8.15.0" />
       <PackageReference Include="SSH.NET" Version="2024.0.0" />
     </ItemGroup>
@@ -24,6 +28,9 @@
       </Compile>
       <Compile Update="Components\Layout\MainLayout.cs">
         <DependentUpon>MainLayout.razor</DependentUpon>
+      </Compile>
+      <Compile Update="Components\Pages\Login.cs">
+        <DependentUpon>Login.razor</DependentUpon>
       </Compile>
     </ItemGroup>
 

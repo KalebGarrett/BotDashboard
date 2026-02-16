@@ -1,9 +1,13 @@
+using BotDashboard.App.Commands;
+using BotDashboard.App.Services;
+using BotHarbor.App2;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using BotHarbor.App2.Components;
 using BotHarbor.App2.Components.Account;
 using BotHarbor.App2.Data;
+using MudBlazor.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -34,6 +38,18 @@ builder.Services.AddIdentityCore<BotHarborUser>(options => options.SignIn.Requir
 
 builder.Services.AddSingleton<IEmailSender<BotHarborUser>, IdentityNoOpEmailSender>();
 
+builder.Services.AddScoped<DockerService>();
+builder.Services.AddScoped<DockerCommand>();
+
+builder.Services.AddScoped<UbuntuService>();
+builder.Services.AddScoped<UbuntuCommand>();
+
+builder.Services.AddMudServices(config =>
+{
+    config.SnackbarConfiguration.MaxDisplayedSnackbars = 5;
+    config.SnackbarConfiguration.ShowCloseIcon = true;
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -52,6 +68,7 @@ app.UseHttpsRedirection();
 
 app.UseStaticFiles();
 app.UseAntiforgery();
+app.MapAccountServices();
 
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();

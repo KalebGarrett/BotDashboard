@@ -49,3 +49,18 @@ h1:focus {
 .darker-border-checkbox.form-check-input {
     border-color: #929292;
 }
+
+body {
+    background-color: #08081C;
+}
+
+.main-site-card {
+    background-color: #080E2C;
+    color: white;
+}
+
+.container-card {
+    border-radius: 25px;
+    background-color: #080E2C;
+    color: white;
+}
