@@ -20,9 +20,8 @@
         @{ NavigateToHomePage(); }
     </Authorized>
     <NotAuthorized>
-        <div class="row">
+        <div class="row d-flex justify-content-center mt-6">
             <div class="col-md-4">
-                <StatusMessage Message="@errorMessage"/>
                 <EditForm Model="Input" method="post" OnValidSubmit="LoginUser" FormName="login">
                     <DataAnnotationsValidator/>
                     <ValidationSummary class="text-danger" role="alert"/>
@@ -38,7 +37,7 @@
                         <label for="password" class="form-label">Password</label>
                         <ValidationMessage For="() => Input.Password" class="text-danger"/>
                     </div>
-                    <div class="checkbox mb-3">
+                    <div class="checkbox mb-3 text-white">
                         <label class="form-label">
                             <InputCheckbox @bind-Value="Input.RememberMe"
                                            class="darker-border-checkbox form-check-input"/>
@@ -54,15 +53,16 @@
     </NotAuthorized>
 </AuthorizeView>
 
-
 @code {
-    private string? errorMessage;
+    private string? ErrorMessage { get; set; }
 
     [CascadingParameter] private HttpContext HttpContext { get; set; } = default!;
 
     [SupplyParameterFromForm] private InputModel Input { get; set; } = new();
 
     [SupplyParameterFromQuery] private string? ReturnUrl { get; set; }
+
+    [Inject] private ISnackbar Snackbar { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -96,13 +96,20 @@
         }
         else
         {
-            errorMessage = "Error: Invalid login attempt.";
+            ErrorMessage = "Error: Invalid login attempt.";
+            CreateSnackbarMessage(ErrorMessage, Severity.Error);
         }
     }
 
     private void NavigateToHomePage()
     {
         NavigationManager.NavigateTo("");
+    }
+
+    private void CreateSnackbarMessage(string message, Severity severity)
+    {
+        Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomRight;
+        Snackbar.Add(message, severity);
     }
 
     private sealed class InputModel

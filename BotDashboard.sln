@@ -1,10 +1,10 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BotDashboard.App", "BotDashboard.App\BotDashboard.App.csproj", "{BCFC5113-7366-42C8-83BF-E549AC469A16}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BotDashboard.AppOld", "BotDashboard.AppOld\BotDashboard.AppOld.csproj", "{BCFC5113-7366-42C8-83BF-E549AC469A16}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BotDashboard.Models", "BotDashboard.Models\BotDashboard.Models.csproj", "{988D5D03-65E0-4C5E-953C-43632AE69125}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BotHarbor.API", "BotHarbor.API\BotHarbor.API.csproj", "{F81C69D6-3C9F-4427-84E6-3A1001196C8F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BotHarbor.App2", "BotHarbor.App2\BotHarbor.App2.csproj", "{4E8A36F2-57FA-464C-A3B6-0C9EA54C34FD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -20,9 +20,9 @@ Global
 		{988D5D03-65E0-4C5E-953C-43632AE69125}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{988D5D03-65E0-4C5E-953C-43632AE69125}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{988D5D03-65E0-4C5E-953C-43632AE69125}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F81C69D6-3C9F-4427-84E6-3A1001196C8F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F81C69D6-3C9F-4427-84E6-3A1001196C8F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F81C69D6-3C9F-4427-84E6-3A1001196C8F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F81C69D6-3C9F-4427-84E6-3A1001196C8F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4E8A36F2-57FA-464C-A3B6-0C9EA54C34FD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4E8A36F2-57FA-464C-A3B6-0C9EA54C34FD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4E8A36F2-57FA-464C-A3B6-0C9EA54C34FD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4E8A36F2-57FA-464C-A3B6-0C9EA54C34FD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
