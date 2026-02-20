@@ -1,5 +1,5 @@
 ﻿using BotDashboard.App.Commands;
-using BotDashboard.App.Constants;
+using BotDashboard.App.Credentials;
 using BotDashboard.Models;
 using Renci.SshNet;
 

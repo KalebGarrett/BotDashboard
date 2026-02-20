@@ -1,4 +1,4 @@
-﻿namespace BotDashboard.App.Constants;
+﻿namespace BotDashboard.App.Credentials;
 
 public class DigitalOcean
 {

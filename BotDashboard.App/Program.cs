@@ -1,15 +1,13 @@
 using BotDashboard.App;
-using BotDashboard.App.Commands;
 using BotDashboard.App.Components;
 using BotDashboard.App.Components.Account;
-using BotDashboard.App.Constants;
+using BotDashboard.App.Credentials;
 using BotDashboard.App.Data;
 using BotDashboard.App.Services;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using MudBlazor.Services;
-using ConnectionInfo = Renci.SshNet.ConnectionInfo;
 
 var builder = WebApplication.CreateBuilder(args);
 
