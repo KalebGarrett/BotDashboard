@@ -30,7 +30,7 @@ public partial class ChangePassword
         HasPassword = await UserManager.HasPasswordAsync(User);
         if (!HasPassword)
         {
-            RedirectManager.RedirectTo("Account/Manage/SetPassword");
+            RedirectManager.RedirectTo("account/manage/setpassword");
         }
     }
 

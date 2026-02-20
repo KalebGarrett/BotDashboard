@@ -29,7 +29,7 @@ public partial class SetPassword
         var hasPassword = await UserManager.HasPasswordAsync(User);
         if (hasPassword)
         {
-            RedirectManager.RedirectTo("Account/Manage/ChangePassword");
+            RedirectManager.RedirectTo("account/manage/changepassword");
         }
     }
 
