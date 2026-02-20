@@ -16,6 +16,12 @@
         <MudNavLink IconColor="Color.Tertiary" Class="mud-link-item" Icon="@Icons.Material.Filled.QueryStats"
                     Href="stats" Match="NavLinkMatch.Prefix">Stats
         </MudNavLink>
+        <MudDivider Class="my-3"/>
+        <MudNavGroup IconColor="Color.Tertiary" Icon="@Icons.Material.Filled.Settings" Title="Settings" Expanded="true">
+            <MudNavLink IconColor="Color.Tertiary" Class="mud-link-item" Icon="@Icons.Material.Filled.Password"
+                        Href="/account/manage/changepassword" Match="NavLinkMatch.Prefix">Manage Password
+            </MudNavLink>
+        </MudNavGroup>
     </MudNavMenu>
 </MudPaper>
 
@@ -26,75 +32,18 @@
     }
 </style>
 
-<!--<div class="top-row ps-3 navbar navbar-dark">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="">BotDashboard.App</a>
-    </div>
-</div>
-
-<input type="checkbox" title="Navigation menu" class="navbar-toggler"/>
-
-<div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
-    <nav class="flex-column">
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Home
-            </NavLink>
-        </div>
-
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="/commands">
-                <span class="bi bi-command" aria-hidden="true"></span> Commands
-            </NavLink>
-        </div>
-
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="/stats">
-                <span class="bi bi-bar-chart" aria-hidden="true"></span> Stats
-            </NavLink>
-        </div>
-        
-
-        <AuthorizeView>
-            <Authorized>
-                <div class="nav-item px-3">
-                    <form action="Account/Logout" method="post">
-                        <AntiforgeryToken/>
-                        <input type="hidden" name="ReturnUrl" value="@currentUrl"/>
-                        <button type="submit" class="nav-link">
-                            <span class="bi bi-arrow-bar-left-nav-menu" aria-hidden="true"></span> Logout
-                        </button>
-                    </form>
-                </div>
-            </Authorized>
-            <NotAuthorized>
-                <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="Account/Register">
-                        <span class="bi bi-person-nav-menu" aria-hidden="true"></span> Register
-                    </NavLink>
-                </div>
-                <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="/login">
-                        <span class="bi bi-person-badge-nav-menu" aria-hidden="true"></span> Login
-                    </NavLink>
-                </div>
-            </NotAuthorized>
-        </AuthorizeView>
-    </nav>
-</div>-->
-
 @code {
-    private string? currentUrl;
+    private string CurrentUrl { get; set; }
 
     protected override void OnInitialized()
     {
-        currentUrl = NavigationManager.ToBaseRelativePath(NavigationManager.Uri);
+        CurrentUrl = NavigationManager.ToBaseRelativePath(NavigationManager.Uri);
         NavigationManager.LocationChanged += OnLocationChanged;
     }
 
     private void OnLocationChanged(object? sender, LocationChangedEventArgs e)
     {
-        currentUrl = NavigationManager.ToBaseRelativePath(e.Location);
+        CurrentUrl = NavigationManager.ToBaseRelativePath(e.Location);
         StateHasChanged();
     }
 
