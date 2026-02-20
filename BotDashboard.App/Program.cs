@@ -36,8 +36,6 @@ builder.Services.AddIdentityCore<BotHarborUser>(options => options.SignIn.Requir
     .AddSignInManager()
     .AddDefaultTokenProviders();
 
-builder.Services.AddSingleton<IEmailSender<BotHarborUser>, IdentityNoOpEmailSender>();
-
 builder.Services.AddSingleton(_ =>
 {
     var host = builder.Configuration["SSH:Host"];
@@ -74,12 +72,11 @@ app.UseHttpsRedirection();
 
 app.UseStaticFiles();
 app.UseAntiforgery();
-app.MapAccountServices();
 
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
 
 // Add additional endpoints required by the Identity /Account Razor components.
-app.MapAdditionalIdentityEndpoints();
+app.MapAccountServices();
 
 app.Run();
