@@ -1,5 +1,5 @@
 ﻿using BotDashboard.App.Commands;
-using BotDashboard.App.Secrets;
+using BotDashboard.App.Constants;
 using BotDashboard.Models;
 using Renci.SshNet;
 
@@ -7,16 +7,18 @@ namespace BotDashboard.App.Services;
 
 public class UbuntuService
 {
-    private readonly UbuntuCommand _UbuntuCommand;
+    private readonly DigitalOcean _digitalOcean;
 
-    public UbuntuService(UbuntuCommand ubuntuCommand)
+    public UbuntuService(DigitalOcean digitalOcean)
     {
-        _UbuntuCommand = ubuntuCommand;
+        _digitalOcean = digitalOcean;
     }
+    
+    private UbuntuCommand UbuntuCommand { get; } = new();
 
     public double MemoryUsagePercentage()
     {
-        var command = _UbuntuCommand.ListMemoryUsage();
+        var command = UbuntuCommand.ListMemoryUsage();
         var response = RunCommandWithResponse(command);
 
         var trimmedResponse = response.Substring(14).Trim();
@@ -27,7 +29,7 @@ public class UbuntuService
 
     public double CpuUsagePercentage()
     {
-        var command = _UbuntuCommand.ListCpuUsage();
+        var command = UbuntuCommand.ListCpuUsage();
         var response = RunCommandWithResponse(command);
 
         var trimmedResponse = response.Substring(10).Trim();
@@ -38,7 +40,7 @@ public class UbuntuService
 
     public double DiskUsage()
     {
-        var command = _UbuntuCommand.ListDiskUsage();
+        var command = UbuntuCommand.ListDiskUsage();
         var response = RunCommandWithResponse(command);
 
         return Convert.ToDouble(response);
@@ -46,7 +48,7 @@ public class UbuntuService
 
     public string Uptime()
     {
-        var command = _UbuntuCommand.ListUptime();
+        var command = UbuntuCommand.ListUptime();
         var response = RunCommandWithResponse(command);
 
         return response;
@@ -54,7 +56,7 @@ public class UbuntuService
 
     public string BootTime()
     {
-        var command = _UbuntuCommand.ListBootTime();
+        var command = UbuntuCommand.ListBootTime();
         var response = RunCommandWithResponse(command);
 
         return response;
@@ -69,7 +71,7 @@ public class UbuntuService
         var weekStart = today.AddDays(-daysSinceSunday);
         var weekEnd = weekStart.AddDays(6);
 
-        var command = _UbuntuCommand.ListSshLogins(
+        var command = UbuntuCommand.ListSshLogins(
             weekStart.ToString("yyyy-MM-dd"), 
             weekEnd.ToString("yyyy-MM-dd"));
         
@@ -98,7 +100,7 @@ public class UbuntuService
 
     private string RunCommandWithResponse(string command)
     {
-        using var client = new SshClient(DigitalOcean.Host, DigitalOcean.Username, DigitalOcean.Password);
+        using var client = new SshClient(_digitalOcean.Host, _digitalOcean.Username, _digitalOcean.Password);
         client.Connect();
 
         var response = client.RunCommand(command).Execute();

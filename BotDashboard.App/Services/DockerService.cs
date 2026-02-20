@@ -1,5 +1,5 @@
 ﻿using BotDashboard.App.Commands;
-using BotDashboard.App.Secrets;
+using BotDashboard.App.Constants;
 using BotDashboard.Models;
 using Renci.SshNet;
 
@@ -7,55 +7,57 @@ namespace BotDashboard.App.Services;
 
 public class DockerService
 {
-    private readonly DockerCommand _dockercommand;
+    private readonly DigitalOcean _digitalOcean;
 
-    public DockerService(DockerCommand dockercommand)
+    public DockerService(DigitalOcean digitalOcean)
     {
-        _dockercommand = dockercommand;
+        _digitalOcean = digitalOcean;
     }
 
+    private DockerCommand DockerCommand { get; } = new();
+    
     public void RunImage(string imageName)
     {
-        var command = _dockercommand.Run(imageName);
+        var command = DockerCommand.Run(imageName);
         RunCommand(command);
     }
 
     public void RunYtCipher()
     {
-        var command = _dockercommand.RunYtCipher();
+        var command = DockerCommand.RunYtCipher();
         RunCommand(command);
     }
 
     public void StopContainer(string containerId)
     {
-        var command = _dockercommand.Stop(containerId);
+        var command = DockerCommand.Stop(containerId);
         RunCommand(command);
     }
 
     public void StopAllContainers()
     {
-        var command = _dockercommand.StopAll();
+        var command = DockerCommand.StopAll();
         RunCommand(command);
     }
 
     public void RestartContainer(string containerId)
     {
-        var command = _dockercommand.Restart(containerId);
+        var command = DockerCommand.Restart(containerId);
         RunCommand(command);
     }
     
     public void RestartAllContainers()
     {
-        var command = _dockercommand.RestartAll();
+        var command = DockerCommand.RestartAll();
         RunCommand(command);
     }
     
     public List<Container> ListContainers()
     {
-        using var client = new SshClient(DigitalOcean.Host, DigitalOcean.Username, DigitalOcean.Password);
+        using var client = new SshClient(_digitalOcean.Host, _digitalOcean.Username, _digitalOcean.Password);
         client.Connect();
 
-        var command = client.CreateCommand(_dockercommand.ListContainers());
+        var command = client.CreateCommand(DockerCommand.ListContainers());
         var response = command.Execute();
 
         client.Disconnect();
@@ -80,10 +82,10 @@ public class DockerService
     
     public List<DockerImage> ListImages()
     {
-        using var client = new SshClient(DigitalOcean.Host, DigitalOcean.Username, DigitalOcean.Password);
+        using var client = new SshClient(_digitalOcean.Host, _digitalOcean.Username, _digitalOcean.Password);
         client.Connect();
 
-        var command = client.CreateCommand(_dockercommand.ListImages());
+        var command = client.CreateCommand(DockerCommand.ListImages());
         var response = command.Execute();
 
         client.Disconnect();
@@ -107,7 +109,7 @@ public class DockerService
     
     public string PullImage(string imageName)
     {
-        var command = _dockercommand.Pull(imageName);
+        var command = DockerCommand.Pull(imageName);
         var response = RunCommandWithResponse(command);
 
         return response;
@@ -115,7 +117,7 @@ public class DockerService
     
     public string RemoveImage(string imageId)
     {
-        var command = _dockercommand.Remove(imageId);
+        var command = DockerCommand.Remove(imageId);
         var response = RunCommandWithResponse(command);
 
         return response;
@@ -123,7 +125,7 @@ public class DockerService
 
     public string LogContainerCommand(string containerId)
     {
-        var command = _dockercommand.Log(containerId);
+        var command = DockerCommand.Log(containerId);
         var response = RunCommandWithResponse(command);
 
         return response;
@@ -131,7 +133,7 @@ public class DockerService
     
     private void RunCommand(string command)
     {
-        using var client = new SshClient(DigitalOcean.Host, DigitalOcean.Username, DigitalOcean.Password);
+        using var client = new SshClient(_digitalOcean.Host, _digitalOcean.Username, _digitalOcean.Password);
         client.Connect();
         client.RunCommand(command);
         client.Disconnect();
@@ -139,7 +141,7 @@ public class DockerService
 
     private string RunCommandWithResponse(string command)
     {
-        using var client = new SshClient(DigitalOcean.Host, DigitalOcean.Username, DigitalOcean.Password);
+        using var client = new SshClient(_digitalOcean.Host, _digitalOcean.Username, _digitalOcean.Password);
         client.Connect();
          
         var response = client.RunCommand(command).Execute();

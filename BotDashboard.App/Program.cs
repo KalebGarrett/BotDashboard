@@ -2,12 +2,14 @@ using BotDashboard.App;
 using BotDashboard.App.Commands;
 using BotDashboard.App.Components;
 using BotDashboard.App.Components.Account;
+using BotDashboard.App.Constants;
 using BotDashboard.App.Data;
 using BotDashboard.App.Services;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using MudBlazor.Services;
+using ConnectionInfo = Renci.SshNet.ConnectionInfo;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -38,11 +40,17 @@ builder.Services.AddIdentityCore<BotHarborUser>(options => options.SignIn.Requir
 
 builder.Services.AddSingleton<IEmailSender<BotHarborUser>, IdentityNoOpEmailSender>();
 
-builder.Services.AddScoped<DockerService>();
-builder.Services.AddScoped<DockerCommand>();
+builder.Services.AddSingleton(_ =>
+{
+    var host = builder.Configuration["SSH:Host"];
+    var username = builder.Configuration["SSH:Username"];
+    var password = builder.Configuration["SSH:Password"];
+    
+    return new DigitalOcean(host, username, password);
+});
 
+builder.Services.AddScoped<DockerService>();
 builder.Services.AddScoped<UbuntuService>();
-builder.Services.AddScoped<UbuntuCommand>();
 
 builder.Services.AddMudServices(config =>
 {

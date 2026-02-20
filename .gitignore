@@ -266,5 +266,3 @@ __pycache__/
 
 # Cake - Uncomment if you are using it
 # tools/
-BotDashboard.App/Secrets
-BotDashboard.App/appsettings.json
