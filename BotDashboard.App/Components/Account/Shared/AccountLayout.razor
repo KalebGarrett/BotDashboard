@@ -1,11 +1,11 @@
 ﻿@using BotDashboard.App.Components.Layout
 @inherits LayoutComponentBase
-@layout MainLayout
+@layout AccountSettingsLayout
 @inject NavigationManager NavigationManager
 
 @if (HttpContext is null)
 {
-    <p>Loading...</p>
+    <p class="text-white">Loading...</p>
 }
 else
 {

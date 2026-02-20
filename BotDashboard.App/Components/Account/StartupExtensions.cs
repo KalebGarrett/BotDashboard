@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 
-namespace BotDashboard.App;
+namespace BotDashboard.App.Components.Account;
 
 public static class StartupExtensions
 {
