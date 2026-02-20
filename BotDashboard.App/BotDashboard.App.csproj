@@ -38,6 +38,9 @@
       <Compile Update="Components\Pages\Stats.cs">
         <DependentUpon>Stats.razor</DependentUpon>
       </Compile>
+      <Compile Update="Components\Layout\AccountSettingsLayout.cs">
+        <DependentUpon>AccountSettingsLayout.razor</DependentUpon>
+      </Compile>
     </ItemGroup>
 
 </Project>
