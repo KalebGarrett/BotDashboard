@@ -1,13 +1,13 @@
-﻿<MudAppBar Class="shadow-none" Style="background-color: rgba(0, 0, 0, 0);" Bottom="true" Fixed="false" Elevation="1" Dense=true ?>
-    <div class="container">
-        <div class="row text-center">
-            <p class="col-6 text-white">Powered by .NET @DotNetVersion</p>
-            <p class="col-6 text-white">&copy; @CurrentYear Bot Harbor</p>
-        </div>
+﻿<div class="container">
+    <div class="row text-center text-white">
+        <p class="col-6">Powered by .NET @DotNetVersion</p>
+        <p class="col-6">&copy; @CurrentYear Bot Harbor</p>
     </div>
-</MudAppBar>
+</div>
+
 
 @code {
     private Version DotNetVersion { get; set; } = Environment.Version;
     private int CurrentYear { get; set; } = DateTime.UtcNow.Year;
+
 }
