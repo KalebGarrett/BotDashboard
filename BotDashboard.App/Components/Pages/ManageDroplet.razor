@@ -2,54 +2,58 @@
 
 <PageTitle>Manage Droplet</PageTitle>
 
-<MudContainer MaxWidth="MaxWidth.Small">
-    <MudCard Class="pa-6 main-site-card" Elevation="2">
-        <div class="d-flex justify-content-center">
-            <MudImage Width="160" Height="160" Src="imgs/1024px-DigitalOcean_logo.svg.png"
-                      Alt="Digital Ocean"/>
-        </div>
-        <MudCardContent>
-            <MudStack Spacing="3">
-                <MudPaper Class="pa-3" Elevation="1">
-                    <MudText Typo="Typo.subtitle2" GutterBottom="true">
-                        Status
-                    </MudText>
-                    <MudText Typo="Typo.body2">
-                        @Droplet.Status
-                    </MudText>
-                </MudPaper>
-                <MudPaper Class="pa-3" Elevation="1">
-                    <MudText Typo="Typo.subtitle2" GutterBottom="true">
-                        Created At
-                    </MudText>
-                    <MudText Typo="Typo.body2">
-                        @Droplet.CreatedAt
-                    </MudText>
-                </MudPaper>
-                <MudPaper Class="pa-3" Elevation="1">
-                    <MudText Typo="Typo.subtitle2" GutterBottom="true">
-                        Is Locked
-                    </MudText>
-                    <MudText Typo="Typo.body2">
-                        @Droplet.Locked
-                    </MudText>
-                </MudPaper>
-            </MudStack>
-            <MudDivider Class="my-4"/>
-            <MudStack Spacing="2">
-                <MudSwitch T="bool"
-                           @bind-Value="PowerSwitch"
-                           @bind-Value:after="OnPowerSwitchChanged"
-                           Color="Color.Tertiary"
-                           Label="Power"/>
-                <MudButton Disabled="Locked" Class="mt-2" Variant="Variant.Filled" OnClick="RebootDroplet"
-                           Color="Color.Primary"> Reboot
-                </MudButton>
-                <MudButton Disabled="Locked" Class="mt-2" Variant="Variant.Filled" OnClick="GetDropletInfo"
-                           Color="Color.Tertiary">Get
-                    Droplet Info
-                </MudButton>
-            </MudStack>
-        </MudCardContent>
-    </MudCard>
-</MudContainer>
+<AuthorizeView>
+    <Authorized>
+        <MudContainer MaxWidth="MaxWidth.Small">
+            <MudCard Class="pa-6 main-site-card" Elevation="2">
+                <div class="d-flex justify-content-center">
+                    <MudImage Width="160" Height="160" Src="imgs/1024px-DigitalOcean_logo.svg.png"
+                              Alt="Digital Ocean"/>
+                </div>
+                <MudCardContent>
+                    <MudStack Spacing="3">
+                        <MudPaper Class="pa-3" Elevation="1">
+                            <MudText Typo="Typo.subtitle2" GutterBottom="true">
+                                Status
+                            </MudText>
+                            <MudText Typo="Typo.body2">
+                                @Droplet.Status
+                            </MudText>
+                        </MudPaper>
+                        <MudPaper Class="pa-3" Elevation="1">
+                            <MudText Typo="Typo.subtitle2" GutterBottom="true">
+                                Created At
+                            </MudText>
+                            <MudText Typo="Typo.body2">
+                                @Droplet.CreatedAt
+                            </MudText>
+                        </MudPaper>
+                        <MudPaper Class="pa-3" Elevation="1">
+                            <MudText Typo="Typo.subtitle2" GutterBottom="true">
+                                Is Locked
+                            </MudText>
+                            <MudText Typo="Typo.body2">
+                                @Droplet.Locked
+                            </MudText>
+                        </MudPaper>
+                    </MudStack>
+                    <MudDivider Class="my-4"/>
+                    <MudStack Spacing="2">
+                        <MudSwitch T="bool"
+                                   @bind-Value="PowerSwitch"
+                                   @bind-Value:after="OnPowerSwitchChanged"
+                                   Color="Color.Tertiary"
+                                   Label="Power"/>
+                        <MudButton Disabled="Locked" Class="mt-2" Variant="Variant.Filled" OnClick="RebootDroplet"
+                                   Color="Color.Primary"> Reboot
+                        </MudButton>
+                        <MudButton Disabled="Locked" Class="mt-2" Variant="Variant.Filled" OnClick="GetDropletInfo"
+                                   Color="Color.Tertiary">Get
+                            Droplet Info
+                        </MudButton>
+                    </MudStack>
+                </MudCardContent>
+            </MudCard>
+        </MudContainer>
+    </Authorized>
+</AuthorizeView>
