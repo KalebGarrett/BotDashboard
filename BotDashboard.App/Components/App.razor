@@ -37,7 +37,9 @@
     [CascadingParameter]
     private HttpContext HttpContext { get; set; } = default!;
 
-    private IComponentRenderMode? RenderModeForPage => HttpContext.Request.Path.StartsWithSegments("/account")
+    private IComponentRenderMode? RenderModeForPage => 
+        HttpContext.Request.Path.StartsWithSegments("/manage/password") 
+        || HttpContext.Request.Path.StartsWithSegments("/manage/setpassword")
         ? null
         : InteractiveServer;
 }
