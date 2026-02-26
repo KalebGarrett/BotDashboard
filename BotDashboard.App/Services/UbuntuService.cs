@@ -7,9 +7,9 @@ namespace BotDashboard.App.Services;
 
 public class UbuntuService
 {
-    private readonly DigitalOcean _digitalOcean;
+    private readonly DigitalOceanDropletCredentials _digitalOcean;
 
-    public UbuntuService(DigitalOcean digitalOcean)
+    public UbuntuService(DigitalOceanDropletCredentials digitalOcean)
     {
         _digitalOcean = digitalOcean;
     }

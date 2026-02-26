@@ -7,9 +7,9 @@ namespace BotDashboard.App.Services;
 
 public class DockerService
 {
-    private readonly DigitalOcean _digitalOcean;
+    private readonly DigitalOceanDropletCredentials _digitalOcean;
 
-    public DockerService(DigitalOcean digitalOcean)
+    public DockerService(DigitalOceanDropletCredentials digitalOcean)
     {
         _digitalOcean = digitalOcean;
     }

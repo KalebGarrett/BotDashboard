@@ -1,9 +1,9 @@
-using BotDashboard.App;
 using BotDashboard.App.Components;
 using BotDashboard.App.Components.Account;
 using BotDashboard.App.Credentials;
 using BotDashboard.App.Data;
 using BotDashboard.App.Services;
+using DigitalOcean.API;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -38,12 +38,28 @@ builder.Services.AddIdentityCore<BotHarborUser>(options => options.SignIn.Requir
 
 builder.Services.AddSingleton(_ =>
 {
+    var apiToken = builder.Configuration["ApiTokens:DigitalOcean"];
+
+    return new DigitalOceanCredentials(apiToken);
+});
+
+builder.Services.AddSingleton(_ =>
+{
+    var token = builder.Configuration["ApiTokens:DigitalOcean"];
+    return new DigitalOceanClient(token);
+});
+
+builder.Services.AddSingleton(_ =>
+{
+    var id = builder.Configuration["SSH:Id"];
     var host = builder.Configuration["SSH:Host"];
     var username = builder.Configuration["SSH:Username"];
     var password = builder.Configuration["SSH:Password"];
-    
-    return new DigitalOcean(host, username, password);
+
+    return new DigitalOceanDropletCredentials(id, host, username, password);
 });
+
+builder.Services.AddScoped<DigitalOceanService>();
 
 builder.Services.AddScoped<DockerService>();
 builder.Services.AddScoped<UbuntuService>();
