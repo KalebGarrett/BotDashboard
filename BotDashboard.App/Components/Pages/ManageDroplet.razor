@@ -38,12 +38,14 @@
                         </MudPaper>
                     </MudStack>
                     <MudDivider Class="my-4"/>
-                    <MudStack Spacing="2">
+                    <MudStack Spacing="2" AlignItems="AlignItems.Center">
                         <MudSwitch T="bool"
                                    @bind-Value="PowerSwitch"
                                    @bind-Value:after="OnPowerSwitchChanged"
                                    Color="Color.Tertiary"
                                    Label="Power"/>
+                    </MudStack>
+                    <MudStack Spacing="2">
                         <MudButton Disabled="Locked" Class="mt-2" Variant="Variant.Filled" OnClick="RebootDroplet"
                                    Color="Color.Primary"> Reboot
                         </MudButton>
