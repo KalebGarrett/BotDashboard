@@ -30,8 +30,7 @@
                 </MudHidden>
                 <MudSpacer/>
                 <MudText>Welcome, @context.User.Identity?.Name!</MudText>
-                <MudSwitch Class="pa-4" T="bool" Size="Size.Small" @bind-Value="Switch.OnInitialized"
-                           @onclick="Switch.ToggleOnInitialized" Color="Color.Tertiary"></MudSwitch>
+                <MudDivider Class="mx-1" Vertical="true" />
                 <MudMenu DropShadow="true" AnchorOrigin="Origin.BottomRight">
                     <ActivatorContent>
                         <MudAvatar>
