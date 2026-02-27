@@ -27,6 +27,7 @@ public partial class ManageDroplet
         await Task.Yield();
         
         Droplet = await DigitalOceanService.GetDropletInfo();
+        PowerSwitch = Droplet.Status == "active";
         
         Locked = false;
         await InvokeAsync(StateHasChanged);
