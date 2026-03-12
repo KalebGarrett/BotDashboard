@@ -48,20 +48,6 @@ public partial class Commands
         Locked = false;
         await InvokeAsync(StateHasChanged);
     }
-    
-    private async Task RunYtCipher()
-    {
-        Locked = true;
-        await InvokeAsync(StateHasChanged);
-        await Task.Yield();
-        
-        DockerService.RunYtCipher();
-        await ListContainers(isInternalCall: true);
-        CreateSnackbarMessage("Successfully ran image!", Severity.Success);
-
-        Locked = false;
-        await InvokeAsync(StateHasChanged);
-    }
 
     private async Task StopContainer(string containerId)
     {

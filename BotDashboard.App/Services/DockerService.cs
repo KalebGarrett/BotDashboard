@@ -22,12 +22,6 @@ public class DockerService
         RunCommand(command);
     }
 
-    public void RunYtCipher()
-    {
-        var command = DockerCommand.RunYtCipher();
-        RunCommand(command);
-    }
-
     public void StopContainer(string containerId)
     {
         var command = DockerCommand.Stop(containerId);

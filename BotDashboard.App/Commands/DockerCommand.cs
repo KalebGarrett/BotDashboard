@@ -7,11 +7,6 @@ public class DockerCommand
         return $"docker run {imageName}";
     }
 
-    public string RunYtCipher()
-    {
-        return "cd yt-cipher && docker compose up -d";
-    }
-
     public string Stop(string containerId)
     {
         return $"docker stop {containerId}";

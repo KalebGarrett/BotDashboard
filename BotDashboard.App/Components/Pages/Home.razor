@@ -107,7 +107,7 @@
                                                        Color="Color.Tertiary"
                                                        Variant="Variant.Filled"
                                                        Size="Size.Large"
-                                                       OnClick="RunYtCipher">
+                                                       OnClick="() => RunImage(DockerRepository.YtCipher)">
                                                 Start Youtube Cipher
                                             </MudButton>
                                         </div>
@@ -199,12 +199,12 @@
                                         <div class="mt-2 ms-3">
                                             @if (container.Image.Contains("ghcr.io/kikkia/yt-cipher"))
                                             {
-                                                <img src="https://www.svgviewer.dev/static-svgs/405425/youtube"
+                                                <img src="https://www.svgrepo.com/show/28730/youtube.svg"
                                                      width="50" height="50" alt="@container.Image"/>
                                             }
                                             else
                                             {
-                                                <img src="https://www.svgviewer.dev/static-svgs/13822/discord-icon.svg"
+                                                <img src="https://www.svgrepo.com/show/353655/discord-icon.svg"
                                                      width="50" height="50" alt="@container.Image"/>
                                             }
                                         </div>
