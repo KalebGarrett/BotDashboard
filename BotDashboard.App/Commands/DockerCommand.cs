@@ -1,9 +1,18 @@
-﻿namespace BotDashboard.App.Commands;
+﻿using BotDashboard.App.Constants;
+
+namespace BotDashboard.App.Commands;
 
 public class DockerCommand
 {
     public string Run(string imageName)
     {
+        // Jam Junction runs the AI song recommender against an Ollama server on the
+        // droplet's loopback (127.0.0.1:11434). Host networking lets the container
+        // reach that loopback, and OLLAMA_MODEL selects the 1B model that fits the
+        // 4 GB droplet (the image's baked-in default is the larger 3B model).
+        if (imageName == DockerRepository.JamJunction)
+            return $"docker run -d --network host -e OLLAMA_MODEL=llama3.2:1b {imageName}";
+
         return $"docker run {imageName}";
     }
 
