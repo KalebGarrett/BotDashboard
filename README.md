@@ -45,10 +45,11 @@ cp .env.example .env   # fill in the blanks
 docker compose up -d
 ```
 
-Local development needs only the database:
+Local development needs only the database. The dev overlay publishes it on loopback, which
+the NAS deliberately does not do:
 
 ```bash
-docker compose up -d postgres
+docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d postgres
 dotnet run --project BotDashboard.App
 ```
 

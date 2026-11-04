@@ -1,0 +1,14 @@
+# Local development overlay. Publishes Postgres on the workstation's loopback so the app can
+# be run straight from an IDE against it:
+#
+#   docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d postgres
+#   dotnet run --project BotDashboard.App
+#
+# Do not use this on the NAS. UGOS already has PostgreSQL 15 on 127.0.0.1:5432, and the stack
+# does not need a published port there -- the app resolves `postgres` over the compose network.
+
+services:
+  postgres:
+    ports:
+      # Loopback only, so the LAN cannot reach the database.
+      - "${POSTGRES_BIND:-127.0.0.1}:${POSTGRES_PORT:-5432}:5432"

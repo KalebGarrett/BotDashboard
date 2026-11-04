@@ -5,14 +5,15 @@
 #   tailscale  joins the tailnet and terminates TLS in front of the app
 #   botharbor  the Blazor dashboard, sharing the tailscale network namespace
 #
-# The app publishes no host ports. The only way in is the tailnet, so the dashboard is never
-# exposed to the internet and needs no router port forward.
+# Nothing publishes a host port. The only way in is the tailnet, so the dashboard is never
+# exposed to the internet and needs no router port forward, and Postgres stays off the NAS's
+# own already-occupied 5432.
 #
 #   docker compose up -d
 #
 # Only POSTGRES_PASSWORD uses a ${VAR:?} guard. Compose interpolates the whole file before it
 # filters down to the services you named, so a guard on one service aborts `up` for every
-# other one too -- `docker compose up -d postgres` for local dev would die on TS_AUTHKEY.
+# other one too -- bringing up postgres alone for local dev would die on TS_AUTHKEY.
 # The rest are ${VAR:-}: the tailscale container reports a bad auth key itself, and the app
 # logs a warning at startup naming any droplet settings it is missing.
 #
@@ -33,10 +34,10 @@ services:
       POSTGRES_INITDB_ARGS: "--encoding=UTF8 --locale=C"
     volumes:
       - postgres-data:/var/lib/postgresql/data
-    ports:
-      # Loopback only, so `dotnet run` on a dev box can reach it but the LAN cannot.
-      # The app container talks to `postgres:5432` over the compose network instead.
-      - "${POSTGRES_BIND:-127.0.0.1}:5432:5432"
+    # No published port. UGOS runs its own PostgreSQL 15 on 127.0.0.1:5432, so publishing
+    # here fails with "address already in use" on the NAS. The app reaches `postgres:5432`
+    # over the compose network. For local development, add docker-compose.dev.yml, which
+    # publishes it on the host.
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-botharbor} -d ${POSTGRES_DB:-botharbor}"]
       interval: 10s

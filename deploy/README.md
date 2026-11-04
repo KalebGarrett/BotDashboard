@@ -178,16 +178,21 @@ gunzip -c botharbor-20261104.sql.gz | \
 | Dashboard up but droplet actions fail | Droplet credentials or the DigitalOcean token are wrong — or you rotated them during Azure teardown and didn't update `.env`. |
 | `Running without these droplet settings: ...` in the logs | Exactly what it says: those keys are blank in `.env`. Sign-in and the UI still work, so this is a warning, not a crash. |
 | `up -d postgres` fails on an unrelated variable | Should not happen any more. Only `POSTGRES_PASSWORD` uses a `${VAR:?}` guard, because Compose interpolates the whole file before narrowing to the services you named, so a guard anywhere aborts every `up`. Don't add new ones. |
+| `failed to bind host port 127.0.0.1:5432: address already in use` | UGOS runs its own PostgreSQL 15 on 5432 (`/usr/ugreen/etc/psql`). The stack no longer publishes a port, so this only happens if you added `docker-compose.dev.yml` on the NAS. Drop it; the app reaches `postgres:5432` over the compose network. |
 
 ## Local development
 
 Postgres only, app from Rider:
 
 ```bash
-docker compose up -d postgres
+# The dev overlay publishes 5432 on loopback; the NAS stack deliberately does not.
+docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d postgres
 # appsettings.Development.json already points at localhost:5432
 dotnet run --project BotDashboard.App
 ```
+
+If something already owns 5432 on your workstation, set `POSTGRES_PORT` in `.env` and update
+the connection string in `appsettings.Development.json` to match.
 
 `BotHarbor:BehindReverseProxy` stays `false` outside the container, so local runs keep HTTPS
 redirection and `UseHttpsRedirection` behaves normally.
