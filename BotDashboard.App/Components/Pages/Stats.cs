@@ -22,7 +22,7 @@ public partial class Stats
 
     private List<SankeyChartNode> Nodes { get; } =
     [
-        new("Droplet", 0),
+        new("Cortex", 0),
 
         new("/media", 1),
         new("/snap", 1),
@@ -43,23 +43,24 @@ public partial class Stats
 
     private List<SankeyChartEdge> Edges { get; } =
     [
-        new("Droplet", "/media", 1),
-        new("Droplet", "/snap", 9),
-        new("Droplet", "/mnt", 1),
-        new("Droplet", "/sys", 1),
-        new("Droplet", "/var", 57),
-        new("Droplet", "/dev", 1),
-        new("Droplet", "/srv", 1),
-        new("Droplet", "/opt", 1),
-        new("Droplet", "/tmp", 1),
-        new("Droplet", "/etc", 1),
-        new("Droplet", "/lost+found", 1),
-        new("Droplet", "/usr", 22),
-        new("Droplet", "/boot", 2),
-        new("Droplet", "/run", 1),
+        new("Cortex", "/media", 1),
+        new("Cortex", "/snap", 9),
+        new("Cortex", "/mnt", 1),
+        new("Cortex", "/sys", 1),
+        new("Cortex", "/var", 57),
+        new("Cortex", "/dev", 1),
+        new("Cortex", "/srv", 1),
+        new("Cortex", "/opt", 1),
+        new("Cortex", "/tmp", 1),
+        new("Cortex", "/etc", 1),
+        new("Cortex", "/lost+found", 1),
+        new("Cortex", "/usr", 22),
+        new("Cortex", "/boot", 2),
+        new("Cortex", "/run", 1),
     ];
 
     private double DiskUsed { get; set; }
+    private double DiskTotal { get; set; }
     private static double DiskUsedPercentage { get; set; }
     private double FreeDisk { get; set; }
     private static double FreeDiskPercentage { get; set; }
@@ -152,9 +153,14 @@ public partial class Stats
         await Task.Yield();
 
         DiskUsed = UbuntuService.DiskUsage();
-        DiskUsedPercentage = (DiskUsed / 25) * 100;
+        DiskTotal = UbuntuService.DiskTotal();
 
-        FreeDisk = 25 - DiskUsed;
+        // Read the real size rather than assuming one. This used to divide by a hardcoded 25,
+        // the droplet's disk; against Cortex's ~107 GiB root that reported several hundred
+        // percent used and a negative amount free.
+        DiskUsedPercentage = DiskTotal > 0 ? (DiskUsed / DiskTotal) * 100 : 0;
+
+        FreeDisk = Math.Max(DiskTotal - DiskUsed, 0);
         FreeDiskPercentage = 100 - DiskUsedPercentage;
 
         DiskFetchTime = DateTime.UtcNow.ToLocalTime().ToString(CultureInfo.CurrentCulture);

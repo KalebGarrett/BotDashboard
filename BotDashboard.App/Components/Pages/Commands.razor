@@ -1,5 +1,6 @@
 ﻿@page "/commands"
 @using BotDashboard.App.Constants
+@using BotDashboard.Models
 @using MudBlazor
 @inject ISnackbar Snackbar
 
@@ -223,9 +224,64 @@
                                     <div class="container justify-content-center">
                                         <p class="text-white-50 small mb-3">
                                             Powers Jam Junction's song recommender. Runs as a systemd
-                                            service on the droplet, bound to 127.0.0.1:11434.
+                                            service on the DigitalOcean droplet, bound to 127.0.0.1:11434.
+                                            Cortex reaches it over the tailnet.
                                         </p>
+
+                                        @if (OllamaHealth != null)
+                                        {
+                                            <div class="bh-stat-row mb-3">
+                                                <div class="bh-stat">
+                                                    <span class="bh-stat__label">Service</span>
+                                                    <span class="bh-stat__value" style="font-size: 1rem;">
+                                                        <span class="bh-status @(OllamaHealth.ServiceActive ? "bh-status--up" : "bh-status--down")"></span>
+                                                        @OllamaHealth.ServiceState
+                                                    </span>
+                                                </div>
+                                                <div class="bh-stat">
+                                                    <span class="bh-stat__label">Cortex &rarr; Ollama</span>
+                                                    <span class="bh-stat__value" style="font-size: 1rem;">
+                                                        <span class="bh-status @(OllamaHealth.Reachable ? "bh-status--up" : "bh-status--down")"></span>
+                                                        @(OllamaHealth.Reachable ? "connected" : "no route")
+                                                    </span>
+                                                </div>
+                                                <div class="bh-stat">
+                                                    <span class="bh-stat__label">Latency</span>
+                                                    <span class="bh-stat__value bh-stat__value--accent" style="font-size: 1rem;">
+                                                        @(OllamaHealth.Reachable ? $"{OllamaHealth.LatencyMs} ms" : "-")
+                                                    </span>
+                                                </div>
+                                                <div class="bh-stat">
+                                                    <span class="bh-stat__label">Models</span>
+                                                    <span class="bh-stat__value" style="font-size: 1rem;">
+                                                        @(OllamaHealth.Models.Count > 0
+                                                            ? string.Join(", ", OllamaHealth.Models)
+                                                            : "-")
+                                                    </span>
+                                                </div>
+                                            </div>
+
+                                            <p class="text-white-50 small mb-2">
+                                                Endpoint: <code>@OllamaHealth.Endpoint</code>
+                                            </p>
+
+                                            @if (!string.IsNullOrWhiteSpace(OllamaHealth.Error))
+                                            {
+                                                <MudAlert Severity="Severity.Warning" Dense="true" Class="mb-3">
+                                                    @OllamaHealth.Error
+                                                </MudAlert>
+                                            }
+
+                                            <p class="bh-timestamp mb-3">Last checked: @OllamaHealthFetchTime</p>
+                                        }
                                         <div class="row g-2">
+                                            <div class="col-md-4">
+                                                <MudButton Disabled="Locked" FullWidth="true"
+                                                           Color="Color.Info" Variant="Variant.Filled"
+                                                           Size="Size.Large" OnClick="() => CheckOllamaHealth()">
+                                                    Check Connection
+                                                </MudButton>
+                                            </div>
                                             <div class="col-md-4">
                                                 <MudButton Disabled="Locked" FullWidth="true"
                                                            Color="Color.Primary" Variant="Variant.Filled"

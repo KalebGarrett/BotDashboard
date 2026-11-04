@@ -100,6 +100,32 @@ builder.Services.AddSingleton(_ =>
     return new DigitalOceanDropletCredentials(id, host, username, password);
 });
 
+// Cortex, the NAS. Everything container-related and the whole Stats page run here; the droplet
+// is left with only the Manage Droplet page and the Ollama controls.
+builder.Services.AddSingleton(_ =>
+{
+    var host = builder.Configuration["Nas:Host"];
+    var username = builder.Configuration["Nas:Username"];
+    var password = builder.Configuration["Nas:Password"];
+
+    return new NasCredentials(host, username, password);
+});
+
+builder.Services.AddSingleton(_ =>
+{
+    var host = builder.Configuration["Ollama:Host"];
+    var port = builder.Configuration.GetValue("Ollama:Port", 11434);
+
+    return new OllamaEndpoint(host, port);
+});
+
+// Short timeout on purpose: this backs a status panel, and a dead tailnet path should report
+// itself in seconds rather than leaving the page spinning on the default 100.
+builder.Services.AddHttpClient("ollama", client =>
+{
+    client.Timeout = TimeSpan.FromSeconds(8);
+});
+
 builder.Services.AddScoped<DigitalOceanService>();
 
 builder.Services.AddScoped<DockerService>();
@@ -164,6 +190,33 @@ var startupLogger = app.Services
 // not throw -- that would break `dotnet run` for local UI work, the same way the compose
 // ${VAR:?} guards used to break `docker compose up -d postgres`. Name what is missing instead,
 // once, at startup, so a half-configured deployment is obvious in `docker compose logs`.
+// Cortex first: without it the container grid and the whole Stats page are blind, which is a
+// far bigger hole than the droplet-only features below.
+var missingNasSettings = new[]
+    {
+        ("Nas:Host", "NAS_HOST"),
+        ("Nas:Username", "NAS_USERNAME"),
+        ("Nas:Password", "NAS_PASSWORD")
+    }
+    .Where(setting => string.IsNullOrWhiteSpace(app.Configuration[setting.Item1]))
+    .Select(setting => setting.Item2)
+    .ToArray();
+
+if (missingNasSettings.Length > 0)
+{
+    startupLogger.LogWarning(
+        "Running without these Cortex settings: {Missing}. Containers, images and the Stats "
+        + "page all read from Cortex over SSH and will fail until these are set in .env.",
+        string.Join(", ", missingNasSettings));
+}
+
+if (string.IsNullOrWhiteSpace(app.Configuration["Ollama:Host"]))
+{
+    startupLogger.LogWarning(
+        "Ollama:Host is not set, so the Ollama health panel cannot test the path from Cortex "
+        + "to the droplet. Set OLLAMA_HOST in .env to the droplet's tailnet address.");
+}
+
 var missingDropletSettings = new[]
     {
         ("ApiTokens:DigitalOcean", "DIGITALOCEAN_TOKEN"),
@@ -179,8 +232,8 @@ var missingDropletSettings = new[]
 if (missingDropletSettings.Length > 0)
 {
     startupLogger.LogWarning(
-        "Running without these droplet settings: {Missing}. Sign-in and the UI work, but "
-        + "listing containers or stats will fail until they are set in .env. See deploy/README.md.",
+        "Running without these droplet settings: {Missing}. The Manage Droplet page and the "
+        + "Ollama controls need them; everything else now reads from Cortex. See deploy/README.md.",
         string.Join(", ", missingDropletSettings));
 }
 

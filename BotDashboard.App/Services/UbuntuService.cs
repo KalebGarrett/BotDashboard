@@ -7,11 +7,11 @@ namespace BotDashboard.App.Services;
 
 public class UbuntuService
 {
-    private readonly DigitalOceanDropletCredentials _digitalOcean;
+    private readonly NasCredentials _nas;
 
-    public UbuntuService(DigitalOceanDropletCredentials digitalOcean)
+    public UbuntuService(NasCredentials nas)
     {
-        _digitalOcean = digitalOcean;
+        _nas = nas;
     }
     
     private UbuntuCommand UbuntuCommand { get; } = new();
@@ -36,6 +36,15 @@ public class UbuntuService
         var usedCpu = trimmedResponse.Remove(trimmedResponse.LastIndexOf('%'));
 
         return Convert.ToDouble(usedCpu);
+    }
+
+    /// <summary>Total size of Cortex's root filesystem, in GiB.</summary>
+    public double DiskTotal()
+    {
+        var command = UbuntuCommand.ListDiskTotal();
+        var response = RunCommandWithResponse(command);
+
+        return Convert.ToDouble(response);
     }
 
     public double DiskUsage()
@@ -100,7 +109,17 @@ public class UbuntuService
 
     private string RunCommandWithResponse(string command)
     {
-        using var client = new SshClient(_digitalOcean.Host, _digitalOcean.Username, _digitalOcean.Password);
+        // Fail with a sentence naming the missing setting. Without it SSH.NET throws from deep
+        // inside Renci with a message that says nothing about which value is blank, and in a
+        // component's OnInitializedAsync that takes the whole Blazor circuit down with it.
+        if (!_nas.IsConfigured)
+        {
+            throw new InvalidOperationException(
+                "Cortex SSH settings are missing. Set NAS_HOST, NAS_USERNAME and NAS_PASSWORD "
+                + "in .env, then restart the app. See deploy/README.md.");
+        }
+
+        using var client = new SshClient(_nas.Host, _nas.Username, _nas.Password);
         client.Connect();
 
         var response = client.RunCommand(command).Execute();

@@ -1,5 +1,8 @@
+using System.Diagnostics;
+using System.Text.Json;
 using BotDashboard.App.Commands;
 using BotDashboard.App.Credentials;
+using BotDashboard.Models;
 using Renci.SshNet;
 
 namespace BotDashboard.App.Services;
@@ -14,10 +17,17 @@ namespace BotDashboard.App.Services;
 public class OllamaService
 {
     private readonly DigitalOceanDropletCredentials _digitalOcean;
+    private readonly OllamaEndpoint _endpoint;
+    private readonly IHttpClientFactory _httpClientFactory;
 
-    public OllamaService(DigitalOceanDropletCredentials digitalOcean)
+    public OllamaService(
+        DigitalOceanDropletCredentials digitalOcean,
+        OllamaEndpoint endpoint,
+        IHttpClientFactory httpClientFactory)
     {
         _digitalOcean = digitalOcean;
+        _endpoint = endpoint;
+        _httpClientFactory = httpClientFactory;
     }
 
     private OllamaCommand OllamaCommand { get; } = new();
@@ -43,6 +53,80 @@ public class OllamaService
     public string Version() => RunCommandWithResponse(OllamaCommand.Version());
 
     public string MemoryUsage() => RunCommandWithResponse(OllamaCommand.MemoryUsage());
+
+    /// <summary>
+    /// Whether Ollama is up, and whether Cortex can actually reach it.
+    /// </summary>
+    /// <remarks>
+    /// The HTTP half does not go through SSH. Bot Harbor shares the Tailscale sidecar's network
+    /// namespace, so it calls the droplet's tailnet address directly -- the same path Jam
+    /// Junction would take from Cortex. Asking the droplet to curl its own loopback would
+    /// always succeed and would prove nothing about whether Cortex can get there.
+    /// </remarks>
+    public async Task<OllamaHealth> HealthAsync(CancellationToken cancellationToken = default)
+    {
+        var health = new OllamaHealth { Endpoint = _endpoint.BaseUrl };
+
+        // Half one: the systemd unit, over SSH to the droplet.
+        try
+        {
+            health.ServiceState = RunCommandWithResponse("systemctl is-active ollama").Trim();
+        }
+        catch (Exception exception)
+        {
+            health.ServiceState = "unknown";
+            health.Error = $"Could not read the service state: {exception.Message}";
+        }
+
+        if (!_endpoint.IsConfigured)
+        {
+            health.Error = "Ollama__Host is not configured. Set OLLAMA_HOST in .env.";
+            return health;
+        }
+
+        // Half two: the HTTP API, from here, across the tailnet.
+        var stopwatch = Stopwatch.StartNew();
+        try
+        {
+            var client = _httpClientFactory.CreateClient("ollama");
+            using var response = await client.GetAsync(
+                $"{_endpoint.BaseUrl}/api/tags", cancellationToken);
+
+            stopwatch.Stop();
+            health.LatencyMs = stopwatch.ElapsedMilliseconds;
+
+            if (!response.IsSuccessStatusCode)
+            {
+                health.Error = $"HTTP {(int)response.StatusCode} from {_endpoint.BaseUrl}/api/tags";
+                return health;
+            }
+
+            health.Reachable = true;
+
+            var body = await response.Content.ReadAsStringAsync(cancellationToken);
+            using var document = JsonDocument.Parse(body);
+            if (document.RootElement.TryGetProperty("models", out var models))
+            {
+                foreach (var model in models.EnumerateArray())
+                {
+                    if (model.TryGetProperty("name", out var name))
+                    {
+                        health.Models.Add(name.GetString());
+                    }
+                }
+            }
+        }
+        catch (Exception exception)
+        {
+            stopwatch.Stop();
+            health.LatencyMs = stopwatch.ElapsedMilliseconds;
+            // Nearly always a timeout, which here means the tailnet path is down rather than
+            // that Ollama is broken -- worth distinguishing, so report the message verbatim.
+            health.Error = exception.Message;
+        }
+
+        return health;
+    }
 
     private string RunCommandWithResponse(string command)
     {

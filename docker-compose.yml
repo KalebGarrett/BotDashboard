@@ -103,6 +103,17 @@ services:
       BotHarbor__BootstrapUser__Password: ${BOTHARBOR_ADMIN_PASSWORD:-}
       Database__MigrateOnStartup: "true"
       ApiTokens__DigitalOcean: ${DIGITALOCEAN_TOKEN:-}
+      # Cortex. Containers, images and the Stats page all read from here over SSH. The app
+      # runs on this machine, so it is SSHing back to its own host -- see NasCredentials for
+      # why that beats mounting the docker socket.
+      Nas__Host: ${NAS_HOST:-}
+      Nas__Username: ${NAS_USERNAME:-}
+      Nas__Password: ${NAS_PASSWORD:-}
+      # The droplet's tailnet address. Reached directly from this container, which shares the
+      # tailscale sidecar's namespace, so the health panel tests the real path rather than
+      # asking the droplet to check itself.
+      Ollama__Host: ${OLLAMA_HOST:-}
+      Ollama__Port: ${OLLAMA_PORT:-11434}
       SSH__Id: ${DROPLET_ID:-}
       SSH__Host: ${DROPLET_HOST:-}
       SSH__Username: ${DROPLET_USERNAME:-}

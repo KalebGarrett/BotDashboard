@@ -22,6 +22,9 @@ public partial class Commands
     private string Output { get; set; }
     private string OutputFetchTime { get; set; }
     
+    private OllamaHealth OllamaHealth { get; set; }
+    private string OllamaHealthFetchTime { get; set; }
+
     private bool Locked { get; set; }
 
     protected override async Task OnInitializedAsync()
@@ -34,6 +37,44 @@ public partial class Commands
 
         await ListContainers(isInternalCall: true);
         await ListImages(isInternalCall: true);
+        await CheckOllamaHealth(showSnackbar: false);
+    }
+
+    /// <summary>
+    /// Refreshes the Ollama panel: the systemd state over SSH, and whether Cortex can reach
+    /// the HTTP API across the tailnet.
+    /// </summary>
+    private async Task CheckOllamaHealth(bool showSnackbar = true)
+    {
+        Locked = true;
+        await InvokeAsync(StateHasChanged);
+        await Task.Yield();
+
+        try
+        {
+            OllamaHealth = await OllamaService.HealthAsync();
+            OllamaHealthFetchTime = DateTime.UtcNow.ToLocalTime().ToString(CultureInfo.CurrentCulture);
+
+            if (showSnackbar)
+            {
+                CreateSnackbarMessage(
+                    OllamaHealth.Healthy ? "Ollama is reachable!" : "Ollama is not fully healthy.",
+                    OllamaHealth.Healthy ? Severity.Success : Severity.Warning);
+            }
+        }
+        catch (Exception exception)
+        {
+            OllamaHealth = new OllamaHealth { Error = exception.Message };
+            OllamaHealthFetchTime = DateTime.UtcNow.ToLocalTime().ToString(CultureInfo.CurrentCulture);
+
+            if (showSnackbar)
+            {
+                CreateSnackbarMessage("Could not check Ollama.", Severity.Error);
+            }
+        }
+
+        Locked = false;
+        await InvokeAsync(StateHasChanged);
     }
 
    private async Task RunImage(string imageName)

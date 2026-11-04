@@ -54,6 +54,24 @@ cd botharbor
 At <https://login.tailscale.com/admin/settings/keys> create a key that is **Reusable**, with
 **Ephemeral off** (the node must survive restarts), and tagged `tag:container`.
 
+### 3b. Give the Cortex account docker and journal access
+
+Bot Harbor reads containers, images and the whole Stats page from Cortex over SSH. Two group
+memberships make that work without a password prompt SSH.NET has no way to answer:
+
+```bash
+sudo usermod -aG docker,systemd-journal $USER
+```
+
+Then **log out and back in**, or the new groups will not apply to your session.
+
+- `docker` lets `docker ps` run without `sudo`.
+- `systemd-journal` lets `journalctl -u ssh` read the SSH logins the Stats chart plots.
+
+Being in the `docker` group is equivalent to root on this machine. That is not a new privilege
+if the account already has full `sudo`, but it is worth knowing before you grant it. Without
+it, every container panel reports a permission error from the Docker socket.
+
 ### 4. Fill in the environment
 
 Use the script rather than an editor:
@@ -176,6 +194,26 @@ gunzip -c botharbor-20261104.sql.gz | \
   docker compose exec -T postgres psql -U botharbor -d botharbor
 ```
 
+## Which host serves what
+
+| Feature | Runs against | How |
+| --- | --- | --- |
+| Containers, images, run/stop/restart/pull/logs | **Cortex** | SSH, `NAS_*` |
+| Stats: memory, CPU, disk, uptime, SSH logins | **Cortex** | SSH, `NAS_*` |
+| Manage Droplet: status, power, reboot | droplet | DigitalOcean API, `DIGITALOCEAN_TOKEN` + `DROPLET_ID` |
+| Ollama: status, models, start/stop/restart | droplet | SSH, `DROPLET_*` |
+| Ollama health panel | both | systemd state over SSH to the droplet, **plus** an HTTP call from Bot Harbor across the tailnet |
+
+That last row is the one worth understanding. The panel reports two things separately because
+they fail separately: the systemd unit can be `active` while the port answers nothing, and the
+tailnet path can be down while Ollama is perfectly healthy. Jam Junction only ever cares about
+the second, so the HTTP call is made from Bot Harbor itself — which shares the Tailscale
+sidecar's network namespace — rather than asking the droplet to curl its own loopback, which
+would always succeed and prove nothing.
+
+`OLLAMA_HOST` must therefore be the droplet's **tailnet** address, not its public IP. Ollama
+has no authentication of its own; the tailnet is the only thing keeping it private.
+
 ## Troubleshooting
 
 | Symptom | Cause / fix |
@@ -189,6 +227,10 @@ gunzip -c botharbor-20261104.sql.gz | \
 | Can't log in, fresh database | No bootstrap user was configured. Set `BOTHARBOR_ADMIN_EMAIL` / `_PASSWORD` in `.env` and `docker compose up -d botharbor`. |
 | Dashboard up but droplet actions fail | Droplet credentials or the DigitalOcean token are wrong — or you rotated them during Azure teardown and didn't update `.env`. |
 | `Running without these droplet settings: ...` in the logs | Exactly what it says: those keys are blank in `.env`. Sign-in and the UI still work, so this is a warning, not a crash. |
+| `permission denied ... /var/run/docker.sock` on every container panel | The Cortex account is not in the `docker` group. See step 3b, and log out and back in afterwards. |
+| SSH logins chart is empty | The account is not in `systemd-journal`, or the unit is named `sshd` rather than `ssh`. The command asks for both. |
+| Ollama panel: service `active` but `no route` | The tailnet path from Cortex to the droplet is down, not Ollama. Check `tailscale status` on both, and that `OLLAMA_HOST` is the 100.x address. |
+| Ollama panel: `no route` and service `unknown` | The droplet is unreachable entirely. Check it is powered on from the Manage Droplet page. |
 | Credentials are right but authentication fails | A value in `.env` contains a `$` and is not single-quoted, so Compose interpolated part of it away. Re-run `./deploy/configure.sh`, which quotes correctly. An apostrophe cannot be represented in `.env` at all; change that credential. |
 | `up -d postgres` fails on an unrelated variable | Should not happen any more. Only `POSTGRES_PASSWORD` uses a `${VAR:?}` guard, because Compose interpolates the whole file before narrowing to the services you named, so a guard anywhere aborts every `up`. Don't add new ones. |
 | `failed to bind host port 127.0.0.1:5432: address already in use` | UGOS runs its own PostgreSQL 15 on 5432 (`/usr/ugreen/etc/psql`). The stack no longer publishes a port, so this only happens if you added `docker-compose.dev.yml` on the NAS. Drop it; the app reaches `postgres:5432` over the compose network. |

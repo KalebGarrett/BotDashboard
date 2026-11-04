@@ -110,6 +110,19 @@ check_tailscale_key() {
     return 1
 }
 
+check_tailnet_address() {
+    # Tailscale hands out 100.64.0.0/10. A public IP here would mean reaching an
+    # unauthenticated LLM server across the internet, so reject it rather than warn.
+    case "$1" in
+        100.*)    return 0 ;;
+        *.ts.net) return 0 ;;
+    esac
+    echo "  not a tailnet address. Tailscale addresses start with 100. or end in .ts.net." >&2
+    echo "  Ollama has no authentication, so it must not be reached over the public" >&2
+    echo "  internet. Run: tailscale status   on the droplet to find its address." >&2
+    return 1
+}
+
 check_droplet_id() {
     [[ "$1" =~ ^[0-9]+$ ]] && return 0
     echo "  a droplet id is all digits. Find it in the droplet's URL on DigitalOcean." >&2
@@ -118,6 +131,14 @@ check_droplet_id() {
 
 echo "Filling in $ENV_FILE"
 echo "Press Ctrl-C at any point; nothing is written until a value is accepted."
+
+ask NAS_HOST "IP or hostname of Cortex. Containers, images and the Stats page all read from here." no
+
+ask NAS_USERNAME "SSH user on Cortex. Must be in the docker and systemd-journal groups." no
+
+ask NAS_PASSWORD "Password for that Cortex account." yes
+
+ask OLLAMA_HOST "The droplet TAILNET address (100.x.y.z), not its public IP." no check_tailnet_address
 
 ask TS_AUTHKEY \
     "Tailscale auth key. Must be Reusable, with Ephemeral OFF, or the node disappears on restart." \

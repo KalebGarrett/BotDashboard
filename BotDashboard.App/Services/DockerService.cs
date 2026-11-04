@@ -7,11 +7,11 @@ namespace BotDashboard.App.Services;
 
 public class DockerService
 {
-    private readonly DigitalOceanDropletCredentials _digitalOcean;
+    private readonly NasCredentials _nas;
 
-    public DockerService(DigitalOceanDropletCredentials digitalOcean)
+    public DockerService(NasCredentials nas)
     {
-        _digitalOcean = digitalOcean;
+        _nas = nas;
     }
 
     private DockerCommand DockerCommand { get; } = new();
@@ -48,7 +48,14 @@ public class DockerService
     
     public List<Container> ListContainers()
     {
-        using var client = new SshClient(_digitalOcean.Host, _digitalOcean.Username, _digitalOcean.Password);
+        if (!_nas.IsConfigured)
+        {
+            throw new InvalidOperationException(
+                "Cortex SSH settings are missing. Set NAS_HOST, NAS_USERNAME and NAS_PASSWORD "
+                + "in .env, then restart the app. See deploy/README.md.");
+        }
+
+        using var client = new SshClient(_nas.Host, _nas.Username, _nas.Password);
         client.Connect();
 
         var command = client.CreateCommand(DockerCommand.ListContainers());
@@ -76,7 +83,14 @@ public class DockerService
     
     public List<DockerImage> ListImages()
     {
-        using var client = new SshClient(_digitalOcean.Host, _digitalOcean.Username, _digitalOcean.Password);
+        if (!_nas.IsConfigured)
+        {
+            throw new InvalidOperationException(
+                "Cortex SSH settings are missing. Set NAS_HOST, NAS_USERNAME and NAS_PASSWORD "
+                + "in .env, then restart the app. See deploy/README.md.");
+        }
+
+        using var client = new SshClient(_nas.Host, _nas.Username, _nas.Password);
         client.Connect();
 
         var command = client.CreateCommand(DockerCommand.ListImages());
@@ -127,7 +141,14 @@ public class DockerService
     
     private void RunCommand(string command)
     {
-        using var client = new SshClient(_digitalOcean.Host, _digitalOcean.Username, _digitalOcean.Password);
+        if (!_nas.IsConfigured)
+        {
+            throw new InvalidOperationException(
+                "Cortex SSH settings are missing. Set NAS_HOST, NAS_USERNAME and NAS_PASSWORD "
+                + "in .env, then restart the app. See deploy/README.md.");
+        }
+
+        using var client = new SshClient(_nas.Host, _nas.Username, _nas.Password);
         client.Connect();
         client.RunCommand(command);
         client.Disconnect();
@@ -135,7 +156,14 @@ public class DockerService
 
     private string RunCommandWithResponse(string command)
     {
-        using var client = new SshClient(_digitalOcean.Host, _digitalOcean.Username, _digitalOcean.Password);
+        if (!_nas.IsConfigured)
+        {
+            throw new InvalidOperationException(
+                "Cortex SSH settings are missing. Set NAS_HOST, NAS_USERNAME and NAS_PASSWORD "
+                + "in .env, then restart the app. See deploy/README.md.");
+        }
+
+        using var client = new SshClient(_nas.Host, _nas.Username, _nas.Password);
         client.Connect();
          
         var response = client.RunCommand(command).Execute();

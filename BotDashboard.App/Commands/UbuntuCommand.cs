@@ -17,6 +17,18 @@ public class UbuntuCommand
         return "df -B1 --output=used / | tail -n 1 | awk '{printf \"%.2f\\n\", $1/1024/1024/1024}'\n";
     }
 
+    /// <summary>
+    /// Total size of the root filesystem, in GiB.
+    /// </summary>
+    /// <remarks>
+    /// The disk gauge used to divide by a hardcoded 25, the droplet's size. Cortex's root is
+    /// about 107 GiB, so that arithmetic would have reported several hundred percent used.
+    /// </remarks>
+    public string ListDiskTotal()
+    {
+        return "df -B1 --output=size / | tail -n 1 | awk '{printf \"%.2f\\n\", $1/1024/1024/1024}'\n";
+    }
+
     public string ListUptime()
     {
         return "uptime -p";
@@ -30,7 +42,7 @@ public class UbuntuCommand
     public string ListSshLogins(string weekStart, string weekEnd)
     {
         return
-            $"sudo journalctl --no-pager -u ssh \\\n" +
+            $"journalctl --no-pager -u ssh -u sshd \\\n" +
             $"  --since \"{weekStart}\" \\\n" +
             $"  --until \"{weekEnd}\" |\n" +
             $"grep \"Accepted\" |\n" +
