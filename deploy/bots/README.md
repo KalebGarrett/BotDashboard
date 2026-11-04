@@ -68,6 +68,25 @@ separate from Bot Harbor's.
 
 ## Images
 
+**`kalebg08/jamjunction` is private on Docker Hub.** `docker compose pull` will fail for it
+unless Cortex is logged in (`docker login -u kalebg08` with a read-only access token). The
+deploy path used instead needs no registry at all, and works regardless of visibility:
+
+```bash
+docker build -t kalebg08/jamjunction:latest -f JamJunction.App/Dockerfile JamJunction.App
+docker save kalebg08/jamjunction:latest | gzip | ssh Kalebg808@192.168.1.167 "gunzip -c | docker load"
+```
+
+That only works because the Cortex account is in the `docker` group -- `sudo` would need a
+password on the same stdin the image is travelling down. It also has to be built on a machine
+that has `Secrets/`, since that folder is gitignored and absent from a fresh clone.
+
+The other four bots remain public: the free Docker Hub plan allows one private repository.
+Their Discord tokens are compiled into publicly pullable images and should be treated as
+known. Jam Junction's token was rotated on 2026-11-04.
+
+
+
 All six are `linux/amd64` and run natively on the DXP4800. They are built elsewhere and pulled
 here; none builds from source on the NAS, because every bot's `Secrets/` folder is gitignored
 and so absent from a fresh clone.
