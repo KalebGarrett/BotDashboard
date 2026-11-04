@@ -212,6 +212,90 @@
                             </div>
                         </div>
                     </div>
+                    <div class="col-md-12 mt-4">
+                        <h2 class="text-white font-weight-bold fw-bold">
+                            <i class="bi bi-cpu"></i>
+                            Ollama
+                        </h2>
+                        <div class="card main-site-card">
+                            <div class="position-relative">
+                                <div class="card-body text-center">
+                                    <div class="container justify-content-center">
+                                        <p class="text-white-50 small mb-3">
+                                            Powers Jam Junction's song recommender. Runs as a systemd
+                                            service on the droplet, bound to 127.0.0.1:11434.
+                                        </p>
+                                        <div class="row g-2">
+                                            <div class="col-md-4">
+                                                <MudButton Disabled="Locked" FullWidth="true"
+                                                           Color="Color.Primary" Variant="Variant.Filled"
+                                                           Size="Size.Large" OnClick="OllamaStatus">
+                                                    Status
+                                                </MudButton>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <MudButton Disabled="Locked" FullWidth="true"
+                                                           Color="Color.Primary" Variant="Variant.Filled"
+                                                           Size="Size.Large" OnClick="OllamaApiHealth">
+                                                    API Health
+                                                </MudButton>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <MudButton Disabled="Locked" FullWidth="true"
+                                                           Color="Color.Primary" Variant="Variant.Filled"
+                                                           Size="Size.Large" OnClick="OllamaMemoryUsage">
+                                                    Memory
+                                                </MudButton>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <MudButton Disabled="Locked" FullWidth="true"
+                                                           Color="Color.Primary" Variant="Variant.Filled"
+                                                           Size="Size.Large" OnClick="OllamaListModels">
+                                                    List Models
+                                                </MudButton>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <MudButton Disabled="Locked" FullWidth="true"
+                                                           Color="Color.Primary" Variant="Variant.Filled"
+                                                           Size="Size.Large" OnClick="OllamaRunningModels">
+                                                    Loaded Models
+                                                </MudButton>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <MudButton Disabled="Locked" FullWidth="true"
+                                                           Color="Color.Primary" Variant="Variant.Filled"
+                                                           Size="Size.Large"
+                                                           OnClick="() => OllamaPullModel(OllamaModel.Llama32_1B)">
+                                                    Pull @OllamaModel.Llama32_1B
+                                                </MudButton>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <MudButton Disabled="Locked" FullWidth="true"
+                                                           Color="Color.Success" Variant="Variant.Filled"
+                                                           Size="Size.Large" OnClick="OllamaStart">
+                                                    Start
+                                                </MudButton>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <MudButton Disabled="Locked" FullWidth="true"
+                                                           Color="Color.Warning" Variant="Variant.Filled"
+                                                           Size="Size.Large" OnClick="OllamaRestart">
+                                                    Restart
+                                                </MudButton>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <MudButton Disabled="Locked" FullWidth="true"
+                                                           Color="Color.Error" Variant="Variant.Filled"
+                                                           Size="Size.Large" OnClick="OllamaStop">
+                                                    Stop
+                                                </MudButton>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="col-md-6 d-flex flex-column">

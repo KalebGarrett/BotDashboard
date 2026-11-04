@@ -5,6 +5,12 @@
 <AuthorizeView>
     <Authorized>
         <MudContainer MaxWidth="MaxWidth.Small">
+            @if (!string.IsNullOrWhiteSpace(ErrorMessage))
+            {
+                <MudAlert Severity="Severity.Error" Class="mb-4" Variant="Variant.Filled">
+                    @ErrorMessage
+                </MudAlert>
+            }
             <MudCard Class="pa-6 main-site-card" Elevation="2">
                 <div class="d-flex justify-content-center">
                     <MudImage Width="160" Height="160" Src="imgs/1024px-DigitalOcean_logo.svg.png"

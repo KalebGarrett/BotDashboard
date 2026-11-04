@@ -14,6 +14,8 @@ public partial class ManageDroplet
     
     private bool Locked { get; set; }
 
+    private string ErrorMessage { get; set; }
+
     protected override async Task OnInitializedAsync()
     {
         await GetDropletInfo();
@@ -26,7 +28,19 @@ public partial class ManageDroplet
         await InvokeAsync(StateHasChanged);
         await Task.Yield();
         
-        Droplet = await DigitalOceanService.GetDropletInfo();
+        try
+        {
+            Droplet = await DigitalOceanService.GetDropletInfo();
+            ErrorMessage = null;
+        }
+        catch (Exception exception)
+        {
+            // Keep the circuit alive so the page can say what is wrong. An exception escaping
+            // here reaches the renderer and the user only sees "Oops... something went wrong".
+            Droplet = new Droplet();
+            ErrorMessage = exception.Message;
+        }
+
         PowerSwitch = Droplet.Status == "active";
         
         Locked = false;

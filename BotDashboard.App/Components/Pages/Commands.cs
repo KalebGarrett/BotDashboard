@@ -9,6 +9,7 @@ namespace BotDashboard.App.Components.Pages;
 public partial class Commands
 {
     [Inject] public DockerService DockerService { get; set; }
+    [Inject] public OllamaService OllamaService { get; set; }
 
     private List<DockerImage> DockerImages { get; set; } = new();
     private string ImageFetchTime { get; set; }
@@ -188,6 +189,67 @@ public partial class Commands
         Locked = false;
         await InvokeAsync(StateHasChanged);
     }
+
+    // ---------------------------------------------------------------------------------------
+    // Ollama
+    //
+    // Every one of these is a read or a service action on the droplet, and all of them write
+    // their result into the same Logs panel the Docker commands use, so the output has one
+    // place to land rather than a second panel to look at.
+    // ---------------------------------------------------------------------------------------
+
+    private async Task RunOllamaCommand(Func<string> command, string successMessage)
+    {
+        Locked = true;
+        await InvokeAsync(StateHasChanged);
+        await Task.Yield();
+
+        try
+        {
+            Output = command();
+            OutputFetchTime = DateTime.UtcNow.ToLocalTime().ToString(CultureInfo.CurrentCulture);
+            CreateSnackbarMessage(successMessage, Severity.Success);
+        }
+        catch (Exception exception)
+        {
+            // An unreachable droplet or a refused SSH login throws out of SshClient. Without
+            // this the whole Blazor circuit tears down and the page dies with the generic
+            // "Oops... something went wrong", which says nothing about what actually failed.
+            Output = exception.Message;
+            OutputFetchTime = DateTime.UtcNow.ToLocalTime().ToString(CultureInfo.CurrentCulture);
+            CreateSnackbarMessage("Ollama command failed. See the log panel.", Severity.Error);
+        }
+
+        Locked = false;
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private Task OllamaStatus() =>
+        RunOllamaCommand(() => OllamaService.Status(), "Fetched Ollama status!");
+
+    private Task OllamaApiHealth() =>
+        RunOllamaCommand(() => OllamaService.ApiHealth(), "Checked the Ollama API!");
+
+    private Task OllamaMemoryUsage() =>
+        RunOllamaCommand(() => OllamaService.MemoryUsage(), "Fetched droplet memory!");
+
+    private Task OllamaListModels() =>
+        RunOllamaCommand(() => OllamaService.ListModels(), "Listed Ollama models!");
+
+    private Task OllamaRunningModels() =>
+        RunOllamaCommand(() => OllamaService.RunningModels(), "Listed loaded models!");
+
+    private Task OllamaPullModel(string model) =>
+        RunOllamaCommand(() => OllamaService.PullModel(model), $"Pulled {model}!");
+
+    private Task OllamaStart() =>
+        RunOllamaCommand(() => OllamaService.Start(), "Started Ollama!");
+
+    private Task OllamaRestart() =>
+        RunOllamaCommand(() => OllamaService.Restart(), "Restarted Ollama!");
+
+    private Task OllamaStop() =>
+        RunOllamaCommand(() => OllamaService.Stop(), "Stopped Ollama!");
 
     private void CreateSnackbarMessage(string message, Severity severity)
     {

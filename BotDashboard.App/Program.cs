@@ -104,6 +104,7 @@ builder.Services.AddScoped<DigitalOceanService>();
 
 builder.Services.AddScoped<DockerService>();
 builder.Services.AddScoped<UbuntuService>();
+builder.Services.AddScoped<OllamaService>();
 
 builder.Services.AddMudServices(config =>
 {
