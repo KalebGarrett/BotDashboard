@@ -1,0 +1,108 @@
+# Discord bots, self-hosted on the Cortex NAS.
+#
+#   cd /volume1/appdata/bots && sudo docker compose up -d
+#
+# STOP THE DROPLET COPIES FIRST. Discord allows one gateway connection per bot token. Running
+# the same bot here and on the droplet means both receive every interaction, so the bot replies
+# twice and the two instances fight over the same commands. Stop them on the droplet before
+# starting anything here -- Bot Harbor's "Stop All Containers" does it in one click once the
+# DROPLET_* settings are filled in.
+#
+# All secrets are compiled into these images (the Secrets/*.cs classes are gitignored but are
+# copied in by `COPY . ./`), so none of the four simple bots need configuration here. They need
+# nothing but outbound internet.
+#
+# Jam Junction and yt-cipher are held behind the `audio` profile and do NOT start by default.
+# See the notes on each, and deploy/bots/README.md.
+
+name: bots
+
+x-bot: &bot
+  restart: unless-stopped
+  # A Discord bot is a long-lived outbound websocket. No ports, no volumes, no inbound anything.
+  logging:
+    driver: json-file
+    options: { max-size: "10m", max-file: "3" }
+
+services:
+  jokebot:
+    <<: *bot
+    image: kalebg08/jokebot:latest
+    container_name: jokebot
+
+  triviabot:
+    <<: *bot
+    image: kalebg08/triviabot:latest
+    container_name: triviabot
+
+  factbot:
+    <<: *bot
+    image: kalebg08/factbot:latest
+    container_name: factbot
+
+  prembot:
+    <<: *bot
+    image: kalebg08/prembot:latest
+    container_name: prembot
+
+  # ---------------------------------------------------------------------------------------
+  # Below here: not started by default. `--profile audio` opts in.
+  # ---------------------------------------------------------------------------------------
+
+  # Joins the tailnet so Jam Junction can reach Lavalink on the home server PC and Ollama on
+  # the droplet. Both are private services with no authentication of their own, which is
+  # exactly why they must not be reached over the public internet.
+  bots-tailscale:
+    image: tailscale/tailscale:latest
+    container_name: bots-tailscale
+    profiles: [audio]
+    restart: unless-stopped
+    hostname: ${TS_HOSTNAME:-nas-bots}
+    environment:
+      TS_AUTHKEY: ${TS_AUTHKEY:-}
+      TS_STATE_DIR: /var/lib/tailscale
+      TS_USERSPACE: "false"
+      TS_EXTRA_ARGS: ${TS_EXTRA_ARGS:-}
+      # Unlike the Bot Harbor stack, MagicDNS is wanted here: Jam Junction addresses Lavalink
+      # and Ollama by tailnet IP, and nothing in this stack resolves another service by name.
+      TS_ACCEPT_DNS: "true"
+    volumes:
+      - bots-tailscale-state:/var/lib/tailscale
+    devices: [/dev/net/tun]
+    cap_add: [NET_ADMIN, SYS_MODULE]
+
+  jamjunction:
+    <<: *bot
+    image: kalebg08/jamjunction:latest
+    container_name: jamjunction
+    profiles: [audio]
+    network_mode: service:bots-tailscale
+    depends_on:
+      bots-tailscale: { condition: service_started }
+    environment:
+      # Lavalink on the home server PC, over Tailscale. Overridable since the LavalinkSecrets
+      # change; before that this was a compile-time const needing a rebuild to move.
+      LAVALINK_HOST: ${LAVALINK_HOST:-100.121.114.24}
+      LAVALINK_PORT: ${LAVALINK_PORT:-2333}
+      # Ollama stays on the droplet. 1b because the droplet is memory-constrained; if Ollama
+      # ever moves somewhere roomier, drop the suffix for the 3B default.
+      OLLAMA_HOST: ${OLLAMA_HOST:-100.120.70.97}
+      OLLAMA_PORT: ${OLLAMA_PORT:-11434}
+      OLLAMA_MODEL: ${OLLAMA_MODEL:-llama3.2:1b}
+      OLLAMA_ENABLED: ${OLLAMA_ENABLED:-true}
+
+  # Solves YouTube's signature cipher for Lavalink. Lavalink runs on the home server PC, so
+  # moving this here puts a network hop between them that does not exist today. Keeping it on
+  # the droplet, or alongside Lavalink, is likely better -- measure before moving it.
+  yt-cipher:
+    image: ghcr.io/kikkia/yt-cipher:master
+    container_name: yt-cipher
+    profiles: [audio]
+    restart: unless-stopped
+    ports:
+      - "${YT_CIPHER_BIND:-0.0.0.0}:${YT_CIPHER_PORT:-8081}:8080"
+    environment:
+      API_KEY: ${YT_CIPHER_API_KEY:-}
+
+volumes:
+  bots-tailscale-state:
