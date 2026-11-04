@@ -3,7 +3,7 @@
 # Build from the repository root so both projects are in context:
 #   docker build -t kalebg08/botharbor:latest .
 
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 WORKDIR /src
 
 # Restore first, against the project files only, so a code-only change reuses the package layer.
@@ -21,7 +21,7 @@ RUN dotnet publish BotDashboard.App/BotDashboard.App.csproj \
         --output /app
 
 
-FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
+FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS runtime
 WORKDIR /app
 
 # curl is only here so the compose healthcheck can probe /healthz.
