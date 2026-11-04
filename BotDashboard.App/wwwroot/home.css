@@ -1,4 +1,204 @@
-﻿.logo-container {
-    background-image: linear-gradient(90deg, rgb(5, 39, 103) 0%, #4112C7 70%);
-    border-radius: 20px;
+﻿/* ===========================================================================
+   Dashboard hero
+   =========================================================================== */
+.logo-container {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    border-radius: var(--bh-radius-lg, 22px);
+    border: 1px solid rgba(118, 142, 206, 0.22);
+    padding: 1.75rem 1rem;
+    min-height: 190px;
+    /* Oversized so the slow pan below has somewhere to travel. */
+    background-image: linear-gradient(100deg,
+        rgb(5, 39, 103) 0%,
+        #15257F 34%,
+        #4112C7 68%,
+        #6D2BE0 100%);
+    background-size: 200% 200%;
+    animation: bh-hero-drift 22s ease-in-out infinite;
+    box-shadow: 0 24px 60px -30px rgba(65, 18, 199, 0.9);
+}
+
+/* Soft highlight in the top-left so the panel reads as lit, not painted. */
+.logo-container::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background:
+        radial-gradient(640px 280px at 18% 0%, rgba(255, 255, 255, 0.16), transparent 62%),
+        radial-gradient(420px 220px at 92% 100%, rgba(34, 211, 165, 0.2), transparent 64%);
+    pointer-events: none;
+}
+
+/* A single diagonal sheen that sweeps across every so often. */
+.logo-container::after {
+    content: "";
+    position: absolute;
+    top: -60%;
+    left: -35%;
+    width: 42%;
+    height: 220%;
+    z-index: -1;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.11), transparent);
+    transform: rotate(16deg);
+    animation: bh-hero-sheen 9s ease-in-out infinite;
+    pointer-events: none;
+}
+
+.logo-container img {
+    max-height: 132px;
+    width: auto;
+    filter: drop-shadow(0 12px 26px rgba(0, 0, 0, 0.45));
+}
+
+@keyframes bh-hero-drift {
+    0%, 100% { background-position: 0% 50%; }
+    50%      { background-position: 100% 50%; }
+}
+
+@keyframes bh-hero-sheen {
+    0%, 62%, 100% { left: -35%; opacity: 0; }
+    68%           { opacity: 1; }
+    94%           { left: 112%; opacity: 0; }
+}
+
+/* ===========================================================================
+   Stat tiles above the usage donuts
+   =========================================================================== */
+.bh-stat-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 0.6rem;
+}
+
+.bh-stat {
+    padding: 0.7rem 0.85rem;
+    border-radius: 12px;
+    border: 1px solid var(--bh-border, rgba(118, 142, 206, 0.16));
+    background: rgba(7, 11, 30, 0.5);
+}
+
+.bh-stat__label {
+    display: block;
+    font-size: 0.66rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--bh-text-muted, #8E9DC4);
+    margin-bottom: 0.2rem;
+}
+
+.bh-stat__value {
+    display: block;
+    font-size: 1.4rem;
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    color: var(--bh-text, #EEF3FF);
+    font-variant-numeric: tabular-nums;
+}
+
+.bh-stat__value--accent {
+    /* Gradient numerals, clipped to the glyphs. */
+    background: linear-gradient(95deg, var(--bh-signal, #22D3A5), var(--bh-beacon, #4C8DFF));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* ===========================================================================
+   Usage donuts
+
+   MudChart emits a fixed-size <svg>. Left alone it keeps its pixel width as the
+   column narrows, so the two donuts overflow their card and overlap each other.
+   Capping the wrapper and letting the svg scale to it keeps them inside.
+   =========================================================================== */
+.bh-donut {
+    width: 100%;
+    max-width: 210px;
+    margin-inline: auto;
+}
+
+.bh-donut .mud-chart,
+.bh-donut svg {
+    width: 100% !important;
+    height: auto !important;
+    max-width: 100%;
+    display: block;
+}
+
+/* The legend wraps rather than pushing the card wider. */
+.bh-donut .mud-chart-legend,
+.bh-donut .mud-chart-legend-item {
+    flex-wrap: wrap;
+    font-size: 0.72rem;
+}
+
+/* ===========================================================================
+   Container grid
+   =========================================================================== */
+.bh-container-logo {
+    display: grid;
+    place-items: center;
+    width: 46px;
+    height: 46px;
+    border-radius: 12px;
+    border: 1px solid var(--bh-border, rgba(118, 142, 206, 0.16));
+    background: rgba(7, 11, 30, 0.6);
+}
+
+.bh-container-logo img {
+    width: 26px;
+    height: 26px;
+}
+
+.bh-container-name {
+    font-size: 0.98rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    margin: 0;
+    overflow-wrap: anywhere;
+}
+
+/* Dashed placeholder shown when nothing is running. */
+.bh-empty {
+    border: 1px dashed var(--bh-border-strong, rgba(118, 142, 206, 0.32));
+    border-radius: var(--bh-radius, 16px);
+    padding: 2.25rem 1.5rem;
+    text-align: center;
+    color: var(--bh-text-muted, #8E9DC4);
+    background: rgba(7, 11, 30, 0.35);
+}
+
+.bh-empty i {
+    font-size: 1.9rem;
+    display: block;
+    margin-bottom: 0.5rem;
+    opacity: 0.65;
+}
+
+/* ===========================================================================
+   "Last fetched" caption
+   =========================================================================== */
+.bh-timestamp {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.74rem;
+    color: var(--bh-text-muted, #8E9DC4);
+    margin: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .logo-container {
+        animation: none;
+        background-position: 0% 50%;
+    }
+
+    .logo-container::after {
+        animation: none;
+        opacity: 0;
+    }
 }

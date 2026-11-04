@@ -1,66 +1,459 @@
+/* ===========================================================================
+   Bot Harbor — design tokens
+   Kept in step with Theme/BotHarborTheme.cs. Change both together.
+   =========================================================================== */
+:root {
+    --bh-abyss: #070B1E;
+    --bh-hull: #0D1430;
+    --bh-deck: #081233;
+    --bh-beacon: #4C8DFF;
+    --bh-dusk: #7C5CFF;
+    --bh-signal: #22D3A5;
+    --bh-danger: #FF4D6D;
+
+    --bh-text: #EEF3FF;
+    --bh-text-muted: #8E9DC4;
+    --bh-border: rgba(118, 142, 206, 0.16);
+    --bh-border-strong: rgba(118, 142, 206, 0.32);
+
+    --bh-radius: 16px;
+    --bh-radius-lg: 22px;
+    --bh-shadow: 0 18px 40px -22px rgba(0, 0, 0, 0.85);
+    --bh-shadow-lift: 0 26px 52px -20px rgba(0, 0, 0, 0.9);
+    --bh-ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+/* ===========================================================================
+   Base
+   =========================================================================== */
 html, body {
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-family: "Montserrat", "Segoe UI", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+}
+
+body {
+    background-color: var(--bh-abyss);
+    /* Two broad, fixed radial washes stop the dark page reading as flat black. */
+    background-image:
+        radial-gradient(1100px 620px at 12% -8%, rgba(76, 141, 255, 0.13), transparent 60%),
+        radial-gradient(900px 540px at 88% 4%, rgba(124, 92, 255, 0.12), transparent 62%);
+    background-attachment: fixed;
+    color: var(--bh-text);
 }
 
 a, .btn-link {
-    color: #006bb7;
+    color: var(--bh-beacon);
+    text-decoration: none;
+    transition: color 0.18s var(--bh-ease);
 }
 
-.btn-primary {
-    color: #fff;
-    background-color: #1b6ec2;
-    border-color: #1861ac;
+a:hover, .btn-link:hover {
+    color: #8FB6FF;
 }
 
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
-
-.content {
-    padding-top: 1.1rem;
+h1, h2, h3, h4, h5, h6 {
+    letter-spacing: -0.015em;
 }
 
 h1:focus {
     outline: none;
 }
 
-.valid.modified:not([type=checkbox]) {
-    outline: 1px solid #26b050;
+.content {
+    padding-top: 1.4rem;
+    padding-bottom: 1rem;
 }
 
-.invalid {
-    outline: 1px solid #e50000;
+/* Section heading with a gradient accent rule trailing off to the right. */
+.bh-section-title {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--bh-text);
+    margin-bottom: 1rem;
 }
 
-.validation-message {
-    color: #e50000;
+.bh-section-title i {
+    color: var(--bh-signal);
 }
 
-.blazor-error-boundary {
-    background: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTYiIGhlaWdodD0iNDkiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIG92ZXJmbG93PSJoaWRkZW4iPjxkZWZzPjxjbGlwUGF0aCBpZD0iY2xpcDAiPjxyZWN0IHg9IjIzNSIgeT0iNTEiIHdpZHRoPSI1NiIgaGVpZ2h0PSI0OSIvPjwvY2xpcFBhdGg+PC9kZWZzPjxnIGNsaXAtcGF0aD0idXJsKCNjbGlwMCkiIHRyYW5zZm9ybT0idHJhbnNsYXRlKC0yMzUgLTUxKSI+PHBhdGggZD0iTTI2My41MDYgNTFDMjY0LjcxNyA1MSAyNjUuODEzIDUxLjQ4MzcgMjY2LjYwNiA1Mi4yNjU4TDI2Ny4wNTIgNTIuNzk4NyAyNjcuNTM5IDUzLjYyODMgMjkwLjE4NSA5Mi4xODMxIDI5MC41NDUgOTIuNzk1IDI5MC42NTYgOTIuOTk2QzI5MC44NzcgOTMuNTEzIDI5MSA5NC4wODE1IDI5MSA5NC42NzgyIDI5MSA5Ny4wNjUxIDI4OS4wMzggOTkgMjg2LjYxNyA5OUwyNDAuMzgzIDk5QzIzNy45NjMgOTkgMjM2IDk3LjA2NTEgMjM2IDk0LjY3ODIgMjM2IDk0LjM3OTkgMjM2LjAzMSA5NC4wODg2IDIzNi4wODkgOTMuODA3MkwyMzYuMzM4IDkzLjAxNjIgMjM2Ljg1OCA5Mi4xMzE0IDI1OS40NzMgNTMuNjI5NCAyNTkuOTYxIDUyLjc5ODUgMjYwLjQwNyA1Mi4yNjU4QzI2MS4yIDUxLjQ4MzcgMjYyLjI5NiA1MSAyNjMuNTA2IDUxWk0yNjMuNTg2IDY2LjAxODNDMjYwLjczNyA2Ni4wMTgzIDI1OS4zMTMgNjcuMTI0NSAyNTkuMzEzIDY5LjMzNyAyNTkuMzEzIDY5LjYxMDIgMjU5LjMzMiA2OS44NjA4IDI1OS4zNzEgNzAuMDg4N0wyNjEuNzk1IDg0LjAxNjEgMjY1LjM4IDg0LjAxNjEgMjY3LjgyMSA2OS43NDc1QzI2Ny44NiA2OS43MzA5IDI2Ny44NzkgNjkuNTg3NyAyNjcuODc5IDY5LjMxNzkgMjY3Ljg3OSA2Ny4xMTgyIDI2Ni40NDggNjYuMDE4MyAyNjMuNTg2IDY2LjAxODNaTTI2My41NzYgODYuMDU0N0MyNjEuMDQ5IDg2LjA1NDcgMjU5Ljc4NiA4Ny4zMDA1IDI1OS43ODYgODkuNzkyMSAyNTkuNzg2IDkyLjI4MzcgMjYxLjA0OSA5My41Mjk1IDI2My41NzYgOTMuNTI5NSAyNjYuMTE2IDkzLjUyOTUgMjY3LjM4NyA5Mi4yODM3IDI2Ny4zODcgODkuNzkyMSAyNjcuMzg3IDg3LjMwMDUgMjY2LjExNiA4Ni4wNTQ3IDI2My41NzYgODYuMDU0N1oiIGZpbGw9IiNGRkU1MDAiIGZpbGwtcnVsZT0iZXZlbm9kZCIvPjwvZz48L3N2Zz4=) no-repeat 1rem/1.8rem, #b32121;
-    padding: 1rem 1rem 1rem 3.7rem;
-    color: white;
+.bh-section-title::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, var(--bh-border-strong), transparent);
 }
 
-    .blazor-error-boundary::after {
-        content: "An error has occurred."
-    }
-
-.darker-border-checkbox.form-check-input {
-    border-color: #929292;
+/* Custom scrollbar so the browser default doesn't punch a light strip into the page. */
+* {
+    scrollbar-color: #26335C transparent;
+    scrollbar-width: thin;
 }
 
-body {
-    background-color: #08081C;
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
 }
 
-.main-site-card {
-    background-color: #080E2C;
-    color: white;
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #26335C;
+    border: 2px solid transparent;
+    border-radius: 8px;
+    background-clip: padding-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #36477A;
+    background-clip: padding-box;
+}
+
+/* ===========================================================================
+   Surfaces
+   =========================================================================== */
+
+/* Frosted panel: translucent fill, hairline border, soft drop shadow. */
+.main-site-card,
+.container-card,
+.bh-panel {
+    position: relative;
+    background: linear-gradient(165deg, rgba(20, 29, 62, 0.92) 0%, rgba(11, 17, 40, 0.92) 100%);
+    border: 1px solid var(--bh-border);
+    border-radius: var(--bh-radius);
+    box-shadow: var(--bh-shadow);
+    color: var(--bh-text);
+    backdrop-filter: blur(10px);
+    overflow: hidden;
+}
+
+/* Thin gradient highlight along the top edge: the "lit from above" cue. */
+.main-site-card::before,
+.container-card::before,
+.bh-panel::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(76, 141, 255, 0.55), rgba(124, 92, 255, 0.4), transparent);
+    pointer-events: none;
 }
 
 .container-card {
-    border-radius: 25px;
-    background-color: #080E2C;
-    color: white;
+    border-radius: var(--bh-radius-lg);
+    transition: transform 0.22s var(--bh-ease), box-shadow 0.22s var(--bh-ease), border-color 0.22s var(--bh-ease);
+}
+
+.container-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--bh-shadow-lift);
+    border-color: var(--bh-border-strong);
+}
+
+.bh-muted {
+    color: var(--bh-text-muted) !important;
+}
+
+/* Key/value rows inside a container card. */
+.bh-meta {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0.4rem 0;
+    border-top: 1px solid var(--bh-border);
+    font-size: 0.82rem;
+}
+
+.bh-meta:first-of-type {
+    border-top: none;
+}
+
+.bh-meta dt {
+    color: var(--bh-text-muted);
+    font-weight: 500;
+    margin: 0;
+    white-space: nowrap;
+}
+
+.bh-meta dd {
+    margin: 0;
+    color: var(--bh-text);
+    font-family: ui-monospace, "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+    font-size: 0.78rem;
+    text-align: right;
+    overflow-wrap: anywhere;
+}
+
+/* ===========================================================================
+   Status pill
+   =========================================================================== */
+.bh-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.2rem 0.6rem 0.2rem 0.5rem;
+    border-radius: 999px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    border: 1px solid transparent;
+    white-space: nowrap;
+}
+
+.bh-status__dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    flex: 0 0 auto;
+}
+
+.bh-status--up {
+    color: var(--bh-signal);
+    background: rgba(34, 211, 165, 0.1);
+    border-color: rgba(34, 211, 165, 0.3);
+}
+
+.bh-status--up .bh-status__dot {
+    background: var(--bh-signal);
+    animation: bh-pulse 2.4s var(--bh-ease) infinite;
+}
+
+.bh-status--idle {
+    color: #FBBF24;
+    background: rgba(251, 191, 36, 0.1);
+    border-color: rgba(251, 191, 36, 0.3);
+}
+
+.bh-status--idle .bh-status__dot {
+    background: #FBBF24;
+}
+
+.bh-status--down {
+    color: var(--bh-danger);
+    background: rgba(255, 77, 109, 0.1);
+    border-color: rgba(255, 77, 109, 0.32);
+}
+
+.bh-status--down .bh-status__dot {
+    background: var(--bh-danger);
+}
+
+@keyframes bh-pulse {
+    0%   { box-shadow: 0 0 0 0 rgba(34, 211, 165, 0.55); }
+    70%  { box-shadow: 0 0 0 7px rgba(34, 211, 165, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(34, 211, 165, 0); }
+}
+
+/* ===========================================================================
+   MudBlazor overrides
+   =========================================================================== */
+.mud-appbar {
+    /* Matches the hero gradient direction so the chrome reads as one piece. */
+    background-image: linear-gradient(90deg, #02194C 0%, #0A1A4E 48%, #141A52 100%) !important;
+    border-bottom: 1px solid var(--bh-border);
+    backdrop-filter: blur(8px);
+}
+
+.mud-drawer {
+    border-right: 1px solid var(--bh-border);
+}
+
+.mud-button-root {
+    transition: transform 0.16s var(--bh-ease), box-shadow 0.16s var(--bh-ease), filter 0.16s var(--bh-ease);
+}
+
+.mud-button-root:hover:not(:disabled) {
+    transform: translateY(-1px);
+    filter: brightness(1.08);
+}
+
+.mud-button-root:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+.mud-button-filled:not(:disabled) {
+    box-shadow: 0 8px 20px -12px rgba(0, 0, 0, 0.9);
+}
+
+/* Nav links: pill-shaped, with the active one marked by a gradient bar. */
+.mud-nav-link {
+    border-radius: 10px !important;
+    margin-bottom: 2px;
+    transition: background-color 0.18s var(--bh-ease), color 0.18s var(--bh-ease);
+}
+
+.mud-nav-link:hover {
+    background-color: rgba(76, 141, 255, 0.12) !important;
+    color: #FFFFFF !important;
+}
+
+.mud-nav-link.active {
+    background-color: rgba(76, 141, 255, 0.16) !important;
+    color: #FFFFFF !important;
+    font-weight: 600;
+    position: relative;
+}
+
+.mud-nav-link.active::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 18%;
+    bottom: 18%;
+    width: 3px;
+    border-radius: 0 3px 3px 0;
+    background: linear-gradient(180deg, var(--bh-signal), var(--bh-beacon));
+}
+
+.donut-inner-text {
+    font-family: "Montserrat", sans-serif;
+    font-weight: 700;
+}
+
+/* ===========================================================================
+   Forms (the login page and Manage Password still use Bootstrap controls)
+   =========================================================================== */
+.form-control {
+    background-color: rgba(7, 11, 30, 0.72);
+    border: 1px solid var(--bh-border-strong);
+    border-radius: 11px;
+    color: var(--bh-text);
+    transition: border-color 0.18s var(--bh-ease), box-shadow 0.18s var(--bh-ease);
+}
+
+.form-control:focus {
+    background-color: rgba(7, 11, 30, 0.9);
+    border-color: var(--bh-beacon);
+    box-shadow: 0 0 0 3px rgba(76, 141, 255, 0.22);
+    color: var(--bh-text);
+}
+
+.form-control::placeholder {
+    color: #5A678F;
+}
+
+.form-floating > label {
+    color: var(--bh-text-muted);
+}
+
+.btn-primary {
+    color: #06111F;
+    background-image: linear-gradient(95deg, var(--bh-beacon), var(--bh-dusk));
+    background-color: var(--bh-beacon);
+    border: none;
+    border-radius: 11px;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    transition: transform 0.16s var(--bh-ease), box-shadow 0.16s var(--bh-ease), filter 0.16s var(--bh-ease);
+}
+
+.btn-primary:hover, .btn-primary:focus {
+    color: #06111F;
+    filter: brightness(1.08);
+    transform: translateY(-1px);
+    box-shadow: 0 14px 30px -16px rgba(76, 141, 255, 0.85);
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus,
+.form-control:focus, .form-check-input:focus {
+    box-shadow: 0 0 0 3px rgba(76, 141, 255, 0.3);
+}
+
+.form-check-input, .darker-border-checkbox.form-check-input {
+    background-color: rgba(7, 11, 30, 0.72);
+    border-color: var(--bh-border-strong);
+}
+
+.form-check-input:checked {
+    background-color: var(--bh-beacon);
+    border-color: var(--bh-beacon);
+}
+
+/* ===========================================================================
+   Validation
+   =========================================================================== */
+.valid.modified:not([type=checkbox]) {
+    outline: 1px solid var(--bh-signal);
+}
+
+.invalid {
+    outline: 1px solid var(--bh-danger);
+}
+
+.validation-message, .text-danger {
+    color: var(--bh-danger) !important;
+}
+
+/* ===========================================================================
+   Error surfaces
+   =========================================================================== */
+.blazor-error-boundary {
+    background: #7F1D2E;
+    border: 1px solid rgba(255, 77, 109, 0.4);
+    border-radius: var(--bh-radius);
+    padding: 1rem 1.25rem;
+    color: #FFE4E9;
+}
+
+.blazor-error-boundary::after {
+    content: "An error has occurred.";
+}
+
+#blazor-error-ui {
+    background: #1A1033;
+    border-top: 1px solid rgba(255, 77, 109, 0.45);
+    bottom: 0;
+    box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.6);
+    color: var(--bh-text);
+    display: none;
+    left: 0;
+    padding: 0.7rem 1.25rem;
+    position: fixed;
+    width: 100%;
+    z-index: 1000;
+}
+
+#blazor-error-ui .reload {
+    color: var(--bh-beacon);
+    text-decoration: underline;
+}
+
+#blazor-error-ui .dismiss {
+    cursor: pointer;
+    position: absolute;
+    right: 0.9rem;
+    top: 0.6rem;
+    color: var(--bh-text-muted);
+}
+
+/* ===========================================================================
+   Footer
+   =========================================================================== */
+.bh-footer {
+    border-top: 1px solid var(--bh-border);
+    margin-top: 2rem;
+    padding: 1rem 0 0.75rem;
+    color: var(--bh-text-muted);
+    font-size: 0.8rem;
+}
+
+/* Honour a reduced-motion preference: drop the decorative animations. */
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.001ms !important;
+    }
+
+    .container-card:hover,
+    .mud-button-root:hover:not(:disabled),
+    .btn-primary:hover {
+        transform: none;
+    }
 }

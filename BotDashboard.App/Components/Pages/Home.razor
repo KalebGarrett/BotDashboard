@@ -6,246 +6,264 @@
 
 <AuthorizeView>
     <Authorized>
-        <div class="container-fluid logo-container text-white d-flex align-items-center justify-content-center">
+        <div class="logo-container d-flex align-items-center justify-content-center">
             <img src="imgs/Bot Harbor - Logo Resized.png" alt="Bot Harbor Logo" class="img-fluid"/>
         </div>
 
         <div class="row gy-3 mt-4">
-            <div class="col-md-6 d-flex flex-column">
-                <h2 class="text-white fw-bold"><i class="bi bi-command"></i> Commands</h2>
-                <div class="card main-site-card flex-fill">
-                    <div class="position-relative">
-                        <div class="bg-image hover-overlay ripple" data-mdb-ripple-color="light">
-                            <div class="mt-4 ms-3 text-center">
-                                <img src="imgs/Docker Logo.png"
-                                     width="192" height="192" alt="Discord Logo"/>
+            <div class="col-lg-6 d-flex flex-column">
+                <h2 class="bh-section-title h4">
+                    <i class="bi bi-command"></i> Commands
+                </h2>
+                <div class="main-site-card flex-fill">
+                    <div class="p-4">
+                        <div class="d-flex align-items-center gap-3 mb-4">
+                            <div class="bh-container-logo">
+                                <img src="imgs/Docker Logo.png" alt="Docker"/>
                             </div>
-                        </div>
-                        <div class="card-body text-center">
-                            <div class="container justify-content-center">
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <div class="d-flex flex-column flex-md-row justify-content-center gap-2">
-                                            <MudButton Disabled="Locked"
-                                                       Color="Color.Primary"
-                                                       Variant="Variant.Filled"
-                                                       Size="Size.Large"
-                                                       OnClick="StopAllContainers">
-                                                Stop All Containers
-                                            </MudButton>
-
-                                            <MudButton Disabled="Locked"
-                                                       Color="Color.Primary"
-                                                       Variant="Variant.Filled"
-                                                       Size="Size.Large"
-                                                       OnClick="RestartAllContainers">
-                                                Restart All Containers
-                                            </MudButton>
-
-                                            <MudButton Disabled="Locked"
-                                                       Color="Color.Primary"
-                                                       Variant="Variant.Filled"
-                                                       Size="Size.Large"
-                                                       OnClick="() => ListContainers()">
-                                                List All Containers
-                                            </MudButton>
-
-                                            <MudButton Disabled="Locked"
-                                                       Color="Color.Primary"
-                                                       Variant="Variant.Filled"
-                                                       Size="Size.Large"
-                                                       OnClick="() => ListStats()">
-                                                List Stats
-                                            </MudButton>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-12 mt-2 mb-4">
-                                        <div class="d-flex flex-column flex-md-row justify-content-center gap-2">
-                                            <MudButton Disabled="Locked"
-                                                       Color="Color.Tertiary"
-                                                       Variant="Variant.Filled"
-                                                       Size="Size.Large"
-                                                       OnClick="() => RunImage(DockerRepository.JokeBot)">
-                                                Start JokeBot
-                                            </MudButton>
-
-                                            <MudButton Disabled="Locked"
-                                                       Color="Color.Tertiary"
-                                                       Variant="Variant.Filled"
-                                                       Size="Size.Large"
-                                                       OnClick="() => RunImage(DockerRepository.TriviaBot)">
-                                                Start TriviaBot
-                                            </MudButton>
-
-                                            <MudButton Disabled="Locked"
-                                                       Color="Color.Tertiary"
-                                                       Variant="Variant.Filled"
-                                                       Size="Size.Large"
-                                                       OnClick="() => RunImage(DockerRepository.FactBot)">
-                                                Start FactBot
-                                            </MudButton>
-
-                                            <MudButton Disabled="Locked"
-                                                       Color="Color.Tertiary"
-                                                       Variant="Variant.Filled"
-                                                       Size="Size.Large"
-                                                       OnClick="() => RunImage(DockerRepository.PremBot)">
-                                                Start PremBot
-                                            </MudButton>
-
-                                            <MudButton Disabled="Locked"
-                                                       Color="Color.Tertiary"
-                                                       Variant="Variant.Filled"
-                                                       Size="Size.Large"
-                                                       OnClick="() => RunImage(DockerRepository.JamJunction)">
-                                                Start JamJunction
-                                            </MudButton>
-
-                                            <MudButton Disabled="Locked"
-                                                       Color="Color.Tertiary"
-                                                       Variant="Variant.Filled"
-                                                       Size="Size.Large"
-                                                       OnClick="() => RunImage(DockerRepository.YtCipher)">
-                                                Start Youtube Cipher
-                                            </MudButton>
-                                        </div>
-                                    </div>
+                            <div>
+                                <div class="fw-bold">Docker fleet</div>
+                                <div class="bh-muted" style="font-size: 0.8rem;">
+                                    Acting on @Containers.Count running container@(Containers.Count == 1 ? "" : "s")
                                 </div>
                             </div>
                         </div>
+
+                        <div class="bh-muted mb-2" style="font-size: 0.68rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;">
+                            Fleet
+                        </div>
+                        <div class="d-flex flex-wrap gap-2 mb-4">
+                            <MudButton Disabled="Locked"
+                                       Color="Color.Primary"
+                                       Variant="Variant.Filled"
+                                       StartIcon="@Icons.Material.Filled.StopCircle"
+                                       OnClick="StopAllContainers">
+                                Stop All
+                            </MudButton>
+
+                            <MudButton Disabled="Locked"
+                                       Color="Color.Primary"
+                                       Variant="Variant.Filled"
+                                       StartIcon="@Icons.Material.Filled.RestartAlt"
+                                       OnClick="RestartAllContainers">
+                                Restart All
+                            </MudButton>
+
+                            <MudButton Disabled="Locked"
+                                       Color="Color.Primary"
+                                       Variant="Variant.Outlined"
+                                       StartIcon="@Icons.Material.Filled.Refresh"
+                                       OnClick="() => ListContainers()">
+                                Refresh Containers
+                            </MudButton>
+
+                            <MudButton Disabled="Locked"
+                                       Color="Color.Primary"
+                                       Variant="Variant.Outlined"
+                                       StartIcon="@Icons.Material.Filled.Insights"
+                                       OnClick="() => ListStats()">
+                                Refresh Stats
+                            </MudButton>
+                        </div>
+
+                        <div class="bh-muted mb-2" style="font-size: 0.68rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;">
+                            Launch a bot
+                        </div>
+                        <div class="d-flex flex-wrap gap-2">
+                            <MudButton Disabled="Locked" Color="Color.Tertiary" Variant="Variant.Filled"
+                                       StartIcon="@Icons.Material.Filled.PlayArrow"
+                                       OnClick="() => RunImage(DockerRepository.JokeBot)">
+                                JokeBot
+                            </MudButton>
+
+                            <MudButton Disabled="Locked" Color="Color.Tertiary" Variant="Variant.Filled"
+                                       StartIcon="@Icons.Material.Filled.PlayArrow"
+                                       OnClick="() => RunImage(DockerRepository.TriviaBot)">
+                                TriviaBot
+                            </MudButton>
+
+                            <MudButton Disabled="Locked" Color="Color.Tertiary" Variant="Variant.Filled"
+                                       StartIcon="@Icons.Material.Filled.PlayArrow"
+                                       OnClick="() => RunImage(DockerRepository.FactBot)">
+                                FactBot
+                            </MudButton>
+
+                            <MudButton Disabled="Locked" Color="Color.Tertiary" Variant="Variant.Filled"
+                                       StartIcon="@Icons.Material.Filled.PlayArrow"
+                                       OnClick="() => RunImage(DockerRepository.PremBot)">
+                                PremBot
+                            </MudButton>
+
+                            <MudButton Disabled="Locked" Color="Color.Tertiary" Variant="Variant.Filled"
+                                       StartIcon="@Icons.Material.Filled.PlayArrow"
+                                       OnClick="() => RunImage(DockerRepository.JamJunction)">
+                                JamJunction
+                            </MudButton>
+
+                            <MudButton Disabled="Locked" Color="Color.Tertiary" Variant="Variant.Filled"
+                                       StartIcon="@Icons.Material.Filled.PlayArrow"
+                                       OnClick="() => RunImage(DockerRepository.YtCipher)">
+                                YouTube Cipher
+                            </MudButton>
+                        </div>
+
+                        @if (Locked)
+                        {
+                            <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="mt-4" Rounded="true"/>
+                        }
                     </div>
                 </div>
             </div>
-            <div class="col-md-6 d-flex flex-column">
-                <h2 class="text-white fw-bold"><i class="bi bi-activity"></i> Droplet Stats</h2>
-                <div class="card main-site-card flex-fill">
-                    <div class="position-relative">
-                        <div class="card-body m-1">
-                            <div class="row">
-                                <div class="col-md-6 d-flex justify-content-center">
-                                    <div>
-                                        <MudChart ChartType="ChartType.Donut"
-                                                  Width="255px"
-                                                  Height="255px"
-                                                  InputData="@MemoryUsageData"
-                                                  InputLabels="@MemoryUsageLabels">
-                                            <CustomGraphics>
-                                                <text class="donut-inner-text"
-                                                      x="50%"
-                                                      y="50%"
-                                                      dominant-baseline="middle"
-                                                      text-anchor="middle"
-                                                      fill="white"
-                                                      font-size="20">
-                                                    @Math.Round(MemoryUsagePercentage)% / 100%
-                                                </text>
-                                            </CustomGraphics>
-                                        </MudChart>
-                                    </div>
-                                </div>
-                                <div class="col-md-6 d-flex justify-content-center">
-                                    <div>
-                                        <MudChart ChartType="ChartType.Donut"
-                                                  Width="255px"
-                                                  Height="255px"
-                                                  InputData="@CpuUsageData"
-                                                  InputLabels="@CpuUsageLabels">
-                                            <CustomGraphics>
-                                                <text class="donut-inner-text"
-                                                      x="50%"
-                                                      y="50%"
-                                                      dominant-baseline="middle"
-                                                      text-anchor="middle"
-                                                      fill="white"
-                                                      font-size="20">
-                                                    @Math.Round(CpuUsagePercentage)% / 100%
-                                                </text>
-                                            </CustomGraphics>
-                                        </MudChart>
-                                    </div>
-                                </div>
 
+            <div class="col-lg-6 d-flex flex-column">
+                <h2 class="bh-section-title h4">
+                    <i class="bi bi-activity"></i> Droplet Stats
+                </h2>
+                <div class="main-site-card flex-fill d-flex flex-column">
+                    <div class="p-4">
+                        <div class="bh-stat-row mb-3">
+                            <div class="bh-stat">
+                                <span class="bh-stat__label">Memory</span>
+                                <span class="bh-stat__value bh-stat__value--accent">@Math.Round(MemoryUsagePercentage)%</span>
+                            </div>
+                            <div class="bh-stat">
+                                <span class="bh-stat__label">CPU</span>
+                                <span class="bh-stat__value bh-stat__value--accent">@Math.Round(CpuUsagePercentage)%</span>
+                            </div>
+                            <div class="bh-stat">
+                                <span class="bh-stat__label">Containers</span>
+                                <span class="bh-stat__value">@Containers.Count</span>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="bh-donut">
+                                <MudChart ChartType="ChartType.Donut"
+                                          Width="225px"
+                                          Height="225px"
+                                          InputData="@MemoryUsageData"
+                                          InputLabels="@MemoryUsageLabels">
+                                    <CustomGraphics>
+                                        <text class="donut-inner-text"
+                                              x="50%"
+                                              y="50%"
+                                              dominant-baseline="middle"
+                                              text-anchor="middle"
+                                              fill="white"
+                                              font-size="20">
+                                            @Math.Round(MemoryUsagePercentage)%
+                                        </text>
+                                    </CustomGraphics>
+                                </MudChart>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="bh-donut">
+                                <MudChart ChartType="ChartType.Donut"
+                                          Width="225px"
+                                          Height="225px"
+                                          InputData="@CpuUsageData"
+                                          InputLabels="@CpuUsageLabels">
+                                    <CustomGraphics>
+                                        <text class="donut-inner-text"
+                                              x="50%"
+                                              y="50%"
+                                              dominant-baseline="middle"
+                                              text-anchor="middle"
+                                              fill="white"
+                                              font-size="20">
+                                            @Math.Round(CpuUsagePercentage)%
+                                        </text>
+                                    </CustomGraphics>
+                                </MudChart>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <p class="text-white mt-4 text-center">
-                        Last Fetched: @StatFetchTime
-                    </p>
+                    <div class="mt-auto px-4 pb-3 text-center">
+                        <p class="bh-timestamp">
+                            <i class="bi bi-clock-history"></i> Last fetched: @StatFetchTime
+                        </p>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <hr class="text-white"/>
-
-        <h2 class="text-white mb-4 fw-bold">
-            <i class="bi bi-box-seam"></i>
-            Containers Running
+        <h2 class="bh-section-title h4 mt-5">
+            <i class="bi bi-box-seam"></i> Containers Running
+            <MudChip T="string" Size="Size.Small" Color="Color.Primary" Variant="Variant.Outlined" Class="ml-2">
+                @Containers.Count
+            </MudChip>
         </h2>
-        <div class="row gy-2">
+
+        <div class="row gy-3">
             @if (Containers.Count == 0)
             {
-                <p class="text-white">There are no containers currently running...</p>
+                <div class="col-12">
+                    <div class="bh-empty">
+                        <i class="bi bi-moon-stars"></i>
+                        <div class="fw-bold mb-1">Nothing is running</div>
+                        <div style="font-size: 0.85rem;">Launch a bot from the Commands panel above.</div>
+                    </div>
+                </div>
             }
             @foreach (var container in Containers.OrderBy(x => x.Image))
             {
-                <div class="col-md-4 mb-4">
-                    <div class="card container-card">
-                        <div class="position-relative">
-                            <div class="row">
-                                <div class="col-6">
-                                    <div class="bg-image hover-overlay ripple" data-mdb-ripple-color="light">
-                                        <div class="mt-2 ms-3">
-                                            @if (container.Image.Contains("ghcr.io/kikkia/yt-cipher"))
-                                            {
-                                                <img src="https://www.svgrepo.com/show/28730/youtube.svg"
-                                                     width="50" height="50" alt="@container.Image"/>
-                                            }
-                                            else
-                                            {
-                                                <img src="https://www.svgrepo.com/show/353655/discord-icon.svg"
-                                                     width="50" height="50" alt="@container.Image"/>
-                                            }
-                                        </div>
-                                    </div>
+                <div class="col-xl-4 col-md-6">
+                    <div class="container-card h-100">
+                        <div class="p-3">
+                            <div class="d-flex align-items-start gap-3 mb-3">
+                                <div class="bh-container-logo">
+                                    <img src="@ContainerIconUrl(container.Image)" alt="@container.Image"/>
                                 </div>
-                                <div class="col-6">
-                                    <div class="d-flex flex-row justify-content-end mt-3">
-                                        <MudButton Disabled="Locked"
-                                                   OnClick="() => RestartContainer(container.ContainerId)" Class="mr-1"
-                                                   Color="Color.Tertiary" Variant="Variant.Filled">Restart
-                                        </MudButton>
-                                        <MudButton Disabled="Locked"
-                                                   OnClick="() => StopContainer(container.ContainerId)" Class="mr-4"
-                                                   Color="Color.Error" Variant="Variant.Filled">Stop
-                                        </MudButton>
-                                    </div>
+                                <div class="flex-fill" style="min-width: 0;">
+                                    <p class="bh-container-name">@FriendlyImageName(container.Image)</p>
+                                    <span class="bh-status @StatusModifier(container.Status) mt-1">
+                                        <span class="bh-status__dot"></span>@container.Status
+                                    </span>
                                 </div>
                             </div>
-                            <div class="card-body">
-                                @if (container.Image.Contains("kalebg08"))
-                                {
-                                    <h5 class="card-title fw-bold">
-                                        @container.Image.Replace("kalebg08/", "").ToUpper()
-                                    </h5>
-                                }
-                                else
-                                {
-                                    <h5 class="card-title fw-bold">
-                                        @container.Image.Replace("ghcr.io/kikkia/", "").Replace(":master", "").ToUpper()
-                                    </h5>
-                                }
-                                <p class="card-text text-white mt-4" style="color: #8893AC">Container
-                                    Id: @container.ContainerId</p>
-                                <p class="card-text text-white" style="color: #8893AC">Created: @container.Created</p>
-                                <p class="card-text text-white" style="color: #8893AC">Status: @container.Status</p>
+
+                            <dl class="mb-3">
+                                <div class="bh-meta">
+                                    <dt>Container ID</dt>
+                                    <dd>@container.ContainerId</dd>
+                                </div>
+                                <div class="bh-meta">
+                                    <dt>Created</dt>
+                                    <dd>@container.Created</dd>
+                                </div>
+                            </dl>
+
+                            <div class="d-flex gap-2">
+                                <MudButton Disabled="Locked"
+                                           OnClick="() => RestartContainer(container.ContainerId)"
+                                           Color="Color.Tertiary"
+                                           Variant="Variant.Filled"
+                                           Size="Size.Small"
+                                           StartIcon="@Icons.Material.Filled.RestartAlt"
+                                           FullWidth="true">
+                                    Restart
+                                </MudButton>
+                                <MudButton Disabled="Locked"
+                                           OnClick="() => StopContainer(container.ContainerId)"
+                                           Color="Color.Error"
+                                           Variant="Variant.Outlined"
+                                           Size="Size.Small"
+                                           StartIcon="@Icons.Material.Filled.Stop"
+                                           FullWidth="true">
+                                    Stop
+                                </MudButton>
                             </div>
                         </div>
                     </div>
                 </div>
             }
         </div>
-        <p class="text-white">Last Fetched: @ContainerFetchTime</p>
+
+        <p class="bh-timestamp mt-3">
+            <i class="bi bi-clock-history"></i> Last fetched: @ContainerFetchTime
+        </p>
     </Authorized>
 </AuthorizeView>

@@ -1,0 +1,115 @@
+# Bot Harbor — self-hosted stack for the Cortex NAS (UGREEN DXP4800 Plus).
+#
+# Three containers:
+#   postgres   the database that replaced Azure SQL
+#   tailscale  joins the tailnet and terminates TLS in front of the app
+#   botharbor  the Blazor dashboard, sharing the tailscale network namespace
+#
+# The app publishes no host ports. The only way in is the tailnet, so the dashboard is never
+# exposed to the internet and needs no router port forward.
+#
+#   docker compose up -d
+#
+# See deploy/README.md for first-run setup.
+
+name: botharbor
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: botharbor-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-botharbor}
+      POSTGRES_USER: ${POSTGRES_USER:-botharbor}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required, see .env.example}
+      # Keeps index collation stable so a future pg_upgrade does not need a reindex.
+      POSTGRES_INITDB_ARGS: "--encoding=UTF8 --locale=C"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    ports:
+      # Loopback only, so `dotnet run` on a dev box can reach it but the LAN cannot.
+      # The app container talks to `postgres:5432` over the compose network instead.
+      - "${POSTGRES_BIND:-127.0.0.1}:5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-botharbor} -d ${POSTGRES_DB:-botharbor}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+  tailscale:
+    image: tailscale/tailscale:latest
+    container_name: botharbor-tailscale
+    restart: unless-stopped
+    # Becomes bot-harbor.<your-tailnet>.ts.net on the tailnet.
+    hostname: ${TS_HOSTNAME:-bot-harbor}
+    environment:
+      TS_AUTHKEY: ${TS_AUTHKEY:?TS_AUTHKEY is required, see .env.example}
+      TS_STATE_DIR: /var/lib/tailscale
+      # Declarative `tailscale serve`: HTTPS on 443 with a real Let's Encrypt cert,
+      # proxied to Kestrel on loopback.
+      TS_SERVE_CONFIG: /config/serve.json
+      # Leave Docker's embedded resolver in place. With MagicDNS taking over /etc/resolv.conf in
+      # this namespace, botharbor could no longer resolve the `postgres` service name.
+      TS_ACCEPT_DNS: "false"
+      TS_USERSPACE: "false"
+      TS_EXTRA_ARGS: ${TS_EXTRA_ARGS:-}
+    volumes:
+      - tailscale-state:/var/lib/tailscale
+      - ./deploy/tailscale/serve.json:/config/serve.json:ro
+    devices:
+      - /dev/net/tun
+    cap_add:
+      - NET_ADMIN
+      - SYS_MODULE
+    # Uncomment to also reach the dashboard over plain HTTP on the LAN at http://<nas-ip>:8080.
+    # The tailnet hostname is the better route: it gets a valid TLS certificate.
+    # ports:
+    #   - "8080:8080"
+
+  botharbor:
+    image: ${BOTHARBOR_IMAGE:-kalebg08/botharbor:latest}
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: botharbor-app
+    restart: unless-stopped
+    # Share the tailscale container's network namespace so `tailscale serve` can proxy to
+    # 127.0.0.1:8080, and so the app itself has no reachable address off the tailnet.
+    network_mode: service:tailscale
+    depends_on:
+      postgres:
+        condition: service_healthy
+      tailscale:
+        condition: service_started
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ConnectionStrings__DefaultConnection: >-
+        Host=postgres;Port=5432;Database=${POSTGRES_DB:-botharbor};Username=${POSTGRES_USER:-botharbor};Password=${POSTGRES_PASSWORD};Include Error Detail=true
+      # tailscale serve speaks HTTP to Kestrel, so trust X-Forwarded-* and skip HTTPS redirects.
+      BotHarbor__BehindReverseProxy: "true"
+      BotHarbor__DataProtectionKeyPath: /var/botharbor/keys
+      # Creates the first operator account on an empty database. Clear the password once you
+      # have logged in and changed it.
+      BotHarbor__BootstrapUser__Email: ${BOTHARBOR_ADMIN_EMAIL:-}
+      BotHarbor__BootstrapUser__Password: ${BOTHARBOR_ADMIN_PASSWORD:-}
+      Database__MigrateOnStartup: "true"
+      ApiTokens__DigitalOcean: ${DIGITALOCEAN_TOKEN:?DIGITALOCEAN_TOKEN is required, see .env.example}
+      SSH__Id: ${DROPLET_ID:-}
+      SSH__Host: ${DROPLET_HOST:-}
+      SSH__Username: ${DROPLET_USERNAME:-}
+      SSH__Password: ${DROPLET_PASSWORD:-}
+    volumes:
+      - dataprotection-keys:/var/botharbor/keys
+    healthcheck:
+      test: ["CMD-SHELL", "curl --fail --silent http://127.0.0.1:8080/healthz || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 60s
+
+volumes:
+  postgres-data:
+  tailscale-state:
+  dataprotection-keys:

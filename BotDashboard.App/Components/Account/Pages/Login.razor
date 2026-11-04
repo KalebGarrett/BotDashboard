@@ -20,36 +20,43 @@
         @{ NavigateToHomePage(); }
     </Authorized>
     <NotAuthorized>
-        <MudImage Class="mx-auto d-block" Src="imgs\Bot Harbor - Landscape.png" Alt="Bot Harbor" Height="180"
-                  Width="360"></MudImage>
-        <div class="row d-flex justify-content-center mt-6">
-            <div class="col-md-4">
-                <EditForm Model="Input" method="post" OnValidSubmit="LoginUser" FormName="login">
-                    <DataAnnotationsValidator/>
-                    <ValidationSummary class="text-danger" role="alert"/>
-                    <div class="form-floating mb-3">
-                        <InputText @bind-Value="Input.Email" class="form-control" autocomplete="username"
-                                   aria-required="true" placeholder="name@example.com"/>
-                        <label for="email" class="form-label">Email</label>
-                        <ValidationMessage For="() => Input.Email" class="text-danger"/>
-                    </div>
-                    <div class="form-floating mb-3">
-                        <InputText type="password" @bind-Value="Input.Password" class="form-control"
-                                   autocomplete="current-password" aria-required="true" placeholder="password"/>
-                        <label for="password" class="form-label">Password</label>
-                        <ValidationMessage For="() => Input.Password" class="text-danger"/>
-                    </div>
-                    <div class="checkbox mb-3 text-white">
-                        <label class="form-label">
-                            <InputCheckbox @bind-Value="Input.RememberMe"
-                                           class="darker-border-checkbox form-check-input"/>
-                            Remember me
-                        </label>
-                    </div>
-                    <div>
-                        <button type="submit" class="w-100 btn btn-lg btn-primary">Log In</button>
-                    </div>
-                </EditForm>
+        @* Forward slashes: a backslash is not a valid URL path separator. *@
+        <MudImage Class="mx-auto d-block mt-4" Src="imgs/Bot Harbor - Landscape.png" Alt="Bot Harbor"
+                  Height="160" Width="320" ObjectFit="ObjectFit.Contain"></MudImage>
+        <div class="row d-flex justify-content-center mt-4">
+            <div class="col-md-5 col-lg-4">
+                <div class="bh-panel p-4">
+                    <h1 class="h5 fw-bold mb-1">Sign in</h1>
+                    <p class="bh-muted mb-4" style="font-size: 0.85rem;">
+                        Private to your tailnet. No public access.
+                    </p>
+                    <EditForm Model="Input" method="post" OnValidSubmit="LoginUser" FormName="login">
+                        <DataAnnotationsValidator/>
+                        <ValidationSummary class="text-danger" role="alert"/>
+                        <div class="form-floating mb-3">
+                            <InputText @bind-Value="Input.Email" class="form-control" autocomplete="username"
+                                       aria-required="true" placeholder="name@example.com"/>
+                            <label for="email" class="form-label">Email</label>
+                            <ValidationMessage For="() => Input.Email" class="text-danger"/>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <InputText type="password" @bind-Value="Input.Password" class="form-control"
+                                       autocomplete="current-password" aria-required="true" placeholder="password"/>
+                            <label for="password" class="form-label">Password</label>
+                            <ValidationMessage For="() => Input.Password" class="text-danger"/>
+                        </div>
+                        <div class="checkbox mb-4">
+                            <label class="form-label d-flex align-items-center gap-2 mb-0">
+                                <InputCheckbox @bind-Value="Input.RememberMe"
+                                               class="darker-border-checkbox form-check-input mt-0"/>
+                                <span>Remember me</span>
+                            </label>
+                        </div>
+                        <div>
+                            <button type="submit" class="w-100 btn btn-lg btn-primary">Log In</button>
+                        </div>
+                    </EditForm>
+                </div>
             </div>
         </div>
     </NotAuthorized>

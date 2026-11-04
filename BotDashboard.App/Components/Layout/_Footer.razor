@@ -1,10 +1,16 @@
-﻿<div class="container">
-    <div class="row text-center text-white">
-        <p class="col-6">Powered by .NET @DotNetVersion</p>
-        <p class="col-6">&copy; @CurrentYear Bot Harbor</p>
+﻿<div class="container bh-footer">
+    <div class="row align-items-center">
+        <div class="col-sm-6 mb-1 mb-sm-0">
+            <span class="d-inline-flex align-items-center gap-2">
+                <i class="bi bi-hdd-network"></i>
+                Self-hosted on Cortex &middot; .NET @DotNetVersion
+            </span>
+        </div>
+        <div class="col-sm-6 text-sm-end">
+            &copy; @CurrentYear Bot Harbor
+        </div>
     </div>
 </div>
-
 
 @code {
     private Version DotNetVersion { get; set; } = Environment.Version;

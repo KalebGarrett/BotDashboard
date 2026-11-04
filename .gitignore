@@ -266,3 +266,12 @@ __pycache__/
 
 # Cake - Uncomment if you are using it
 # tools/
+
+# Bot Harbor self-hosted deployment secrets
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# Tailscale node state, if ever bind-mounted instead of using the named volume
+deploy/tailscale/state/

@@ -5,11 +5,18 @@ using BotDashboard.App.Data;
 using BotDashboard.App.Services;
 using DigitalOcean.API;
 using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using MudBlazor.Services;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Bot Harbor is self-hosted behind a Tailscale sidecar on the Cortex NAS. `tailscale serve`
+// terminates TLS and forwards plain HTTP to Kestrel, so the app must trust the forwarded headers
+// and must not try to issue its own HTTPS redirects.
+var behindReverseProxy = builder.Configuration.GetValue("BotHarbor:BehindReverseProxy", false);
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
@@ -27,8 +34,42 @@ builder.Services.AddAuthentication(options =>
     })
     .AddIdentityCookies();
 
-builder.Services.AddDbContext<BotHarborDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+if (behindReverseProxy)
+{
+    builder.Services.Configure<ForwardedHeadersOptions>(options =>
+    {
+        options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+        // The only upstream is the Tailscale sidecar sharing this pod's loopback, and the Docker
+        // bridge gateway. Clearing the defaults lets those private addresses be trusted.
+        options.KnownNetworks.Clear();
+        options.KnownProxies.Clear();
+    });
+}
+
+// Identity's auth cookie is encrypted with Data Protection keys. Left on the default in-container
+// path those keys die with the container, logging everyone out on every redeploy, so they are
+// persisted onto the NAS volume instead.
+var dataProtectionKeyPath = builder.Configuration["BotHarbor:DataProtectionKeyPath"];
+
+if (!string.IsNullOrWhiteSpace(dataProtectionKeyPath))
+{
+    var keyDirectory = Directory.CreateDirectory(dataProtectionKeyPath);
+
+    builder.Services.AddDataProtection()
+        .SetApplicationName("BotHarbor")
+        .PersistKeysToFileSystem(keyDirectory);
+}
+
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
+if (string.IsNullOrWhiteSpace(connectionString))
+{
+    throw new InvalidOperationException(
+        "No database connection string. Set ConnectionStrings__DefaultConnection to the PostgreSQL " +
+        "instance (see .env.example).");
+}
+
+builder.Services.AddDbContext<BotHarborDbContext>(options => options.UseNpgsql(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddIdentityCore<BotHarborUser>(options => options.SignIn.RequireConfirmedAccount = true)
@@ -70,7 +111,15 @@ builder.Services.AddMudServices(config =>
     config.SnackbarConfiguration.ShowCloseIcon = true;
 });
 
+builder.Services.AddHealthChecks()
+    .AddDbContextCheck<BotHarborDbContext>("database");
+
 var app = builder.Build();
+
+if (behindReverseProxy)
+{
+    app.UseForwardedHeaders();
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -80,19 +129,34 @@ if (app.Environment.IsDevelopment())
 else
 {
     app.UseExceptionHandler("/Error", createScopeForErrors: true);
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-    app.UseHsts();
 }
 
-app.UseHttpsRedirection();
+if (!behindReverseProxy)
+{
+    app.UseHttpsRedirection();
+
+    if (!app.Environment.IsDevelopment())
+    {
+        // The default HSTS value is 30 days. You may want to change this for production scenarios,
+        // see https://aka.ms/aspnetcore-hsts.
+        app.UseHsts();
+    }
+}
 
 app.UseStaticFiles();
 app.UseAntiforgery();
+
+app.MapHealthChecks("/healthz").AllowAnonymous();
 
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
 
 // Add additional endpoints required by the Identity /Account Razor components.
 app.MapAccountServices();
+
+await DatabaseInitializer.InitializeAsync(
+    app.Services,
+    app.Configuration,
+    app.Services.GetRequiredService<ILoggerFactory>().CreateLogger("BotHarbor.Startup"));
 
 app.Run();

@@ -2,38 +2,36 @@
 
 @inject NavigationManager NavigationManager
 
-<MudPaper Style="background-color: #080E2C;" Elevation="0">
-    <MudNavMenu Bordered="true" Rounded="true" Margin="Margin.Normal" Color="Color.Tertiary" Class="text-white pa-2">
-        <MudImage class="mt-2 ml-8" Width="150" Height="75" Src="imgs\Bot Harbor - Landscape.png"
-                  Alt="FSL Investing"></MudImage>
-        <MudDivider Class="my-3"/>
-        <MudNavLink IconColor="Color.Tertiary" Class="mud-link-item" Icon="@Icons.Material.Filled.Dashboard" Href=""
-                    Match="NavLinkMatch.All">Dashboard
-        </MudNavLink>
-        <MudNavLink IconColor="Color.Tertiary" Class="mud-link-item" Icon="@Icons.Material.Filled.KeyboardCommandKey" Href="commands"
-                    Match="NavLinkMatch.Prefix">Commands
-        </MudNavLink>
-        <MudNavLink IconColor="Color.Tertiary" Class="mud-link-item" Icon="@Icons.Material.Filled.QueryStats"
-                    Href="stats" Match="NavLinkMatch.Prefix">Stats
-        </MudNavLink>
-        <MudDivider Class="my-3"/>
-        <MudNavGroup IconColor="Color.Tertiary" Icon="@Icons.Material.Filled.Settings" Title="Settings" Expanded="true">
-            <MudNavLink IconColor="Color.Tertiary" Class="mud-link-item" Icon="@Icons.Material.Filled.Waves"
-                        Href="/manage/droplet" Match="NavLinkMatch.Prefix">Manage Droplet
-            </MudNavLink>
-            <MudNavLink IconColor="Color.Tertiary" Class="mud-link-item" Icon="@Icons.Material.Filled.Password"
-                        Href="/manage/password" Match="NavLinkMatch.Prefix">Manage Password
-            </MudNavLink>
-        </MudNavGroup>
-    </MudNavMenu>
-</MudPaper>
+@* Drawer background and link styling come from BotHarborTheme and app.css. *@
+<MudNavMenu Bordered="false" Rounded="true" Margin="Margin.Dense" Color="Color.Tertiary" Class="pa-3">
+    <div class="d-flex justify-center py-2">
+        <MudImage Width="160" Height="80" ObjectFit="ObjectFit.Contain"
+                  Src="imgs/Bot Harbor - Landscape.png" Alt="Bot Harbor"/>
+    </div>
 
-<style>
-    .mud-link-item :hover {
-        color: #ffffff !important;
-        font-weight: bold;
-    }
-</style>
+    <MudDivider Class="my-3"/>
+
+    <MudText Typo="Typo.overline" Class="bh-muted px-3">Overview</MudText>
+    <MudNavLink IconColor="Color.Tertiary" Icon="@Icons.Material.Filled.Dashboard" Href=""
+                Match="NavLinkMatch.All">Dashboard
+    </MudNavLink>
+    <MudNavLink IconColor="Color.Tertiary" Icon="@Icons.Material.Filled.KeyboardCommandKey" Href="commands"
+                Match="NavLinkMatch.Prefix">Commands
+    </MudNavLink>
+    <MudNavLink IconColor="Color.Tertiary" Icon="@Icons.Material.Filled.QueryStats" Href="stats"
+                Match="NavLinkMatch.Prefix">Stats
+    </MudNavLink>
+
+    <MudDivider Class="my-3"/>
+
+    <MudText Typo="Typo.overline" Class="bh-muted px-3">Settings</MudText>
+    <MudNavLink IconColor="Color.Tertiary" Icon="@Icons.Material.Filled.Waves" Href="/manage/droplet"
+                Match="NavLinkMatch.Prefix">Manage Droplet
+    </MudNavLink>
+    <MudNavLink IconColor="Color.Tertiary" Icon="@Icons.Material.Filled.Password" Href="/manage/password"
+                Match="NavLinkMatch.Prefix">Manage Password
+    </MudNavLink>
+</MudNavMenu>
 
 @code {
     private string CurrentUrl { get; set; }
