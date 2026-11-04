@@ -56,14 +56,26 @@ At <https://login.tailscale.com/admin/settings/keys> create a key that is **Reus
 
 ### 4. Fill in the environment
 
+Use the script rather than an editor:
+
 ```bash
-cp .env.example .env
-nano .env
+./deploy/configure.sh
 ```
 
-`POSTGRES_PASSWORD`, `TS_AUTHKEY` and `DIGITALOCEAN_TOKEN` are mandatory — compose refuses to
-start without them. Set `BOTHARBOR_ADMIN_EMAIL` and `BOTHARBOR_ADMIN_PASSWORD` too: there is no
-sign-up page, so this is the only way into a fresh database.
+It prompts for each secret with the terminal echo off, so nothing appears on screen or in your
+shell history, validates what you type, and is safe to re-run — values already set are left
+alone unless you ask to replace them.
+
+**It also quotes the values correctly, which matters more than it sounds.** Compose
+interpolates `.env`, so a bare `p$ssword` loses everything from the `$` onward and you get an
+authentication failure with nothing in the logs to explain it. Only single-quoted values
+survive. If you do edit `.env` by hand, single-quote anything containing a `$`.
+
+`POSTGRES_PASSWORD` is mandatory — compose refuses to start the database without it. Set
+`BOTHARBOR_ADMIN_EMAIL` and `BOTHARBOR_ADMIN_PASSWORD` too: there is no sign-up page, so this
+is the only way into a fresh database. `TS_AUTHKEY` and `DIGITALOCEAN_TOKEN` are not guarded by
+compose (see the note at the top of `docker-compose.yml`); without them the tunnel never comes
+up and the app logs a warning naming what is missing.
 
 ### 5. Build and start
 
@@ -177,6 +189,7 @@ gunzip -c botharbor-20261104.sql.gz | \
 | Can't log in, fresh database | No bootstrap user was configured. Set `BOTHARBOR_ADMIN_EMAIL` / `_PASSWORD` in `.env` and `docker compose up -d botharbor`. |
 | Dashboard up but droplet actions fail | Droplet credentials or the DigitalOcean token are wrong — or you rotated them during Azure teardown and didn't update `.env`. |
 | `Running without these droplet settings: ...` in the logs | Exactly what it says: those keys are blank in `.env`. Sign-in and the UI still work, so this is a warning, not a crash. |
+| Credentials are right but authentication fails | A value in `.env` contains a `$` and is not single-quoted, so Compose interpolated part of it away. Re-run `./deploy/configure.sh`, which quotes correctly. An apostrophe cannot be represented in `.env` at all; change that credential. |
 | `up -d postgres` fails on an unrelated variable | Should not happen any more. Only `POSTGRES_PASSWORD` uses a `${VAR:?}` guard, because Compose interpolates the whole file before narrowing to the services you named, so a guard anywhere aborts every `up`. Don't add new ones. |
 | `failed to bind host port 127.0.0.1:5432: address already in use` | UGOS runs its own PostgreSQL 15 on 5432 (`/usr/ugreen/etc/psql`). The stack no longer publishes a port, so this only happens if you added `docker-compose.dev.yml` on the NAS. Drop it; the app reaches `postgres:5432` over the compose network. |
 

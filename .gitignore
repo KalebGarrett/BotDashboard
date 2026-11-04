@@ -267,10 +267,12 @@ __pycache__/
 # Cake - Uncomment if you are using it
 # tools/
 
-# Bot Harbor self-hosted deployment secrets
+# Bot Harbor self-hosted deployment secrets.
+# `.env.*` is deliberately broad: it catches editor leftovers that hold the same secrets,
+# such as nano's `.env.save` and vim's `.env.swp`, which narrower rules missed.
 .env
-.env.local
-.env.*.local
+.env.*
+.*.env
 !.env.example
 
 # Tailscale node state, if ever bind-mounted instead of using the named volume
