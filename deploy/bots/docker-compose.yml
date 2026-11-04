@@ -100,7 +100,8 @@ services:
     profiles: [audio]
     restart: unless-stopped
     ports:
-      - "${YT_CIPHER_BIND:-0.0.0.0}:${YT_CIPHER_PORT:-8081}:8080"
+      # Verified against the running droplet container: it listens on 8001, not 8080.
+      - "${YT_CIPHER_BIND:-0.0.0.0}:${YT_CIPHER_PORT:-8001}:8001"
     environment:
       API_KEY: ${YT_CIPHER_API_KEY:-}
 

@@ -65,6 +65,10 @@ Until both are done, Jam Junction on the NAS loses YouTube metadata resolution. 
 start, and other platforms still work, so the failure looks like a bot bug rather than a
 missing tunnel.
 
+yt-cipher is the one thing still running on the droplet, with `restart: unless-stopped`,
+publishing port 8001. Lavalink on the home PC already reaches it there. Moving it here
+would add a hop that does not exist today, so it is parked behind the profile.
+
 `TS_AUTHKEY` must be set in `.env` for the `audio` profile — the sidecar needs its own key,
 separate from Bot Harbor's.
 
