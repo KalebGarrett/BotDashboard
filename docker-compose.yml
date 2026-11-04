@@ -10,6 +10,12 @@
 #
 #   docker compose up -d
 #
+# Only POSTGRES_PASSWORD uses a ${VAR:?} guard. Compose interpolates the whole file before it
+# filters down to the services you named, so a guard on one service aborts `up` for every
+# other one too -- `docker compose up -d postgres` for local dev would die on TS_AUTHKEY.
+# The rest are ${VAR:-}: the tailscale container reports a bad auth key itself, and the app
+# logs a warning at startup naming any droplet settings it is missing.
+#
 # See deploy/README.md for first-run setup.
 
 name: botharbor
@@ -45,7 +51,7 @@ services:
     # Becomes bot-harbor.<your-tailnet>.ts.net on the tailnet.
     hostname: ${TS_HOSTNAME:-bot-harbor}
     environment:
-      TS_AUTHKEY: ${TS_AUTHKEY:?TS_AUTHKEY is required, see .env.example}
+      TS_AUTHKEY: ${TS_AUTHKEY:-}
       TS_STATE_DIR: /var/lib/tailscale
       # Declarative `tailscale serve`: HTTPS on 443 with a real Let's Encrypt cert,
       # proxied to Kestrel on loopback.
@@ -95,7 +101,7 @@ services:
       BotHarbor__BootstrapUser__Email: ${BOTHARBOR_ADMIN_EMAIL:-}
       BotHarbor__BootstrapUser__Password: ${BOTHARBOR_ADMIN_PASSWORD:-}
       Database__MigrateOnStartup: "true"
-      ApiTokens__DigitalOcean: ${DIGITALOCEAN_TOKEN:?DIGITALOCEAN_TOKEN is required, see .env.example}
+      ApiTokens__DigitalOcean: ${DIGITALOCEAN_TOKEN:-}
       SSH__Id: ${DROPLET_ID:-}
       SSH__Host: ${DROPLET_HOST:-}
       SSH__Username: ${DROPLET_USERNAME:-}

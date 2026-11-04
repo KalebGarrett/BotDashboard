@@ -154,9 +154,35 @@ app.MapRazorComponents<App>()
 // Add additional endpoints required by the Identity /Account Razor components.
 app.MapAccountServices();
 
-await DatabaseInitializer.InitializeAsync(
-    app.Services,
-    app.Configuration,
-    app.Services.GetRequiredService<ILoggerFactory>().CreateLogger("BotHarbor.Startup"));
+var startupLogger = app.Services
+    .GetRequiredService<ILoggerFactory>()
+    .CreateLogger("BotHarbor.Startup");
+
+// The dashboard's whole job is driving the droplet, but Switch.OnInitialized starts false so
+// nothing is fetched until the operator asks. A missing token is therefore not fatal, and must
+// not throw -- that would break `dotnet run` for local UI work, the same way the compose
+// ${VAR:?} guards used to break `docker compose up -d postgres`. Name what is missing instead,
+// once, at startup, so a half-configured deployment is obvious in `docker compose logs`.
+var missingDropletSettings = new[]
+    {
+        ("ApiTokens:DigitalOcean", "DIGITALOCEAN_TOKEN"),
+        ("SSH:Id", "DROPLET_ID"),
+        ("SSH:Host", "DROPLET_HOST"),
+        ("SSH:Username", "DROPLET_USERNAME"),
+        ("SSH:Password", "DROPLET_PASSWORD")
+    }
+    .Where(setting => string.IsNullOrWhiteSpace(app.Configuration[setting.Item1]))
+    .Select(setting => setting.Item2)
+    .ToArray();
+
+if (missingDropletSettings.Length > 0)
+{
+    startupLogger.LogWarning(
+        "Running without these droplet settings: {Missing}. Sign-in and the UI work, but "
+        + "listing containers or stats will fail until they are set in .env. See deploy/README.md.",
+        string.Join(", ", missingDropletSettings));
+}
+
+await DatabaseInitializer.InitializeAsync(app.Services, app.Configuration, startupLogger);
 
 app.Run();

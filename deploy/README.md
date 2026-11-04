@@ -176,6 +176,8 @@ gunzip -c botharbor-20261104.sql.gz | \
 | `relation "AspNetUsers" does not exist` | Migrations didn't run. Confirm `Database__MigrateOnStartup=true` and read `docker compose logs botharbor`. |
 | Can't log in, fresh database | No bootstrap user was configured. Set `BOTHARBOR_ADMIN_EMAIL` / `_PASSWORD` in `.env` and `docker compose up -d botharbor`. |
 | Dashboard up but droplet actions fail | Droplet credentials or the DigitalOcean token are wrong — or you rotated them during Azure teardown and didn't update `.env`. |
+| `Running without these droplet settings: ...` in the logs | Exactly what it says: those keys are blank in `.env`. Sign-in and the UI still work, so this is a warning, not a crash. |
+| `up -d postgres` fails on an unrelated variable | Should not happen any more. Only `POSTGRES_PASSWORD` uses a `${VAR:?}` guard, because Compose interpolates the whole file before narrowing to the services you named, so a guard anywhere aborts every `up`. Don't add new ones. |
 
 ## Local development
 
