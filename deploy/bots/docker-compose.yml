@@ -90,6 +90,12 @@ services:
       OLLAMA_PORT: ${OLLAMA_PORT:-11434}
       OLLAMA_MODEL: ${OLLAMA_MODEL:-llama3.2:1b}
       OLLAMA_ENABLED: ${OLLAMA_ENABLED:-true}
+      # The proxy exists only to give YouTube a residential egress IP. Cortex is already on
+      # the home connection, so requests go out from the same address without it -- and the
+      # SOCKS listener it would otherwise use lives on the droplet's loopback, unreachable
+      # from here, and only while the home server PC is awake.
+      PROXY_ENABLED: ${PROXY_ENABLED:-false}
+      PROXY_ADDRESS: ${PROXY_ADDRESS:-}
 
   # Solves YouTube's signature cipher for Lavalink. Lavalink runs on the home server PC, so
   # moving this here puts a network hop between them that does not exist today. Keeping it on

@@ -47,27 +47,21 @@ Jam Junction has three external dependencies, and only two of them survive the m
 | --- | --- | --- |
 | Lavalink | home server PC, `100.121.114.24:2333` | Yes, over Tailscale |
 | Ollama | droplet `bots-ytcipher`, `100.120.70.97:11434` | Yes, over Tailscale |
-| SOCKS5 proxy for YouTube metadata | droplet loopback `127.0.0.1:14625` | **No** |
+| SOCKS5 proxy for YouTube metadata | droplet loopback `127.0.0.1:14625` | Not needed |
 
-The proxy is a reverse SSH tunnel: a Windows scheduled task on the home PC runs
-`ssh -N -R 14625 root@<droplet>`, publishing a SOCKS5 listener on the **droplet's** loopback.
-Jam Junction reaches it only because it runs on that droplet with `--network host`. From the
-NAS there is no such listener, and `ProxySecrets.Address` is a compile-time `const`, so it
-cannot be repointed with an environment variable the way Lavalink and Ollama now can.
+The proxy turned out to be unnecessary here rather than broken. It exists for one reason: to
+give YouTube a **residential egress IP**, because the droplet egresses from a datacenter
+address YouTube throttles. A reverse SSH tunnel from the home PC publishes a SOCKS5 listener on
+the droplet's loopback, and the bot reaches it only because it runs on that droplet with
+`--network host`.
 
-Moving Jam Junction here therefore needs, first:
+Cortex is on that same home connection. Running here, YouTube requests already egress from the
+identical residential IP, so `PROXY_ENABLED=false` sends them out directly. That is strictly
+better than re-pointing the tunnel: it removes a dependency on the home server PC being awake,
+which today takes YouTube metadata down with it whenever it sleeps.
 
-1. The tunnel re-pointed at the NAS (`ssh -N -R 14625 <user>@<nas>`), and
-2. `ProxySecrets` made environment-overridable, the same way `LavalinkSecrets` was, then a
-   rebuild and push of `kalebg08/jamjunction`.
-
-Until both are done, Jam Junction on the NAS loses YouTube metadata resolution. It will still
-start, and other platforms still work, so the failure looks like a bot bug rather than a
-missing tunnel.
-
-yt-cipher is the one thing still running on the droplet, with `restart: unless-stopped`,
-publishing port 8001. Lavalink on the home PC already reaches it there. Moving it here
-would add a hop that does not exist today, so it is parked behind the profile.
+On the droplet nothing changes. With the variable unset the proxy stays on and uses the
+compiled-in address exactly as before.
 
 `TS_AUTHKEY` must be set in `.env` for the `audio` profile — the sidecar needs its own key,
 separate from Bot Harbor's.
