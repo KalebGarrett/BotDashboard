@@ -110,6 +110,17 @@ check_tailscale_key() {
     return 1
 }
 
+check_tunnel_token() {
+    # Cloudflare tunnel tokens are base64 JSON, so they always start with the encoding
+    # of {"a": -- catching a half-copied paste here beats a connector that silently
+    # refuses to register later.
+    case "$1" in
+        eyJ*) return 0 ;;
+    esac
+    echo "  that does not look like a tunnel token (they start with eyJ)." >&2
+    return 1
+}
+
 check_tailnet_address() {
     # Tailscale hands out 100.64.0.0/10. A public IP here would mean reaching an
     # unauthenticated LLM server across the internet, so reject it rather than warn.
@@ -152,6 +163,12 @@ ask DROPLET_ID   "Numeric id of the droplet running the bots." no check_droplet_
 ask DROPLET_HOST "Droplet IP or hostname." no
 ask DROPLET_USERNAME "SSH user on the droplet (often root)." no
 ask DROPLET_PASSWORD "SSH password for that user." yes
+
+echo
+read -r -p "Set up the Cloudflare Tunnel as well? [y/N] " want_cloudflare
+if [[ "$want_cloudflare" =~ ^[Yy]$ ]]; then
+    ask CLOUDFLARE_TUNNEL_TOKEN "Tunnel token from the tunnel Overview tab in the Cloudflare dashboard." yes check_tunnel_token
+fi
 
 chmod 600 "$ENV_FILE"
 
