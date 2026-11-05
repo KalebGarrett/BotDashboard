@@ -19,7 +19,7 @@
                     <MudIconButton Class="text-white" Edge="Edge.Start"
                                    Icon="@Icons.Material.Filled.Menu"
                                    aria-label="Open navigation"
-                                   OnClick="@(() => MobileOpen = !MobileOpen)"/>
+                                   OnClick="@(() => ToggleDrawer())"/>
                 </MudHidden>
                 <MudSpacer/>
                 <MudHidden Breakpoint="Breakpoint.SmAndDown">
@@ -92,29 +92,20 @@
                     </ChildContent>
                 </MudMenu>
             </MudAppBar>
-            @* Two drawers, one at a time, because the two sizes want genuinely different
-               behaviour.
+            @* One drawer, always rendered. It was briefly two, wrapped in MudHidden so each
+               screen size could have its own variant -- but MudHidden has to ask the browser
+               how wide it is before it renders anything, so the page arrived with no navigation
+               at all until the circuit connected and the first interop round trip came back.
+               The nav is the slowest thing on the page to appear; it should be the first.
 
-               Desktop: Mini. Collapsing shrinks it to an icon rail rather than hiding it, so
-               the toggle at its foot stays reachable -- with the toggle living inside the
-               drawer, a variant that hides it leaves no way back.
-
-               Phone: Temporary. A 72px rail eats a sixth of the screen and the icons sit under
-               the thumb, so there the drawer goes away completely and returns on the app bar's
-               menu button, which only exists at this size. It overlays the content and closes
-               when the scrim is tapped. *@
-            <MudHidden Breakpoint="Breakpoint.SmAndDown">
-                <MudDrawer @bind-Open="@Open" Elevation="0" ClipMode="DrawerClipMode.Never"
-                           Variant="DrawerVariant.Mini" OpenMiniOnHover="false" MiniWidth="72px">
-                    <NavMenu Open="Open" OnToggle="ToggleDrawer"/>
-                </MudDrawer>
-            </MudHidden>
-            <MudHidden Breakpoint="Breakpoint.MdAndUp">
-                <MudDrawer @bind-Open="@MobileOpen" Elevation="0" ClipMode="DrawerClipMode.Never"
-                           Variant="DrawerVariant.Temporary" Overlay="true">
-                    <NavMenu Open="true" OnToggle="CloseMobileDrawer"/>
-                </MudDrawer>
-            </MudHidden>
+               Mini, so collapsing on a desktop leaves an icon rail with the toggle still on it.
+               Below the Md breakpoint app.css takes the rail down to nothing, so on a phone the
+               drawer goes away completely and comes back on the app bar's menu button. *@
+            <MudDrawer @bind-Open="@Open" Elevation="0" ClipMode="DrawerClipMode.Never"
+                       Variant="DrawerVariant.Mini" OpenMiniOnHover="false"
+                       MiniWidth="72px" Breakpoint="Breakpoint.Md">
+                <NavMenu Open="Open" OnToggle="ToggleDrawer"/>
+            </MudDrawer>
             <MudMainContent Class="d-flex flex-column" Style="min-height:100vh;">
                 <article class="content px-4 flex-fill">
                     <ErrorBoundary @ref="ErrorBoundary">

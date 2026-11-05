@@ -8,19 +8,16 @@ namespace BotDashboard.App.Components.Layout;
 
 public partial class MainLayout : IDisposable
 {
-    /// <summary>Desktop drawer: open wide, or collapsed to the icon rail.</summary>
-    private bool Open { get; set; } = true;
-
     /// <summary>
-    /// Phone drawer: on screen, or not there at all.
+    /// Whether the drawer is wide or collapsed.
     /// </summary>
     /// <remarks>
-    /// Separate from <see cref="Open"/> on purpose. They mean different things -- one picks
-    /// between two widths, the other between showing and hiding -- and sharing a field made a
-    /// collapsed rail on the desktop reopen as a full overlay the next time the phone layout
-    /// loaded. It starts closed, because on a phone the content is the point.
+    /// One field for both layouts. Collapsed means an icon rail on a desktop and nothing at
+    /// all on a phone, but that difference is CSS -- the state is the same question either
+    /// way, and keeping it in one place is what lets the drawer render server-side instead of
+    /// waiting on a breakpoint from the browser.
     /// </remarks>
-    private bool MobileOpen { get; set; }
+    private bool Open { get; set; } = true;
 
     private ErrorBoundary ErrorBoundary { get; set; } = new();
 
@@ -115,11 +112,6 @@ public partial class MainLayout : IDisposable
         Open = !Open;
     }
 
-    /// <summary>The arrow at the foot of the phone drawer dismisses it rather than narrowing it.</summary>
-    private void CloseMobileDrawer()
-    {
-        MobileOpen = false;
-    }
 
     private void Logout()
     {

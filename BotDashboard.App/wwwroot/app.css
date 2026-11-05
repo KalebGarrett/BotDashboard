@@ -544,6 +544,43 @@ h1:focus {
     border-top: 1px solid var(--bh-border);
 }
 
+/* Phones. The drawer is the same Mini component as on a desktop -- swapping it for a
+   different variant per screen size meant asking the browser how wide it was before anything
+   could render, which left the page with no navigation until the circuit connected.
+
+   So the variant stays and the rail is taken to nothing here instead: collapsed is 72px of
+   icons on a desktop and genuinely absent on a phone, where that rail would eat a fifth of
+   the screen and sit under the thumb. The app bar's menu button, which only exists at this
+   size, brings it back. 959.98px is MudBlazor's own Md boundary, matched deliberately. */
+@media (max-width: 959.98px) {
+    .mud-layout {
+        --mud-drawer-width-mini-left: 0px;
+    }
+
+    .mud-drawer.mud-drawer-mini.mud-drawer-pos-left.mud-drawer--closed {
+        width: 0;
+        min-width: 0;
+        border-right: none;
+        overflow: hidden;
+    }
+
+    /* Open, it floats over the page. Shifting the content sideways by a full drawer width
+       would push it off the screen on a narrow one. The attribute selectors catch whichever
+       breakpoint suffix MudBlazor put on the layout for this width. */
+    [class*="mud-drawer-open-mini-"] .mud-main-content,
+    [class*="mud-drawer-close-mini-"] .mud-main-content,
+    [class*="mud-drawer-open-mini-"] .mud-appbar,
+    [class*="mud-drawer-close-mini-"] .mud-appbar {
+        margin-left: 0;
+        width: 100%;
+    }
+
+    .mud-drawer.mud-drawer-mini.mud-drawer-pos-left:not(.mud-drawer--closed) {
+        z-index: calc(var(--mud-zindex-appbar, 1100) + 2);
+        box-shadow: 0 0 40px rgba(0, 0, 0, 0.65);
+    }
+}
+
 /* The drawer's own collapse control, now that it lives under the links. */
 .bh-drawer-toggle {
     color: var(--bh-text) !important;
