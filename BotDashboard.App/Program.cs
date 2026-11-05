@@ -175,6 +175,12 @@ app.UseAntiforgery();
 
 app.MapHealthChecks("/healthz").AllowAnonymous();
 
+// .NET 9 moved framework assets -- blazor.web.js among them -- out of UseStaticFiles and onto
+// this endpoint-routed manifest. Without it App.razor's <script src="_framework/blazor.web.js">
+// 404s, Blazor never boots, and the page renders once and is then inert: no circuit, so
+// MudMenu (logout) and MudHidden (the signed-in email) silently do nothing.
+app.MapStaticAssets();
+
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
 
