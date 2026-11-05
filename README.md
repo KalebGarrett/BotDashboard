@@ -76,13 +76,6 @@ docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d postgres
 dotnet run --project BotDashboard.App
 ```
 
-## Digital Ocean
-
-**Host Your Own Bots:**
-   ```plaintext
-   https://www.digitalocean.com
-   ```
-
 ## Stats
 ![Alt](https://repobeats.axiom.co/api/embed/7be079b55ec3c0da14d57536b4ec1d585e7f0076.svg "Repobeats analytics image")
 
