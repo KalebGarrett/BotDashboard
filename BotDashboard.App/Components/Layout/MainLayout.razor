@@ -35,7 +35,11 @@
                     </ChildContent>
                 </MudMenu>
             </MudAppBar>
-            <MudDrawer @bind-Open="@Open" Elevation="0" ClipMode="DrawerClipMode.Never">
+            @* Mini, not the default: collapsing shrinks the drawer to an icon rail instead of
+               hiding it, so the toggle at its foot stays reachable. With the toggle living
+               inside the drawer, a variant that hides it leaves no way to reopen it. *@
+            <MudDrawer @bind-Open="@Open" Elevation="0" ClipMode="DrawerClipMode.Never"
+                       Variant="DrawerVariant.Mini" OpenMiniOnHover="false">
                 <NavMenu Open="Open" OnToggle="ToggleDrawer"/>
             </MudDrawer>
             <MudMainContent Class="d-flex flex-column" Style="min-height:100vh;">

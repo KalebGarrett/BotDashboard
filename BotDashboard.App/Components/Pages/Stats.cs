@@ -33,7 +33,7 @@ public partial class Stats
     private string DiskFetchTime { get; set; }
 
     private string Uptime { get; set; }
-    private DateTime BootTime { get; set; }
+    private DateTime? BootTime { get; set; }
     private string UptimeFetchTime { get; set; }
 
     private AxisChartOptions AxisChartOptions { get; set; } = new();
@@ -176,8 +176,11 @@ public partial class Stats
 
         Uptime = UbuntuService.Uptime().Replace("up", "");
 
-        var rawTime = UbuntuService.BootTime().Replace("system boot", "");
-        BootTime = Convert.ToDateTime(rawTime);
+        // uptime -s prints a bare "yyyy-MM-dd HH:mm:ss". Parse defensively anyway: a host that
+        // cannot answer should leave the card blank rather than throw and kill the circuit.
+        BootTime = DateTime.TryParse(UbuntuService.BootTime().Trim(), out var bootedAt)
+            ? bootedAt
+            : null;
 
         UptimeFetchTime = DateTime.UtcNow.ToLocalTime().ToString(CultureInfo.CurrentCulture);
 

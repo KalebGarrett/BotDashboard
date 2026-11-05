@@ -50,9 +50,15 @@ public class UbuntuCommand
         return "uptime -p";
     }
 
+    /// <summary>When the machine last booted.</summary>
+    /// <remarks>
+    /// Not <c>who -b</c>: that reads the utmp boot record, which UGOS never writes, so on
+    /// Cortex it reports "system boot 1969-12-31 23:59" -- the Unix epoch, which the page then
+    /// rendered as a 1969 calendar. <c>uptime -s</c> derives the same answer from /proc.
+    /// </remarks>
     public string ListBootTime()
     {
-        return "who -b";
+        return "uptime -s";
     }
 
     public string ListSshLogins(string weekStart, string weekEnd)

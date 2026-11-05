@@ -123,19 +123,27 @@
                 <div class="card main-site-card flex-fill">
                     <div class="position-relative">
                         <div class="card-body">
-                            <div class="d-flex justify-content-center">
-                                <MudStack Spacing="2" AlignItems="AlignItems.Center">
-                                    <MudDatePicker Label="Started"
-                                                   Date="@BootTime"
-                                                   Disabled="true"
-                                                   Color="Color.Tertiary"
-                                                   Variant="Variant.Outlined"
-                                                   PickerVariant="PickerVariant.Static"/>
-                                    <MudChip Class="my-9" T="string" Size="Size.Large" Color="Color.Info"
-                                             Icon="@Icons.Material.Filled.Schedule">
-                                        <MudText Typo="Typo.h5">@Uptime</MudText>
-                                    </MudChip>
-                                </MudStack>
+                            @* A boot time is a single instant, so a static month calendar was the
+                               wrong shape for it: twelve rows of dates to convey one value. This
+                               reads the number first and the date underneath it. *@
+                            <div class="bh-uptime">
+                                <span class="bh-uptime__label">Up for</span>
+                                <span class="bh-uptime__value">@(string.IsNullOrWhiteSpace(Uptime) ? "—" : Uptime.Trim())</span>
+
+                                <div class="bh-uptime__meta">
+                                    <div class="bh-stat">
+                                        <span class="bh-stat__label">Booted</span>
+                                        <span class="bh-stat__value" style="font-size: 1rem;">
+                                            @(BootTime.HasValue ? BootTime.Value.ToString("ddd d MMM yyyy") : "—")
+                                        </span>
+                                    </div>
+                                    <div class="bh-stat">
+                                        <span class="bh-stat__label">At</span>
+                                        <span class="bh-stat__value" style="font-size: 1rem;">
+                                            @(BootTime.HasValue ? BootTime.Value.ToString("HH:mm") : "—")
+                                        </span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>

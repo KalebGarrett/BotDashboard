@@ -41,9 +41,13 @@
     [CascadingParameter]
     private HttpContext HttpContext { get; set; } = default!;
 
+        // These pages take HttpContext as a cascading parameter, which exists only during
+        // static server rendering. Rendered interactively it is null, OnInitializedAsync
+        // throws, the circuit dies and the browser reloads -- an endless refresh loop.
     private IComponentRenderMode? RenderModeForPage => 
         HttpContext.Request.Path.StartsWithSegments("/manage/password") 
         || HttpContext.Request.Path.StartsWithSegments("/manage/setpassword")
+        || HttpContext.Request.Path.StartsWithSegments("/manage/email")
         ? null
         : InteractiveServer;
 }

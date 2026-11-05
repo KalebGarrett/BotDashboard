@@ -46,7 +46,7 @@ ENV ASPNETCORE_URLS=http://+:8080 \
     DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false
 
 # Data Protection keys live on a mounted volume so auth cookies survive a redeploy.
-RUN mkdir -p /var/botharbor/keys && chown -R app:app /var/botharbor
+RUN mkdir -p /var/botharbor/keys /var/botharbor/data && chown -R app:app /var/botharbor
 
 COPY --from=build --chown=app:app /app ./
 

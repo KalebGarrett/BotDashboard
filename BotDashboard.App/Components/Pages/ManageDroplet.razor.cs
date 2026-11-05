@@ -7,6 +7,7 @@ namespace BotDashboard.App.Components.Pages;
 public partial class ManageDroplet
 {
     [Inject] private DigitalOceanService DigitalOceanService { get; set; }
+    [Inject] private PreferencesService Preferences { get; set; }
 
     private Droplet Droplet { get; set; } = new();
 
@@ -16,8 +17,19 @@ public partial class ManageDroplet
 
     private string ErrorMessage { get; set; }
 
+    /// <summary>
+    /// Whether pages fetch from Cortex as soon as they open.
+    /// </summary>
+    /// <remarks>
+    /// Previously this bound straight to the static switch and also called a toggle method on
+    /// click, so it flipped twice and appeared not to work. It now writes through the
+    /// preferences file, so the choice survives a restart.
+    /// </remarks>
+    private bool AutoLoadData { get; set; }
+
     protected override async Task OnInitializedAsync()
     {
+        AutoLoadData = Preferences.AutoLoadData;
         await GetDropletInfo();
         PowerSwitch = Droplet.Status == "active";
     }
@@ -45,6 +57,12 @@ public partial class ManageDroplet
         
         Locked = false;
         await InvokeAsync(StateHasChanged);
+    }
+
+    private void OnAutoLoadChanged()
+    {
+        Preferences.SetAutoLoadData(AutoLoadData);
+        Switch.OnInitialized = AutoLoadData;
     }
 
     private async Task OnPowerSwitchChanged()

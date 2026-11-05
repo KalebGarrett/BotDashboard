@@ -45,9 +45,13 @@ services:
       retries: 10
       start_period: 30s
 
+  # Optional now. Cloudflare Access serves the dashboard to any browser, so the tailnet route
+  # is a second way in rather than the only one. Start it with `--profile tailscale` if you
+  # want bot-harbor.<tailnet>.ts.net back.
   tailscale:
     image: tailscale/tailscale:latest
     container_name: botharbor-tailscale
+    profiles: [tailscale]
     restart: unless-stopped
     # Becomes bot-harbor.<your-tailnet>.ts.net on the tailnet.
     hostname: ${TS_HOSTNAME:-bot-harbor}
@@ -57,11 +61,15 @@ services:
       # Declarative `tailscale serve`: HTTPS on 443 with a real Let's Encrypt cert,
       # proxied to Kestrel on loopback.
       TS_SERVE_CONFIG: /config/serve.json
-      # Leave Docker's embedded resolver in place. With MagicDNS taking over /etc/resolv.conf in
-      # this namespace, botharbor could no longer resolve the `postgres` service name.
+      # Still false: the namespace is now the app's, and MagicDNS replacing its resolver would
+      # stop `postgres` resolving over the compose network.
       TS_ACCEPT_DNS: "false"
       TS_USERSPACE: "false"
       TS_EXTRA_ARGS: ${TS_EXTRA_ARGS:-}
+    # Also joins the app's namespace, so `tailscale serve` still proxies to 127.0.0.1:8080.
+    network_mode: service:botharbor
+    depends_on:
+      botharbor: { condition: service_started }
     volumes:
       - tailscale-state:/var/lib/tailscale
       - ./deploy/tailscale/serve.json:/config/serve.json:ro
@@ -82,14 +90,12 @@ services:
       dockerfile: Dockerfile
     container_name: botharbor-app
     restart: unless-stopped
-    # Share the tailscale container's network namespace so `tailscale serve` can proxy to
-    # 127.0.0.1:8080, and so the app itself has no reachable address off the tailnet.
-    network_mode: service:tailscale
+    # On the compose network under its own name. It published no host port before and still
+    # does not: the only ways in are the Cloudflare tunnel and, if the tailscale profile is
+    # started, that sidecar.
     depends_on:
       postgres:
         condition: service_healthy
-      tailscale:
-        condition: service_started
     environment:
       ASPNETCORE_ENVIRONMENT: Production
       ConnectionStrings__DefaultConnection: >-
@@ -97,6 +103,9 @@ services:
       # tailscale serve speaks HTTP to Kestrel, so trust X-Forwarded-* and skip HTTPS redirects.
       BotHarbor__BehindReverseProxy: "true"
       BotHarbor__DataProtectionKeyPath: /var/botharbor/keys
+      # Operator preferences, on their own volume rather than mixed in with the
+      # Data Protection key ring, which has very different sensitivity.
+      BotHarbor__PreferencesPath: /var/botharbor/data/preferences.json
       # Creates the first operator account on an empty database. Clear the password once you
       # have logged in and changed it.
       BotHarbor__BootstrapUser__Email: ${BOTHARBOR_ADMIN_EMAIL:-}
@@ -122,6 +131,7 @@ services:
       SSH__Password: ${DROPLET_PASSWORD:-}
     volumes:
       - dataprotection-keys:/var/botharbor/keys
+      - botharbor-data:/var/botharbor/data
     healthcheck:
       test: ["CMD-SHELL", "curl --fail --silent http://127.0.0.1:8080/healthz || exit 1"]
       interval: 30s
@@ -143,9 +153,11 @@ services:
     container_name: botharbor-cloudflared
     profiles: [cloudflare]
     restart: unless-stopped
-    network_mode: service:tailscale
+    # Shares the app's network namespace, which is what keeps the tunnel's configured service
+    # URL (http://localhost:8080) pointing at the app. Previously both rode the tailscale
+    # sidecar's namespace; inverting it lets tailscale go without touching Cloudflare.
+    network_mode: service:botharbor
     depends_on:
-      tailscale: { condition: service_started }
       botharbor: { condition: service_started }
     command: tunnel --no-autoupdate run
     environment:
@@ -153,5 +165,6 @@ services:
 
 volumes:
   postgres-data:
+  botharbor-data:
   tailscale-state:
   dataprotection-keys:

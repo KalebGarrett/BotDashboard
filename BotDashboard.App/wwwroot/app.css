@@ -492,3 +492,46 @@ h1:focus {
         transform: none;
     }
 }
+
+/* ===========================================================================
+   Uptime card
+   A boot time is one instant. It used to be shown as a static month calendar,
+   which spent a whole card conveying a single value, so this leads with the
+   duration and keeps the date as supporting detail.
+   =========================================================================== */
+.bh-uptime {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 1.75rem 1rem 1.25rem;
+}
+
+.bh-uptime__label {
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--bh-text-muted);
+}
+
+.bh-uptime__value {
+    font-size: clamp(1.5rem, 4vw, 2.3rem);
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    text-align: center;
+    background: linear-gradient(95deg, var(--bh-signal), var(--bh-beacon));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.bh-uptime__meta {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 0.6rem;
+    width: 100%;
+    max-width: 340px;
+    margin-top: 1.1rem;
+}

@@ -51,8 +51,8 @@
                                    Color="Color.Tertiary"
                                    Label="Power"/>
                         <MudSwitch T="bool"
-                                   @bind-Value="Switch.OnInitialized"
-                                   @onclick="Switch.ToggleOnInitialized"
+                                   @bind-Value="AutoLoadData"
+                                   @bind-Value:after="OnAutoLoadChanged"
                                    Color="Color.Primary"
                                    Label="Auto Load Data"/>
                     </MudStack>

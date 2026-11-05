@@ -1,3 +1,4 @@
+using BotDashboard.App;
 using BotDashboard.App.Components;
 using BotDashboard.App.Components.Account;
 using BotDashboard.App.Credentials;
@@ -132,6 +133,7 @@ builder.Services.AddScoped<DigitalOceanService>();
 builder.Services.AddScoped<DockerService>();
 builder.Services.AddScoped<UbuntuService>();
 builder.Services.AddScoped<OllamaService>();
+builder.Services.AddSingleton<PreferencesService>();
 
 builder.Services.AddMudServices(config =>
 {
@@ -187,6 +189,11 @@ app.MapRazorComponents<App>()
 
 // Add additional endpoints required by the Identity /Account Razor components.
 app.MapAccountServices();
+
+// Seed the auto-load switch from disk so the operator's choice survives a restart.
+var preferences = app.Services.GetRequiredService<PreferencesService>();
+preferences.Load();
+Switch.OnInitialized = preferences.AutoLoadData;
 
 var startupLogger = app.Services
     .GetRequiredService<ILoggerFactory>()
