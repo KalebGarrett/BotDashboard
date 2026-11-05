@@ -13,12 +13,13 @@
             @* Colours come from BotHarborTheme and the .mud-appbar rule in app.css. *@
             <MudAppBar Elevation="0">
                 @* Only the small-screen toggle lives here. On desktop the collapse control sits at
-                   the foot of the drawer, which runs full height. On a phone the drawer starts
-                   closed, so a toggle inside it would be unreachable -- hence this one stays. *@
+                   the foot of the drawer, which runs full height. On a phone the drawer is gone
+                   entirely when closed, so this is the only way back to it. *@
                 <MudHidden Breakpoint="Breakpoint.MdAndUp">
                     <MudIconButton Class="text-white" Edge="Edge.Start"
                                    Icon="@Icons.Material.Filled.Menu"
-                                   OnClick="@((e) => ToggleDrawer())"/>
+                                   aria-label="Open navigation"
+                                   OnClick="@(() => MobileOpen = !MobileOpen)"/>
                 </MudHidden>
                 <MudSpacer/>
                 <MudHidden Breakpoint="Breakpoint.SmAndDown">
@@ -91,13 +92,29 @@
                     </ChildContent>
                 </MudMenu>
             </MudAppBar>
-            @* Mini, not the default: collapsing shrinks the drawer to an icon rail instead of
-               hiding it, so the toggle at its foot stays reachable. With the toggle living
-               inside the drawer, a variant that hides it leaves no way to reopen it. *@
-            <MudDrawer @bind-Open="@Open" Elevation="0" ClipMode="DrawerClipMode.Never"
-                       Variant="DrawerVariant.Mini" OpenMiniOnHover="false" MiniWidth="72px">
-                <NavMenu Open="Open" OnToggle="ToggleDrawer"/>
-            </MudDrawer>
+            @* Two drawers, one at a time, because the two sizes want genuinely different
+               behaviour.
+
+               Desktop: Mini. Collapsing shrinks it to an icon rail rather than hiding it, so
+               the toggle at its foot stays reachable -- with the toggle living inside the
+               drawer, a variant that hides it leaves no way back.
+
+               Phone: Temporary. A 72px rail eats a sixth of the screen and the icons sit under
+               the thumb, so there the drawer goes away completely and returns on the app bar's
+               menu button, which only exists at this size. It overlays the content and closes
+               when the scrim is tapped. *@
+            <MudHidden Breakpoint="Breakpoint.SmAndDown">
+                <MudDrawer @bind-Open="@Open" Elevation="0" ClipMode="DrawerClipMode.Never"
+                           Variant="DrawerVariant.Mini" OpenMiniOnHover="false" MiniWidth="72px">
+                    <NavMenu Open="Open" OnToggle="ToggleDrawer"/>
+                </MudDrawer>
+            </MudHidden>
+            <MudHidden Breakpoint="Breakpoint.MdAndUp">
+                <MudDrawer @bind-Open="@MobileOpen" Elevation="0" ClipMode="DrawerClipMode.Never"
+                           Variant="DrawerVariant.Temporary" Overlay="true">
+                    <NavMenu Open="true" OnToggle="CloseMobileDrawer"/>
+                </MudDrawer>
+            </MudHidden>
             <MudMainContent Class="d-flex flex-column" Style="min-height:100vh;">
                 <article class="content px-4 flex-fill">
                     <ErrorBoundary @ref="ErrorBoundary">

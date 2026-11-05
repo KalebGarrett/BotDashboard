@@ -10,20 +10,32 @@ public partial class Stats
 {
     [Inject] private UbuntuService UbuntuService { get; set; }
 
+    // Two slices: the figure and its remainder. Labelled "Total" the ring read as
+    // used-against-total, which is a different number from the one printed inside it.
     private static double MemoryUsagePercentage { get; set; }
     private double[] MemoryUsageData { get; set; } = [0, 100];
-    private string[] MemoryUsageLabels { get; set; } = ["Used Memory", "Total Memory"];
+    private string[] MemoryUsageLabels { get; set; } = ["Used", "Free"];
     private string MemoryFetchTime { get; set; }
 
     private static double CpuUsagePercentage { get; set; }
     private double[] CpuUsageData { get; set; } = [0, 100];
-    private string[] CpuUsageLabels { get; set; } = ["Used CPU", "Total CPU"];
+    private string[] CpuUsageLabels { get; set; } = ["Busy", "Idle"];
     private string CpuFetchTime { get; set; }
 
     // Built from real df output on Cortex. These used to be a hardcoded list of the droplet's
     // top-level directories with invented sizes, which told you nothing once the data moved.
     private List<SankeyChartNode> Nodes { get; set; } = [new("Cortex", 0)];
     private List<SankeyChartEdge> Edges { get; set; } = [];
+
+    /// <summary>The same mounts the Sankey is built from, listed with their own bars.</summary>
+    /// <remarks>
+    /// A Sankey shows proportion well and absolute size badly. The list beside it answers the
+    /// question the chart cannot: how many terabytes is that strand, actually.
+    /// </remarks>
+    private List<DiskMount> Mounts { get; set; } = [];
+
+    /// <summary>Scale for the per-mount bars, so the biggest filesystem fills its row.</summary>
+    private double LargestMountGb => Mounts.Count == 0 ? 0 : Mounts.Max(mount => mount.UsedGb);
 
     private double DiskUsed { get; set; }
     private double DiskTotal { get; set; }
@@ -166,6 +178,24 @@ public partial class Stats
 
         Nodes = nodes;
         Edges = edges;
+        Mounts = mounts;
+    }
+
+    /// <summary>Refreshes every panel on the page in one go.</summary>
+    /// <remarks>
+    /// Five SSH round trips, which is why it is one explicit button rather than something the
+    /// page does on a timer. Each call reports its own failure, so one dead panel does not stop
+    /// the others from updating.
+    /// </remarks>
+    private async Task ListEverything()
+    {
+        await ListMemoryUsagePercentage(showSnackbar: false);
+        await ListCpuUsagePercentage(showSnackbar: false);
+        await ListDiskUsage(showSnackbar: false);
+        await ListUptime(showSnackbar: false);
+        await ListSshLogins(showSnackbar: false);
+
+        CreateSnackbarMessage("Refreshed every Cortex stat.", Severity.Success);
     }
 
     private async Task ListUptime(bool showSnackbar = true)

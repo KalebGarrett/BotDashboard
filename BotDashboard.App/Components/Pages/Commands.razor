@@ -69,7 +69,7 @@
                             <div class="d-flex flex-wrap gap-2 mb-4">
                                 @foreach (var container in CortexContainers.Pullable)
                                 {
-                                    <MudButton Disabled="Locked" Color="Color.Primary" Variant="Variant.Outlined"
+                                    <MudButton Disabled="Locked" Color="Color.Primary" Variant="Variant.Filled"
                                                Size="Size.Small"
                                                StartIcon="@Icons.Material.Filled.CloudDownload"
                                                OnClick="() => PullImage(container.Image)">
@@ -83,12 +83,12 @@
                                two names. *@
                             <div class="bh-command-section">Inspect</div>
                             <div class="d-flex flex-wrap gap-2">
-                                <MudButton Disabled="Locked" Color="Color.Primary" Variant="Variant.Outlined"
+                                <MudButton Disabled="Locked" Color="Color.Primary" Variant="Variant.Filled"
                                            StartIcon="@Icons.Material.Filled.Layers"
                                            OnClick="() => ListImages()">
                                     List Images
                                 </MudButton>
-                                <MudButton Disabled="Locked" Color="Color.Primary" Variant="Variant.Outlined"
+                                <MudButton Disabled="Locked" Color="Color.Primary" Variant="Variant.Filled"
                                            StartIcon="@Icons.Material.Filled.ViewList"
                                            OnClick="() => ListContainers()">
                                     List Containers
@@ -379,7 +379,7 @@
                                 <MudButton Disabled="Locked"
                                            OnClick="() => StopContainer(container.ContainerId)"
                                            Color="Color.Error"
-                                           Variant="Variant.Outlined"
+                                           Variant="Variant.Filled"
                                            Size="Size.Small"
                                            StartIcon="@Icons.Material.Filled.Stop"
                                            FullWidth="true">

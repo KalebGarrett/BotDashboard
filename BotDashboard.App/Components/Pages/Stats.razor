@@ -6,190 +6,244 @@
 
 <AuthorizeView>
     <Authorized>
+        <div class="bh-page-head">
+            <h2 class="bh-section-title h4 mb-0">
+                <i class="bi bi-activity"></i> Cortex Stats
+            </h2>
+            <MudButton Disabled="Locked" Color="Color.Primary" Variant="Variant.Filled"
+                       StartIcon="@Icons.Material.Filled.Refresh"
+                       OnClick="ListEverything">
+                Refresh All
+            </MudButton>
+        </div>
+
+        @* Headline numbers first, so the page answers "is anything wrong" before a single
+           chart has to be read. Everything below is the detail behind these six. *@
+        <div class="bh-stat-row mb-4">
+            <div class="bh-stat">
+                <span class="bh-stat__label">Memory</span>
+                <span class="bh-stat__value bh-stat__value--accent">@Math.Round(MemoryUsagePercentage)%</span>
+            </div>
+            <div class="bh-stat">
+                <span class="bh-stat__label">CPU</span>
+                <span class="bh-stat__value bh-stat__value--accent">@Math.Round(CpuUsagePercentage)%</span>
+            </div>
+            <div class="bh-stat">
+                <span class="bh-stat__label">Disk used</span>
+                <span class="bh-stat__value">@FormatSize(DiskUsed)</span>
+            </div>
+            <div class="bh-stat">
+                <span class="bh-stat__label">Disk free</span>
+                <span class="bh-stat__value">@FormatSize(FreeDisk)</span>
+            </div>
+            <div class="bh-stat">
+                <span class="bh-stat__label">Uptime</span>
+                <span class="bh-stat__value" style="font-size: 1rem;">
+                    @(string.IsNullOrWhiteSpace(Uptime) ? "—" : Uptime.Trim())
+                </span>
+            </div>
+            <div class="bh-stat">
+                <span class="bh-stat__label">Filesystems</span>
+                <span class="bh-stat__value">@Mounts.Count</span>
+            </div>
+        </div>
+
+        @if (Locked)
+        {
+            <MudProgressLinear Color="Color.Primary" Indeterminate="true" Rounded="true" Class="mb-3"/>
+        }
+
         <div class="row gy-3 mb-4">
-            <div class="col-md-6">
-                <h2 class="bh-section-title h4"><i class="bi bi-memory"></i> Cortex Memory Usage</h2>
-                <div class="card main-site-card">
-                    <div class="position-relative">
-                        <div class="card-body">
-                            <div class="d-flex justify-content-center">
-                                <MudChart ChartType="ChartType.Donut"
-                                          Width="200px"
-                                          Height="200px"
-                                          InputData="@MemoryUsageData"
-                                          InputLabels="@MemoryUsageLabels">
-                                    <CustomGraphics>
-                                        <text class="donut-inner-text"
-                                              x="50%"
-                                              y="50%"
-                                              dominant-baseline="middle"
-                                              text-anchor="middle"
-                                              fill="white"
-                                              font-size="20">
-                                            @Math.Round(MemoryUsagePercentage)% / 100%
-                                        </text>
-                                    </CustomGraphics>
-                                </MudChart>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="d-flex justify-content-center">
-                        <MudButton Disabled="Locked" Variant="Variant.Filled" Color="Color.Tertiary"
-                                   Style="margin-bottom: 2em"
-                                   Class="text-white"
-                                   OnClick="() => ListMemoryUsagePercentage()">Memory Usage
+            <div class="col-lg-6 d-flex flex-column">
+                <div class="main-site-card flex-fill">
+                    <div class="bh-card-head">
+                        <span class="bh-card-head__title">
+                            <i class="bi bi-memory"></i> Memory
+                        </span>
+                        <MudButton Disabled="Locked" Size="Size.Small" Color="Color.Tertiary"
+                                   Variant="Variant.Filled"
+                                   OnClick="() => ListMemoryUsagePercentage()">
+                            Refresh
                         </MudButton>
                     </div>
-                    <p class="text-white text-center">Last Fetched: @MemoryFetchTime</p>
+                    <div class="p-4 d-flex justify-content-center">
+                        <div class="bh-donut">
+                            <MudChart ChartType="ChartType.Donut" Width="210px" Height="210px"
+                                      InputData="@MemoryUsageData" InputLabels="@MemoryUsageLabels">
+                                <CustomGraphics>
+                                    <text class="donut-inner-text" x="50%" y="50%"
+                                          dominant-baseline="middle" text-anchor="middle"
+                                          fill="white" font-size="22">
+                                        @Math.Round(MemoryUsagePercentage)%
+                                    </text>
+                                </CustomGraphics>
+                            </MudChart>
+                        </div>
+                    </div>
+                    <p class="bh-timestamp text-center pb-3">
+                        <i class="bi bi-clock-history"></i> Last fetched: @MemoryFetchTime
+                    </p>
                 </div>
             </div>
-            <div class="col-md-6">
-                <h2 class="bh-section-title h4"><i class="bi bi-cpu"></i> Cortex CPU Usage</h2>
-                <div class="card main-site-card">
-                    <div class="position-relative">
-                        <div class="card-body">
-                            <div class="d-flex justify-content-center">
-                                <MudChart ChartType="ChartType.Donut"
-                                          Width="200px"
-                                          Height="200px"
-                                          InputData="@CpuUsageData"
-                                          InputLabels="@CpuUsageLabels">
-                                    <CustomGraphics>
-                                        <text class="donut-inner-text"
-                                              x="50%"
-                                              y="50%"
-                                              dominant-baseline="middle"
-                                              text-anchor="middle"
-                                              fill="white"
-                                              font-size="20">
-                                            @Math.Round(CpuUsagePercentage)% / 100%
-                                        </text>
-                                    </CustomGraphics>
-                                </MudChart>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="d-flex justify-content-center">
-                        <MudButton Disabled="Locked" Variant="Variant.Filled" Color="Color.Tertiary"
-                                   Style="margin-bottom: 2em"
-                                   Class="text-white"
-                                   OnClick="() => ListCpuUsagePercentage()">Cpu Usage
+
+            <div class="col-lg-6 d-flex flex-column">
+                <div class="main-site-card flex-fill">
+                    <div class="bh-card-head">
+                        <span class="bh-card-head__title">
+                            <i class="bi bi-cpu"></i> CPU
+                        </span>
+                        <MudButton Disabled="Locked" Size="Size.Small" Color="Color.Tertiary"
+                                   Variant="Variant.Filled"
+                                   OnClick="() => ListCpuUsagePercentage()">
+                            Refresh
                         </MudButton>
                     </div>
-                    <p class="text-white text-center">Last Fetched: @CpuFetchTime</p>
+                    <div class="p-4 d-flex justify-content-center">
+                        <div class="bh-donut">
+                            <MudChart ChartType="ChartType.Donut" Width="210px" Height="210px"
+                                      InputData="@CpuUsageData" InputLabels="@CpuUsageLabels">
+                                <CustomGraphics>
+                                    <text class="donut-inner-text" x="50%" y="50%"
+                                          dominant-baseline="middle" text-anchor="middle"
+                                          fill="white" font-size="22">
+                                        @Math.Round(CpuUsagePercentage)%
+                                    </text>
+                                </CustomGraphics>
+                            </MudChart>
+                        </div>
+                    </div>
+                    <p class="bh-timestamp text-center pb-3">
+                        <i class="bi bi-clock-history"></i> Last fetched: @CpuFetchTime
+                    </p>
                 </div>
             </div>
         </div>
 
-        <div class="row gy-3 mb-4">
-            <div class="col-md-12">
-                <h2 class="bh-section-title h4"><i class="bi bi-floppy"></i> Cortex Disk Usage</h2>
-                <div class="card main-site-card">
-                    <div class="row p-3">
-                        <div class="col-md-6 mt-2 d-flex justify-content-center">
-                            <MudChart ChartType="ChartType.Sankey" Nodes="@Nodes" Edges="@Edges" Width="300px"
-                                      Height="300px"/>
-                        </div>
-                        <div class="col-md-6 mt-2">
-                            <MudText Class="mt-10">Disk Used: @FormatSize(DiskUsed) / @FormatSize(DiskTotal)</MudText>
-                            <div class="d-flex justify-content-center">
-                                <MudProgressLinear Color="Color.Tertiary" Striped="true" Size="Size.Large"
-                                                   Value="DiskUsedPercentage"
-                                                   Class="my-3"/>
-                            </div>
-                            <MudDivider Class="my-10"></MudDivider>
-                            <MudText Class="mt-10">Free Disk: @FormatSize(FreeDisk) / @FormatSize(DiskTotal)</MudText>
-                            <div class="d-flex justify-content-center">
-                                <MudProgressLinear Color="Color.Info" Striped="true" Size="Size.Large"
-                                                   Value="FreeDiskPercentage"
-                                                   Class="my-3"/>
-                            </div>
-                        </div>
+        <div class="main-site-card mb-4">
+            <div class="bh-card-head">
+                <span class="bh-card-head__title">
+                    <i class="bi bi-hdd-stack"></i> Disk
+                </span>
+                <MudButton Disabled="Locked" Size="Size.Small" Color="Color.Tertiary"
+                           Variant="Variant.Filled"
+                           OnClick="() => ListDiskUsage()">
+                    Refresh
+                </MudButton>
+            </div>
+            <div class="p-4">
+                <div class="bh-disk-meter">
+                    <div class="bh-disk-meter__bar">
+                        <div class="bh-disk-meter__fill" style="width: @($"{Math.Clamp(DiskUsedPercentage, 0, 100).ToString("0.##", System.Globalization.CultureInfo.InvariantCulture)}%");"></div>
                     </div>
-                    <div class="d-flex justify-content-center">
-                        <MudButton Disabled="Locked" Variant="Variant.Filled" Color="Color.Tertiary"
-                                   Style="margin-bottom: 2em"
-                                   Class="text-white my-5" OnClick="() => ListDiskUsage()">Disk Usage
-                        </MudButton>
+                    <div class="bh-disk-meter__legend">
+                        <span><strong>@FormatSize(DiskUsed)</strong> used</span>
+                        <span>@Math.Round(DiskUsedPercentage)% of @FormatSize(DiskTotal)</span>
+                        <span><strong>@FormatSize(FreeDisk)</strong> free</span>
                     </div>
-                    <p class="text-white text-center">Last Fetched: @DiskFetchTime</p>
+                </div>
+
+                <div class="row gy-3 mt-1">
+                    <div class="col-lg-5 d-flex justify-content-center align-items-center">
+                        <MudChart ChartType="ChartType.Sankey" Nodes="@Nodes" Edges="@Edges"
+                                  Width="100%" Height="300px"/>
+                    </div>
+                    <div class="col-lg-7">
+                        @* The figures the Sankey cannot give: how big each strand actually is. *@
+                        @if (Mounts.Count == 0)
+                        {
+                            <div class="bh-empty">
+                                <i class="bi bi-hdd"></i>
+                                <div class="fw-bold mb-1">No filesystems read yet</div>
+                                <div style="font-size: 0.85rem;">Refresh to ask Cortex.</div>
+                            </div>
+                        }
+                        @foreach (var mount in Mounts)
+                        {
+                            <div class="bh-mount">
+                                <div class="bh-mount__head">
+                                    <span class="bh-mount__name">@mount.Mount</span>
+                                    <span class="bh-mount__size">@FormatSize(mount.UsedGb)</span>
+                                </div>
+                                <div class="bh-mount__bar">
+                                    <div class="bh-mount__fill"
+                                         style="width: @($"{(LargestMountGb > 0 ? mount.UsedGb / LargestMountGb * 100 : 0).ToString("0.##", System.Globalization.CultureInfo.InvariantCulture)}%");"></div>
+                                </div>
+                                <div class="bh-mount__source">@mount.Source</div>
+                            </div>
+                        }
+                    </div>
                 </div>
             </div>
+            <p class="bh-timestamp text-center pb-3">
+                <i class="bi bi-clock-history"></i> Last fetched: @DiskFetchTime
+            </p>
         </div>
 
         <div class="row gy-3 mb-4">
-            <div class="col-md-6 d-flex flex-column">
-                <h2 class="bh-section-title h4"><i class="bi bi-clock"></i> Cortex Uptime</h2>
-                <div class="card main-site-card flex-fill">
-                    <div class="position-relative">
-                        <div class="card-body">
-                            @* A boot time is a single instant, so a static month calendar was the
-                               wrong shape for it: twelve rows of dates to convey one value. This
-                               reads the number first and the date underneath it. *@
-                            <div class="bh-uptime">
-                                <span class="bh-uptime__label">Up for</span>
-                                <span class="bh-uptime__value">@(string.IsNullOrWhiteSpace(Uptime) ? "—" : Uptime.Trim())</span>
+            <div class="col-lg-5 d-flex flex-column">
+                <div class="main-site-card flex-fill d-flex flex-column">
+                    <div class="bh-card-head">
+                        <span class="bh-card-head__title">
+                            <i class="bi bi-clock"></i> Uptime
+                        </span>
+                        <MudButton Disabled="Locked" Size="Size.Small" Color="Color.Tertiary"
+                                   Variant="Variant.Filled"
+                                   OnClick="() => ListUptime()">
+                            Refresh
+                        </MudButton>
+                    </div>
+                    <div class="p-4 flex-fill">
+                        @* A boot time is a single instant, so a static month calendar was the
+                           wrong shape for it. This reads the number first, the date underneath. *@
+                        <div class="bh-uptime">
+                            <span class="bh-uptime__label">Up for</span>
+                            <span class="bh-uptime__value">@(string.IsNullOrWhiteSpace(Uptime) ? "—" : Uptime.Trim())</span>
 
-                                <div class="bh-uptime__meta">
-                                    <div class="bh-stat">
-                                        <span class="bh-stat__label">Booted</span>
-                                        <span class="bh-stat__value" style="font-size: 1rem;">
-                                            @(BootTime.HasValue ? BootTime.Value.ToString("ddd d MMM yyyy") : "—")
-                                        </span>
-                                    </div>
-                                    <div class="bh-stat">
-                                        <span class="bh-stat__label">At</span>
-                                        <span class="bh-stat__value" style="font-size: 1rem;">
-                                            @(BootTime.HasValue ? BootTime.Value.ToString("HH:mm") : "—")
-                                        </span>
-                                    </div>
+                            <div class="bh-uptime__meta">
+                                <div class="bh-stat">
+                                    <span class="bh-stat__label">Booted</span>
+                                    <span class="bh-stat__value" style="font-size: 1rem;">
+                                        @(BootTime.HasValue ? BootTime.Value.ToString("ddd d MMM yyyy") : "—")
+                                    </span>
+                                </div>
+                                <div class="bh-stat">
+                                    <span class="bh-stat__label">At</span>
+                                    <span class="bh-stat__value" style="font-size: 1rem;">
+                                        @(BootTime.HasValue ? BootTime.Value.ToString("HH:mm") : "—")
+                                    </span>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="d-flex justify-content-center">
-                        <MudButton Disabled="Locked" Variant="Variant.Filled" Color="Color.Tertiary"
-                                   Style="margin-bottom: 2em"
-                                   Class="text-white"
-                                   OnClick="() => ListUptime()">Uptime
-                        </MudButton>
-                    </div>
-                    <p class="text-white text-center">Last Fetched: @UptimeFetchTime</p>
+                    <p class="bh-timestamp text-center pb-3">
+                        <i class="bi bi-clock-history"></i> Last fetched: @UptimeFetchTime
+                    </p>
                 </div>
             </div>
-            <div class="col-md-6 d-flex flex-column">
-                <h2 class="bh-section-title h4"><i class="bi bi-box-arrow-in-right"></i> Cortex SSH Logins</h2>
-                <div class="card main-site-card flex-fill">
-                    <div class="position-relative">
-                        <div class="card-body">
-                            <div class="d-flex justify-content-center">
-                                <MudChart Class="mt-10 mb-20" ChartType="ChartType.Bar" ChartSeries="@SshLoginsSeries"
-                                          @bind-SelectedIndex="Index"
-                                          XAxisLabels="@SshLoginsXAxisLabels" Width="100%" Height="350px"
-                                          AxisChartOptions="AxisChartOptions"></MudChart>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="d-flex justify-content-center">
-                        <MudButton Disabled="Locked" Variant="Variant.Filled" Color="Color.Tertiary"
-                                   Style="margin-bottom: 2em"
-                                   Class="text-white"
-                                   OnClick="() => ListSshLogins()">SSH Logins
+
+            <div class="col-lg-7 d-flex flex-column">
+                <div class="main-site-card flex-fill d-flex flex-column">
+                    <div class="bh-card-head">
+                        <span class="bh-card-head__title">
+                            <i class="bi bi-box-arrow-in-right"></i> SSH logins this week
+                        </span>
+                        <MudButton Disabled="Locked" Size="Size.Small" Color="Color.Tertiary"
+                                   Variant="Variant.Filled"
+                                   OnClick="() => ListSshLogins()">
+                            Refresh
                         </MudButton>
                     </div>
-                    <p class="text-white text-center">Last Fetched: @SshLoginsFetchTime</p>
+                    <div class="p-4 flex-fill">
+                        <MudChart ChartType="ChartType.Bar" ChartSeries="@SshLoginsSeries"
+                                  @bind-SelectedIndex="Index"
+                                  XAxisLabels="@SshLoginsXAxisLabels" Width="100%" Height="300px"
+                                  AxisChartOptions="AxisChartOptions"/>
+                    </div>
+                    <p class="bh-timestamp text-center pb-3">
+                        <i class="bi bi-clock-history"></i> Last fetched: @SshLoginsFetchTime
+                    </p>
                 </div>
             </div>
         </div>
-
-        <style>
-            .mud-chart-sankey text {
-                fill: #9CA3AF;
-            }
-
-            .mud-chart text {
-                fill: #ffffff;
-            }
-        </style>
     </Authorized>
 </AuthorizeView>

@@ -327,6 +327,118 @@ h1:focus {
     margin-right: 16px;
 }
 
+/* Page header: title on the left, the one page-level action on the right. */
+.bh-page-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin: 0.5rem 0 1rem;
+}
+
+/* Card header strip: what the card is, and the button that refreshes it. Replaces the big
+   centred button that used to hang off the bottom of every stats card. */
+.bh-card-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--bh-border);
+}
+
+.bh-card-head__title {
+    font-weight: 600;
+    letter-spacing: 0.01em;
+}
+
+.bh-card-head__title i {
+    color: var(--bh-signal);
+    margin-right: 0.4rem;
+}
+
+/* Whole-pool meter. One bar carrying used, total and free, rather than two bars that each
+   showed half the story and had to be read together. */
+.bh-disk-meter__bar {
+    height: 14px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.07);
+    overflow: hidden;
+}
+
+.bh-disk-meter__fill {
+    height: 100%;
+    border-radius: 999px;
+    background: linear-gradient(90deg, var(--bh-signal), var(--bh-beacon));
+    transition: width 0.5s var(--bh-ease);
+}
+
+.bh-disk-meter__legend {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+    font-size: 0.8rem;
+    opacity: 0.85;
+}
+
+/* One mounted filesystem, scaled against the largest so the bars compare at a glance. */
+.bh-mount {
+    margin-bottom: 0.9rem;
+}
+
+.bh-mount__head {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    font-size: 0.85rem;
+}
+
+.bh-mount__name {
+    font-weight: 600;
+    overflow-wrap: anywhere;
+}
+
+.bh-mount__size {
+    color: var(--bh-signal);
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.bh-mount__bar {
+    height: 8px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.07);
+    overflow: hidden;
+    margin-top: 0.3rem;
+}
+
+.bh-mount__fill {
+    height: 100%;
+    border-radius: 999px;
+    background: linear-gradient(90deg, var(--bh-beacon), var(--bh-signal));
+    transition: width 0.5s var(--bh-ease);
+}
+
+.bh-mount__source {
+    font-size: 0.7rem;
+    opacity: 0.55;
+    margin-top: 0.15rem;
+    overflow-wrap: anywhere;
+}
+
+/* Chart text. Was an inline <style> block at the foot of the Stats page; it belongs here with
+   the rest of the theme, where the fingerprinted stylesheet carries it. */
+.mud-chart text {
+    fill: #FFFFFF;
+}
+
+.mud-chart-sankey text {
+    fill: #9CA3AF;
+}
+
 /* Secondary icon actions on a container card, beside Restart and Stop. Muted so the two
    named buttons stay the obvious targets. */
 .bh-card-action {
