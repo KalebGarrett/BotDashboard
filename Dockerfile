@@ -15,10 +15,21 @@ RUN dotnet restore BotDashboard.App/BotDashboard.App.csproj
 COPY BotDashboard.App/ BotDashboard.App/
 COPY BotDashboard.Models/ BotDashboard.Models/
 
+# Deliberately restoring again here rather than passing --no-restore. A restore run before
+# the source is present does not resolve the framework's static web assets, and --no-restore
+# then never revisits that: the publish succeeds, but wwwroot/_framework is missing, so
+# /_framework/blazor.web.js 404s, Blazor never boots, and every interactive component
+# silently stops working. .NET 8 tolerated this; .NET 10 does not. The repeat restore is
+# cheap because the packages are already in the layer above.
 RUN dotnet publish BotDashboard.App/BotDashboard.App.csproj \
         --configuration Release \
-        --no-restore \
         --output /app
+
+# Fail the build rather than ship an image whose Blazor script is missing. The symptom is a
+# page that renders correctly and then does nothing at all, which is painful to diagnose
+# from the browser -- Cloudflare even reports the 404 as a 503.
+RUN test -f /app/wwwroot/_framework/blazor.web.js \
+    || (echo 'FATAL: wwwroot/_framework/blazor.web.js missing from publish output' && exit 1)
 
 
 FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS runtime
