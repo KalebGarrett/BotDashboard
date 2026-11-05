@@ -194,6 +194,47 @@ gunzip -c botharbor-20261104.sql.gz | \
   docker compose exec -T postgres psql -U botharbor -d botharbor
 ```
 
+## Two ways in
+
+| Route | Reachable from | Protected by |
+| --- | --- | --- |
+| `bot-harbor.<tailnet>.ts.net` | tailnet devices only | the tailnet itself, plus Bot Harbor's login |
+| `botharbor.horizonstack.app` | any browser, anywhere | **Cloudflare Access**, then Bot Harbor's login |
+
+Both run at once and neither depends on the other. `tailscale serve` and `cloudflared` both
+proxy to `127.0.0.1:8080` inside the same network namespace, which is why the `cloudflared`
+service sets `network_mode: service:tailscale` -- without that, `localhost` would be the
+cloudflared container itself and the tunnel would answer 502.
+
+Start the public route with its profile; it does not come up by default:
+
+```bash
+docker compose --profile cloudflare up -d cloudflared
+```
+
+**Cloudflare Access is doing the real work on the public route.** An unauthenticated request
+gets a 302 to `horizonstack.cloudflareaccess.com` with an empty body -- it never reaches
+Cortex at all. That matters because `Login.razor` calls `PasswordSignInAsync` with
+`lockoutOnFailure: false`, so the application itself will accept unlimited password guesses.
+Exposing it publicly without Access in front would put that on the open internet.
+
+The Access policy is `Bot Harbor owner only`, matching a single email address. It is
+deliberately separate from the ORION policy on the same account, so editing one cannot
+silently change the other.
+
+### A trap when adding the hostname
+
+Cloudflare's current Routes UI creates the tunnel route and says DNS will be configured
+automatically. It was not. The hostname did not resolve until a CNAME was added by hand:
+
+```
+botharbor  CNAME  <tunnel-id>.cfargotunnel.com   (Proxied)
+```
+
+If a tunnel hostname returns nothing at all, check that the DNS record actually exists before
+looking anywhere else -- the tunnel can be healthy with four registered connections while the
+name simply does not resolve.
+
 ## Which host serves what
 
 | Feature | Runs against | How |
