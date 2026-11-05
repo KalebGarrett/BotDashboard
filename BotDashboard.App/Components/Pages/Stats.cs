@@ -20,44 +20,10 @@ public partial class Stats
     private string[] CpuUsageLabels { get; set; } = ["Used CPU", "Total CPU"];
     private string CpuFetchTime { get; set; }
 
-    private List<SankeyChartNode> Nodes { get; } =
-    [
-        new("Cortex", 0),
-
-        new("/media", 1),
-        new("/snap", 1),
-        new("/mnt", 1),
-        new("/sys", 1),
-        new("/var", 1),
-        new("/dev", 1),
-        new("/srv", 1),
-        new("/opt", 1),
-        new("/root", 1),
-        new("/tmp", 1),
-        new("/etc", 1),
-        new("/lost+found", 1),
-        new("/boot", 1),
-        new("/usr", 1),
-        new("/run", 1),
-    ];
-
-    private List<SankeyChartEdge> Edges { get; } =
-    [
-        new("Cortex", "/media", 1),
-        new("Cortex", "/snap", 9),
-        new("Cortex", "/mnt", 1),
-        new("Cortex", "/sys", 1),
-        new("Cortex", "/var", 57),
-        new("Cortex", "/dev", 1),
-        new("Cortex", "/srv", 1),
-        new("Cortex", "/opt", 1),
-        new("Cortex", "/tmp", 1),
-        new("Cortex", "/etc", 1),
-        new("Cortex", "/lost+found", 1),
-        new("Cortex", "/usr", 22),
-        new("Cortex", "/boot", 2),
-        new("Cortex", "/run", 1),
-    ];
+    // Built from real df output on Cortex. These used to be a hardcoded list of the droplet's
+    // top-level directories with invented sizes, which told you nothing once the data moved.
+    private List<SankeyChartNode> Nodes { get; set; } = [new("Cortex", 0)];
+    private List<SankeyChartEdge> Edges { get; set; } = [];
 
     private double DiskUsed { get; set; }
     private double DiskTotal { get; set; }
@@ -154,6 +120,7 @@ public partial class Stats
 
         DiskUsed = UbuntuService.DiskUsage();
         DiskTotal = UbuntuService.DiskTotal();
+        BuildDiskBreakdown();
 
         // Read the real size rather than assuming one. This used to divide by a hardcoded 25,
         // the droplet's disk; against Cortex's ~107 GiB root that reported several hundred
@@ -172,6 +139,33 @@ public partial class Stats
 
         Locked = false;
         await InvokeAsync(StateHasChanged);
+    }
+
+    /// <summary>
+    /// Feeds the Sankey chart from the filesystems Cortex actually has mounted.
+    /// </summary>
+    /// <remarks>
+    /// Capped at the eight largest, and anything under a gigabyte is dropped: a chart with a
+    /// dozen near-zero strands is harder to read than one showing where the space really went.
+    /// </remarks>
+    private void BuildDiskBreakdown()
+    {
+        var mounts = UbuntuService.DiskBreakdown()
+            .Where(mount => mount.UsedGb >= 1)
+            .Take(8)
+            .ToList();
+
+        var nodes = new List<SankeyChartNode> { new("Cortex", 0) };
+        var edges = new List<SankeyChartEdge>();
+
+        foreach (var mount in mounts)
+        {
+            nodes.Add(new SankeyChartNode(mount.Mount, 1));
+            edges.Add(new SankeyChartEdge("Cortex", mount.Mount, mount.UsedGb));
+        }
+
+        Nodes = nodes;
+        Edges = edges;
     }
 
     private async Task ListUptime(bool showSnackbar = true)

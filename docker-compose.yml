@@ -109,6 +109,8 @@ services:
       Nas__Host: ${NAS_HOST:-}
       Nas__Username: ${NAS_USERNAME:-}
       Nas__Password: ${NAS_PASSWORD:-}
+      # The storage pool, not the OS overlay at / -- see NasCredentials.
+      Nas__DiskPath: ${NAS_DISK_PATH:-/volume1}
       # The droplet's tailnet address. Reached directly from this container, which shares the
       # tailscale sidecar's namespace, so the health panel tests the real path rather than
       # asking the droplet to check itself.

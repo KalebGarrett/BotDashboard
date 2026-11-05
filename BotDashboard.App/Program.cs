@@ -107,8 +107,9 @@ builder.Services.AddSingleton(_ =>
     var host = builder.Configuration["Nas:Host"];
     var username = builder.Configuration["Nas:Username"];
     var password = builder.Configuration["Nas:Password"];
+    var diskPath = builder.Configuration["Nas:DiskPath"];
 
-    return new NasCredentials(host, username, password);
+    return new NasCredentials(host, username, password, diskPath);
 });
 
 builder.Services.AddSingleton(_ =>

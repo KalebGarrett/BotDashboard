@@ -281,8 +281,43 @@ h1:focus {
     box-shadow: 0 8px 20px -12px rgba(0, 0, 0, 0.9);
 }
 
+/* Drawer and app-bar text reads white rather than muted blue-grey. The muted token still
+   does its job elsewhere (timestamps, metadata); it was only too dim for navigation, where
+   every item is a target rather than secondary information. */
+.mud-drawer,
+.mud-drawer .mud-typography,
+.mud-appbar,
+.mud-appbar .mud-typography {
+    color: var(--bh-text);
+}
+
+.mud-drawer .bh-muted,
+.mud-appbar .bh-muted {
+    color: var(--bh-text) !important;
+}
+
+/* Section labels stay distinguishable by weight and tracking instead of by being dimmer. */
+.mud-drawer .mud-typography-overline {
+    color: var(--bh-text) !important;
+    opacity: 0.72;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+}
+
+/* The drawer's own collapse control, now that it lives under the links. */
+.bh-drawer-toggle {
+    color: var(--bh-text) !important;
+    border: 1px solid var(--bh-border);
+    border-radius: 10px;
+}
+
+.bh-drawer-toggle:hover {
+    background-color: rgba(76, 141, 255, 0.14) !important;
+}
+
 /* Nav links: pill-shaped, with the active one marked by a gradient bar. */
 .mud-nav-link {
+    color: var(--bh-text) !important;
     border-radius: 10px !important;
     margin-bottom: 2px;
     transition: background-color 0.18s var(--bh-ease), color 0.18s var(--bh-ease);

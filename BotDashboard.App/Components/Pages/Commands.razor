@@ -396,16 +396,8 @@
                                 <div class="col-6">
                                     <div class="bg-image hover-overlay ripple" data-mdb-ripple-color="light">
                                         <div class="mt-2 ms-3">
-                                            @if (container.Image.Contains("ghcr.io/kikkia/yt-cipher"))
-                                            {
-                                                <img src="https://www.svgrepo.com/show/28730/youtube.svg"
-                                                     width="50" height="50" alt="@container.Image"/>
-                                            }
-                                            else
-                                            {
-                                                <img src="https://www.svgrepo.com/show/353655/discord-icon.svg"
-                                                     width="50" height="50" alt="@container.Image"/>
-                                            }
+                                            <img src="@ContainerDisplay.IconUrl(container.Image)"
+                                                 width="50" height="50" alt="@ContainerDisplay.Name(container)"/>
                                         </div>
                                     </div>
                                 </div>
@@ -425,18 +417,8 @@
                                 </div>
                             </div>
                             <div class="card-body">
-                                @if (container.Image.Contains("kalebg08"))
-                                {
-                                    <h5 class="card-title fw-bold">
-                                        @container.Image.Replace("kalebg08/", "").ToUpper()
-                                    </h5>
-                                }
-                                else
-                                {
-                                    <h5 class="card-title fw-bold">
-                                        @container.Image.Replace("ghcr.io/kikkia/", "").Replace(":master", "").ToUpper()
-                                    </h5>
-                                }
+                                <h5 class="card-title fw-bold">@ContainerDisplay.Name(container)</h5>
+                                <p class="card-text" style="color: #8893AC; font-size: 0.78rem;">@container.Image</p>
                                 <p class="card-text text-white mt-4" style="color: #8893AC">Container
                                     Id: @container.ContainerId</p>
                                 <p class="card-text text-white" style="color: #8893AC">Created: @container.Created</p>
@@ -448,8 +430,14 @@
                                     <div class="col-6">
                                         <div class="d-flex flex-row justify-content-end">
                                             <MudIconButton Disabled="Locked"
+                                                           OnClick="() => PullImage(container.Image)"
+                                                           Size="Size.Medium" Style="color: white"
+                                                           Title="Pull the latest image"
+                                                           Icon="@Icons.Material.Filled.CloudDownload"></MudIconButton>
+                                            <MudIconButton Disabled="Locked"
                                                            OnClick="() => LogContainer(container.ContainerId)"
                                                            Size="Size.Medium" Style="color: white"
+                                                           Title="Show recent logs"
                                                            Icon="@Icons.Material.Filled.Info"></MudIconButton>
                                         </div>
                                     </div>

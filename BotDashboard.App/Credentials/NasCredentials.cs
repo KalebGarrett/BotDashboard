@@ -21,11 +21,22 @@ public class NasCredentials
     public readonly string Username;
     public readonly string Password;
 
-    public NasCredentials(string host, string username, string password)
+    /// <summary>
+    /// The filesystem the Stats page reports on.
+    /// </summary>
+    /// <remarks>
+    /// Not <c>/</c>. On Cortex that is a 107 GB overlay holding the OS, while the storage that
+    /// matters -- and that the bots and their volumes actually live on -- is the 11 TB pool at
+    /// /volume1. Reporting the root would show a nearly empty disk and hide the real one.
+    /// </remarks>
+    public readonly string DiskPath;
+
+    public NasCredentials(string host, string username, string password, string diskPath)
     {
         Host = host;
         Username = username;
         Password = password;
+        DiskPath = string.IsNullOrWhiteSpace(diskPath) ? "/volume1" : diskPath;
     }
 
     public bool IsConfigured =>

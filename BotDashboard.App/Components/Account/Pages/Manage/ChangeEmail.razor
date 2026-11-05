@@ -4,18 +4,12 @@
 
 <MudContainer Class="mt-8" MaxWidth="MaxWidth.Small">
     <MudCard Class="pa-6 main-site-card text-black" Elevation="2">
-        <MudText Typo="Typo.h6" Class="mb-2">Sign-in email</MudText>
-        <MudText Typo="Typo.body2" Class="mb-4">
-            Currently <strong>@CurrentEmail</strong>. This is only a login identifier &mdash;
-            Bot Harbor has no mail sender, so nothing is ever sent to it.
-        </MudText>
-
         <EditForm Model="Input" FormName="change-email" OnValidSubmit="OnValidSubmitAsync" method="post">
             <DataAnnotationsValidator/>
             <ValidationSummary class="text-danger" role="alert"/>
             <div class="form-floating mb-3">
                 <InputText @bind-Value="Input.NewEmail" class="form-control" autocomplete="email"
-                           aria-required="true" placeholder="Please enter your new email."/>
+                           aria-required="true" placeholder="@CurrentEmail"/>
                 <label for="new-email" class="form-label">New email</label>
                 <ValidationMessage For="() => Input.NewEmail" class="text-danger"/>
             </div>

@@ -41,7 +41,7 @@ public class UbuntuService
     /// <summary>Total size of Cortex's root filesystem, in GiB.</summary>
     public double DiskTotal()
     {
-        var command = UbuntuCommand.ListDiskTotal();
+        var command = UbuntuCommand.ListDiskTotal(_nas.DiskPath);
         var response = RunCommandWithResponse(command);
 
         return Convert.ToDouble(response);
@@ -49,7 +49,7 @@ public class UbuntuService
 
     public double DiskUsage()
     {
-        var command = UbuntuCommand.ListDiskUsage();
+        var command = UbuntuCommand.ListDiskUsage(_nas.DiskPath);
         var response = RunCommandWithResponse(command);
 
         return Convert.ToDouble(response);
@@ -69,6 +69,35 @@ public class UbuntuService
         var response = RunCommandWithResponse(command);
 
         return response;
+    }
+
+    /// <summary>
+    /// Used space per mounted filesystem, largest first.
+    /// </summary>
+    public List<DiskMount> DiskBreakdown()
+    {
+        var response = RunCommandWithResponse(UbuntuCommand.ListDiskBreakdown());
+        var mounts = new List<DiskMount>();
+
+        foreach (var line in response.Split('\n', StringSplitOptions.RemoveEmptyEntries))
+        {
+            var parts = line.Trim().Split(' ', StringSplitOptions.RemoveEmptyEntries);
+
+            // "<mount> <bytes>". A mount point can contain spaces, so take the used figure
+            // from the end rather than assuming the line splits into exactly two fields.
+            if (parts.Length < 2 || !double.TryParse(parts[^1], out var usedBytes))
+            {
+                continue;
+            }
+
+            mounts.Add(new DiskMount
+            {
+                Mount = string.Join(' ', parts[..^1]),
+                UsedGb = Math.Round(usedBytes / 1024 / 1024 / 1024, 2)
+            });
+        }
+
+        return mounts.OrderByDescending(mount => mount.UsedGb).ToList();
     }
 
     public List<SshLogin> SshLogins()

@@ -164,29 +164,6 @@ public partial class Home
     }
 
     /// <summary>
-    /// Strips the registry and owner prefixes off a Docker image so the card shows "JAMJUNCTION"
-    /// rather than "kalebg08/jamjunction:latest".
-    /// </summary>
-    private static string FriendlyImageName(string image)
-    {
-        if (string.IsNullOrWhiteSpace(image))
-        {
-            return "UNKNOWN";
-        }
-
-        // Drop the tag, then everything up to the last path segment.
-        var withoutTag = image.Split(':')[0];
-        var lastSegment = withoutTag.Split('/')[^1];
-
-        return lastSegment.ToUpperInvariant();
-    }
-
-    private static string ContainerIconUrl(string image) =>
-        image?.Contains("yt-cipher", StringComparison.OrdinalIgnoreCase) == true
-            ? "https://www.svgrepo.com/show/28730/youtube.svg"
-            : "https://www.svgrepo.com/show/353655/discord-icon.svg";
-
-    /// <summary>
     /// Maps a <c>docker ps</c> status string onto a <c>.bh-status--*</c> CSS modifier.
     /// Docker reports things like "Up 2 hours", "Restarting (1) 3 seconds ago",
     /// "Exited (0) 5 minutes ago" and "Created".

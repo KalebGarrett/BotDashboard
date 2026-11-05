@@ -12,28 +12,17 @@
         <MudLayout>
             @* Colours come from BotHarborTheme and the .mud-appbar rule in app.css. *@
             <MudAppBar Elevation="0">
-                <MudHidden Breakpoint="Breakpoint.SmAndDown">
-                    @if (Open)
-                    {
-                        <MudIconButton Icon="@Icons.Material.Filled.ArrowBackIos" Class="text-white" Edge="Edge.Start"
-                                       OnClick="@((e) => ToggleDrawer())"/>
-                    }
-                    else
-                    {
-                        <MudIconButton Icon="@Icons.Material.Filled.ArrowForwardIos" Class="text-white"
-                                       Edge="Edge.Start"
-                                       OnClick="@((e) => ToggleDrawer())"/>
-                    }
-                </MudHidden>
+                @* Only the small-screen toggle lives here. On desktop the collapse control sits at
+                   the foot of the drawer, which runs full height. On a phone the drawer starts
+                   closed, so a toggle inside it would be unreachable -- hence this one stays. *@
                 <MudHidden Breakpoint="Breakpoint.MdAndUp">
-                    <MudIconButton Class="visible-md d-flex justify-content-end text-white"
+                    <MudIconButton Class="text-white" Edge="Edge.Start"
                                    Icon="@Icons.Material.Filled.Menu"
                                    OnClick="@((e) => ToggleDrawer())"/>
                 </MudHidden>
-                <MudText Typo="Typo.h6" Class="ml-2">Bot Harbor</MudText>
                 <MudSpacer/>
                 <MudHidden Breakpoint="Breakpoint.SmAndDown">
-                    <MudText Typo="Typo.body2" Class="bh-muted mr-3">@context.User.Identity?.Name</MudText>
+                    <MudText Typo="Typo.body2" Class="mr-3">@context.User.Identity?.Name</MudText>
                 </MudHidden>
                 <MudMenu DropShadow="true" AnchorOrigin="Origin.BottomRight">
                     <ActivatorContent>
@@ -46,10 +35,8 @@
                     </ChildContent>
                 </MudMenu>
             </MudAppBar>
-            <MudDrawer @bind-Open="@Open" Elevation="0" ClipMode="DrawerClipMode.Docked">
-                <MudNavMenu>
-                    <NavMenu/>
-                </MudNavMenu>
+            <MudDrawer @bind-Open="@Open" Elevation="0" ClipMode="DrawerClipMode.Never">
+                <NavMenu Open="Open" OnToggle="ToggleDrawer"/>
             </MudDrawer>
             <MudMainContent Class="d-flex flex-column" Style="min-height:100vh;">
                 <article class="content px-4 flex-fill">

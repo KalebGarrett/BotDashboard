@@ -215,10 +215,10 @@
                         <div class="p-3">
                             <div class="d-flex align-items-start gap-3 mb-3">
                                 <div class="bh-container-logo">
-                                    <img src="@ContainerIconUrl(container.Image)" alt="@container.Image"/>
+                                    <img src="@ContainerDisplay.IconUrl(container.Image)" alt="@ContainerDisplay.Name(container)"/>
                                 </div>
                                 <div class="flex-fill" style="min-width: 0;">
-                                    <p class="bh-container-name">@FriendlyImageName(container.Image)</p>
+                                    <p class="bh-container-name">@ContainerDisplay.Name(container)</p>
                                     <span class="bh-status @StatusModifier(container.Status) mt-1">
                                         <span class="bh-status__dot"></span>@container.Status
                                     </span>

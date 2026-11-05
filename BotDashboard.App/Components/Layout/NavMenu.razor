@@ -34,9 +34,27 @@
     <MudNavLink IconColor="Color.Tertiary" Icon="@Icons.Material.Filled.Password" Href="/manage/password"
                 Match="NavLinkMatch.Prefix">Manage Password
     </MudNavLink>
+
+    <MudDivider Class="my-3"/>
+
+    @* The collapse control sits under the links rather than in the app bar, so the drawer
+       owns its own chrome now that it runs the full height of the viewport. *@
+    <div class="d-flex justify-center pb-2">
+        <MudIconButton Class="bh-drawer-toggle"
+                       Icon="@(Open ? Icons.Material.Filled.ArrowBackIos : Icons.Material.Filled.ArrowForwardIos)"
+                       Size="Size.Small"
+                       aria-label="@(Open ? "Collapse navigation" : "Expand navigation")"
+                       OnClick="@(() => OnToggle.InvokeAsync())"/>
+    </div>
 </MudNavMenu>
 
 @code {
+    /// <summary>Whether the drawer is open, so the arrow can point the right way.</summary>
+    [Parameter] public bool Open { get; set; }
+
+    /// <summary>Raised when the collapse control is used; MainLayout owns the drawer state.</summary>
+    [Parameter] public EventCallback OnToggle { get; set; }
+
     private string CurrentUrl { get; set; }
 
     protected override void OnInitialized()
