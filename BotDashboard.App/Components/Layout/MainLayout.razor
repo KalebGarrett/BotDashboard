@@ -39,7 +39,7 @@
                hiding it, so the toggle at its foot stays reachable. With the toggle living
                inside the drawer, a variant that hides it leaves no way to reopen it. *@
             <MudDrawer @bind-Open="@Open" Elevation="0" ClipMode="DrawerClipMode.Never"
-                       Variant="DrawerVariant.Mini" OpenMiniOnHover="false">
+                       Variant="DrawerVariant.Mini" OpenMiniOnHover="false" MiniWidth="72px">
                 <NavMenu Open="Open" OnToggle="ToggleDrawer"/>
             </MudDrawer>
             <MudMainContent Class="d-flex flex-column" Style="min-height:100vh;">

@@ -304,6 +304,29 @@ h1:focus {
     letter-spacing: 0.12em;
 }
 
+/* Collapsed, the drawer is a 72px rail that shows icons and the lighthouse mark, nothing
+   else. MudBlazor hides the nav link labels for us; the rail's job here is to make sure
+   nothing wider than it can scroll into view. It used to: the 160px wordmark and the
+   "Overview"/"Settings" headings both overflowed, which is what put a horizontal scrollbar
+   along the bottom of the sidebar and left the headings showing as "Ove" and "Sett". */
+.mud-drawer.mud-drawer-mini.mud-drawer--closed,
+.mud-drawer.mud-drawer-mini.mud-drawer--closed .mud-drawer-content,
+.mud-drawer.mud-drawer-mini.mud-drawer--closed .mud-navmenu {
+    overflow-x: hidden;
+}
+
+/* With the nav menu's own horizontal padding dropped on the rail, a link is 16px of padding,
+   a 24px icon and 16px more -- centred in 72px without any help. The dividers would otherwise
+   run the full rail width and read as a stack of lines, so they are inset to match. */
+.mud-drawer.mud-drawer-mini.mud-drawer--closed .mud-nav-link {
+    justify-content: center;
+}
+
+.mud-drawer.mud-drawer-mini.mud-drawer--closed .mud-divider {
+    margin-left: 16px;
+    margin-right: 16px;
+}
+
 /* The drawer's own collapse control, now that it lives under the links. */
 .bh-drawer-toggle {
     color: var(--bh-text) !important;

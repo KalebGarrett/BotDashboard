@@ -63,19 +63,18 @@ public class DockerService
 
         client.Disconnect();
         
-        return response.Split("\n")
-            .Skip(1)
-            .SkipLast(1)
-            .Select(str => str.Split("   ")
-                .Where(s => s != "").ToArray())
-            .Select(row => new Container
+        // Tab separated by DockerCommand, and with no header row to skip.
+        return response.Split('\n', StringSplitOptions.RemoveEmptyEntries)
+            .Select(line => line.Split('\t'))
+            .Where(fields => fields.Length >= 6)
+            .Select(fields => new Container
             {
-                ContainerId = row[0].Trim(),
-                Image = row[1].Trim(),
-                Command = row[2].Trim(),
-                Created = row[3].Trim(),
-                Status = row[4].Trim(),
-                Names = row[5].Trim()
+                ContainerId = fields[0].Trim(),
+                Image = fields[1].Trim(),
+                Command = fields[2].Trim(),
+                Created = fields[3].Trim(),
+                Status = fields[4].Trim(),
+                Names = fields[5].Trim()
             })
             .OrderBy(container => container.Image)
             .ToList();
@@ -98,20 +97,19 @@ public class DockerService
 
         client.Disconnect();
         
-        return response.Split("\n")
-            .Skip(1)
-            .SkipLast(1)
-            .Select(str => str.Split("   ")
-                .Where(s => s != "").ToArray())
-            .Select(row => new DockerImage
+        // Tab separated by DockerCommand, and with no header row to skip.
+        return response.Split('\n', StringSplitOptions.RemoveEmptyEntries)
+            .Select(line => line.Split('\t'))
+            .Where(fields => fields.Length >= 5)
+            .Select(fields => new DockerImage
             {
-                Repository = row[0].Trim(),
-                Tag = row[1].Trim(),
-                ImageId = row[2].Trim(),
-                Created = row[3].Trim(),
-                Size = row[4].Trim(),
+                Repository = fields[0].Trim(),
+                Tag = fields[1].Trim(),
+                ImageId = fields[2].Trim(),
+                Created = fields[3].Trim(),
+                Size = fields[4].Trim()
             })
-            .OrderBy(container => container.Repository)
+            .OrderBy(image => image.Repository)
             .ToList();
     }
     

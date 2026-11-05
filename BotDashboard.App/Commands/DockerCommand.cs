@@ -36,14 +36,28 @@ public class DockerCommand
         return "docker restart $(docker ps -q)";
     }
 
+    /// <summary>Every image, one per line, tab separated.</summary>
+    /// <remarks>
+    /// Formatted explicitly rather than parsed out of the default table. Docker 29 -- which is
+    /// what Cortex runs -- replaced that table's columns outright: it now prints
+    /// IMAGE / ID / DISK USAGE / CONTENT SIZE / EXTRA instead of
+    /// REPOSITORY / TAG / IMAGE ID / CREATED / SIZE. Reading by position therefore put the size
+    /// in the image id column and the content size, "0B", under Created. A Go template pins the
+    /// fields whatever Docker the host happens to run, and a tab beats the old
+    /// split-on-three-spaces guess because no field can contain one.
+    /// </remarks>
     public string ListImages()
     {
-        return "docker images";
+        return "docker images --format "
+               + "'{{.Repository}}\t{{.Tag}}\t{{.ID}}\t{{.CreatedSince}}\t{{.Size}}'";
     }
-    
+
+    /// <summary>Every running container, one per line, tab separated.</summary>
+    /// <remarks>See <see cref="ListImages"/> for why these are formatted rather than parsed.</remarks>
     public string ListContainers()
     {
-        return "docker ps";
+        return "docker ps --format "
+               + "'{{.ID}}\t{{.Image}}\t{{.Command}}\t{{.RunningFor}}\t{{.Status}}\t{{.Names}}'";
     }
     
     public string Pull(string imageName)

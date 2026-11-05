@@ -45,6 +45,25 @@ public class UbuntuCommand
         return "df -B1 --output=size " + path + " | tail -n 1 | awk '{printf \"%.2f\\n\", $1/1024/1024/1024}'\n";
     }
 
+    /// <summary>
+    /// A fixed six-line report on the machine, for the Manage Cortex page.
+    /// </summary>
+    /// <remarks>
+    /// One round trip rather than six: every SSH connection to Cortex costs a handshake, and
+    /// opening a page should not pay for six of them. Each line falls back to "-" so a command
+    /// that is missing or not permitted shifts nothing below it -- the reader parses by
+    /// position, and a silently absent line would relabel everything after it.
+    /// </remarks>
+    public string ListStatus()
+    {
+        return "hostname || echo -\n"
+               + "uname -r || echo -\n"
+               + "uptime -p || echo -\n"
+               + "docker version --format '{{.Server.Version}}' 2>/dev/null || echo -\n"
+               + "docker ps -q 2>/dev/null | wc -l || echo -\n"
+               + "docker ps -aq 2>/dev/null | wc -l || echo -\n";
+    }
+
     public string ListUptime()
     {
         return "uptime -p";

@@ -55,6 +55,47 @@ public class UbuntuService
         return Convert.ToDouble(response);
     }
 
+    /// <summary>What the dashboard was told to connect to, without connecting.</summary>
+    /// <remarks>
+    /// Worth having on its own. When the connection fails, the configured address and account
+    /// are exactly what a reader needs in order to work out why, and a page showing nothing but
+    /// an exception message leaves them guessing.
+    /// </remarks>
+    public CortexStatus ConfiguredTarget()
+    {
+        return new CortexStatus
+        {
+            Host = _nas.Host,
+            Username = _nas.Username,
+            DiskPath = _nas.DiskPath
+        };
+    }
+
+    /// <summary>Cortex's identity, uptime and Docker state, in one connection.</summary>
+    public CortexStatus Status()
+    {
+        var response = RunCommandWithResponse(UbuntuCommand.ListStatus());
+
+        var lines = response
+            .Split('\n', StringSplitOptions.RemoveEmptyEntries)
+            .Select(line => line.Trim())
+            .ToArray();
+
+        string Line(int index) => index < lines.Length && lines[index].Length > 0 ? lines[index] : "-";
+        int Count(int index) => int.TryParse(Line(index), out var value) ? value : 0;
+
+        var status = ConfiguredTarget();
+
+        status.Hostname = Line(0);
+        status.Kernel = Line(1);
+        status.Uptime = Line(2);
+        status.DockerVersion = Line(3);
+        status.RunningContainers = Count(4);
+        status.TotalContainers = Count(5);
+
+        return status;
+    }
+
     public string Uptime()
     {
         var command = UbuntuCommand.ListUptime();

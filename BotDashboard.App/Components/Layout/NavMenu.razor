@@ -1,17 +1,34 @@
-﻿@implements IDisposable
+@implements IDisposable
 
 @inject NavigationManager NavigationManager
 
 @* Drawer background and link styling come from BotHarborTheme and app.css. *@
-<MudNavMenu Bordered="false" Rounded="true" Margin="Margin.Dense" Color="Color.Tertiary" Class="pa-3">
+<MudNavMenu Bordered="false" Rounded="true" Margin="Margin.Dense" Color="Color.Tertiary"
+            Class="@(Open ? "pa-3" : "px-0 py-3")">
+    @* Collapsed, the drawer is a narrow rail. The landscape wordmark is 160px wide and spilled
+       out of it, which is where the horizontal scrollbar came from; the rail wears the square
+       lighthouse mark instead. *@
     <div class="d-flex justify-center py-2">
-        <MudImage Width="160" Height="80" ObjectFit="ObjectFit.Contain"
-                  Src="imgs/Bot Harbor - Landscape.png" Alt="Bot Harbor"/>
+        @if (Open)
+        {
+            <MudImage Width="160" Height="80" ObjectFit="ObjectFit.Contain"
+                      Src="imgs/Bot Harbor - Landscape.png" Alt="Bot Harbor"/>
+        }
+        else
+        {
+            <MudImage Width="40" Height="40" ObjectFit="ObjectFit.Contain"
+                      Src="imgs/Bot Harbor - Light House.png" Alt="Bot Harbor"/>
+        }
     </div>
 
     <MudDivider Class="my-3"/>
 
-    <MudText Typo="Typo.overline" Class="bh-muted px-3">Overview</MudText>
+    @* MudBlazor hides the link labels itself on a closed mini drawer, but section headings are
+       plain text it knows nothing about, so they are ours to drop. *@
+    @if (Open)
+    {
+        <MudText Typo="Typo.overline" Class="bh-muted px-3">Overview</MudText>
+    }
     <MudNavLink IconColor="Color.Tertiary" Icon="@Icons.Material.Filled.Dashboard" Href=""
                 Match="NavLinkMatch.All">Dashboard
     </MudNavLink>
@@ -24,7 +41,13 @@
 
     <MudDivider Class="my-3"/>
 
-    <MudText Typo="Typo.overline" Class="bh-muted px-3">Settings</MudText>
+    @if (Open)
+    {
+        <MudText Typo="Typo.overline" Class="bh-muted px-3">Settings</MudText>
+    }
+    <MudNavLink IconColor="Color.Tertiary" Icon="@Icons.Material.Filled.Storage" Href="/manage/cortex"
+                Match="NavLinkMatch.Prefix">Manage Cortex
+    </MudNavLink>
     <MudNavLink IconColor="Color.Tertiary" Icon="@Icons.Material.Filled.Waves" Href="/manage/droplet"
                 Match="NavLinkMatch.Prefix">Manage Droplet
     </MudNavLink>
