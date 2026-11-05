@@ -564,15 +564,23 @@ h1:focus {
         overflow: hidden;
     }
 
-    /* Open, it floats over the page. Shifting the content sideways by a full drawer width
-       would push it off the screen on a narrow one. The attribute selectors catch whichever
-       breakpoint suffix MudBlazor put on the layout for this width. */
+    /* The app bar runs edge to edge, and the content is never shifted sideways: on a narrow
+       screen an open drawer floats over the page rather than shoving it off the edge.
+
+       !important is doing real work here rather than papering over a guess. MudBlazor insets
+       both from the drawer with selectors like
+       `.mud-drawer-open-mini-md-left.mud-drawer-left-clipped-never .mud-appbar` -- three
+       classes, which outranks anything reasonable written against the layout's class list,
+       whatever order the stylesheets load in. Without it the top bar started where the drawer
+       ended and left a gap down the left of the screen. */
     [class*="mud-drawer-open-mini-"] .mud-main-content,
     [class*="mud-drawer-close-mini-"] .mud-main-content,
     [class*="mud-drawer-open-mini-"] .mud-appbar,
-    [class*="mud-drawer-close-mini-"] .mud-appbar {
-        margin-left: 0;
-        width: 100%;
+    [class*="mud-drawer-close-mini-"] .mud-appbar,
+    .mud-layout .mud-appbar {
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        width: 100% !important;
     }
 
     .mud-drawer.mud-drawer-mini.mud-drawer-pos-left:not(.mud-drawer--closed) {
