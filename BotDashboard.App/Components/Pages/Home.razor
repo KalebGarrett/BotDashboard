@@ -66,46 +66,24 @@
                             </MudButton>
                         </div>
 
-                        <div class="bh-muted mb-2" style="font-size: 0.68rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;">
-                            Launch a bot
-                        </div>
-                        <div class="d-flex flex-wrap gap-2">
-                            <MudButton Disabled="Locked" Color="Color.Tertiary" Variant="Variant.Filled"
-                                       StartIcon="@Icons.Material.Filled.PlayArrow"
-                                       OnClick="() => RunImage(DockerRepository.JokeBot)">
-                                JokeBot
-                            </MudButton>
-
-                            <MudButton Disabled="Locked" Color="Color.Tertiary" Variant="Variant.Filled"
-                                       StartIcon="@Icons.Material.Filled.PlayArrow"
-                                       OnClick="() => RunImage(DockerRepository.TriviaBot)">
-                                TriviaBot
-                            </MudButton>
-
-                            <MudButton Disabled="Locked" Color="Color.Tertiary" Variant="Variant.Filled"
-                                       StartIcon="@Icons.Material.Filled.PlayArrow"
-                                       OnClick="() => RunImage(DockerRepository.FactBot)">
-                                FactBot
-                            </MudButton>
-
-                            <MudButton Disabled="Locked" Color="Color.Tertiary" Variant="Variant.Filled"
-                                       StartIcon="@Icons.Material.Filled.PlayArrow"
-                                       OnClick="() => RunImage(DockerRepository.PremBot)">
-                                PremBot
-                            </MudButton>
-
-                            <MudButton Disabled="Locked" Color="Color.Tertiary" Variant="Variant.Filled"
-                                       StartIcon="@Icons.Material.Filled.PlayArrow"
-                                       OnClick="() => RunImage(DockerRepository.JamJunction)">
-                                JamJunction
-                            </MudButton>
-
-                            <MudButton Disabled="Locked" Color="Color.Tertiary" Variant="Variant.Filled"
-                                       StartIcon="@Icons.Material.Filled.PlayArrow"
-                                       OnClick="() => RunImage(DockerRepository.YtCipher)">
-                                YouTube Cipher
-                            </MudButton>
-                        </div>
+                        @* One section per kind of container, so starting Postgres and starting a
+                           bot are not the same gesture in the same row of buttons. *@
+                        @foreach (var group in LaunchGroups)
+                        {
+                            <div class="bh-muted mb-2" style="font-size: 0.68rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;">
+                                @group.Heading
+                            </div>
+                            <div class="d-flex flex-wrap gap-2 mb-4">
+                                @foreach (var container in CortexContainers.In(group.Group))
+                                {
+                                    <MudButton Disabled="Locked" Color="@group.Colour" Variant="Variant.Filled"
+                                               StartIcon="@Icons.Material.Filled.PlayArrow"
+                                               OnClick="() => StartContainer(container)">
+                                        @container.Display
+                                    </MudButton>
+                                }
+                            </div>
+                        }
 
                         @if (Locked)
                         {

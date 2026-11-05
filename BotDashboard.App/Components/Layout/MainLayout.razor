@@ -24,6 +24,62 @@
                 <MudHidden Breakpoint="Breakpoint.SmAndDown">
                     <MudText Typo="Typo.body2" Class="mr-3">@context.User.Identity?.Name</MudText>
                 </MudHidden>
+
+                @* The bell. Rows are filed by the snackbar decorator and by the state
+                   reconcilers on the pages, so this only ever reads. *@
+                <MudMenu AnchorOrigin="Origin.BottomRight" TransformOrigin="Origin.TopRight"
+                         DropShadow="true" Class="mr-2">
+                    <ActivatorContent>
+                        <MudBadge Content="@UnreadCount" Visible="@(UnreadCount > 0)"
+                                  Color="Color.Error" Overlap="true" Bordered="true">
+                            <MudIconButton Class="text-white"
+                                           Icon="@(UnreadCount > 0 ? Icons.Material.Filled.NotificationsActive : Icons.Material.Outlined.Notifications)"
+                                           aria-label="Notifications"/>
+                        </MudBadge>
+                    </ActivatorContent>
+                    <ChildContent>
+                        <div class="bh-bell">
+                            <div class="bh-bell__head">
+                                <span class="fw-bold">Notifications</span>
+                                <span class="bh-muted" style="font-size: 0.75rem;">
+                                    @(UnreadCount > 0 ? $"{UnreadCount} unread" : "All caught up")
+                                </span>
+                            </div>
+
+                            @if (Notifications.Count == 0)
+                            {
+                                <div class="bh-bell__empty bh-muted">Nothing to report.</div>
+                            }
+                            else
+                            {
+                                <div class="bh-bell__list">
+                                    @foreach (var notification in Notifications)
+                                    {
+                                        <div class="bh-bell__row @(notification.Unread ? "bh-bell__row--unread" : "")">
+                                            <span class="bh-bell__dot @LevelModifier(notification.Level)"></span>
+                                            <div class="bh-bell__body">
+                                                <div class="bh-bell__title">@notification.Title</div>
+                                                <div class="bh-bell__message">@notification.Message</div>
+                                                <div class="bh-bell__time">@Ago(notification.CreatedAt)</div>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+
+                                <div class="bh-bell__foot">
+                                    <MudButton Size="Size.Small" Variant="Variant.Text" Color="Color.Primary"
+                                               OnClick="MarkAllRead">
+                                        Mark all read
+                                    </MudButton>
+                                    <MudButton Size="Size.Small" Variant="Variant.Text" Color="Color.Error"
+                                               OnClick="ClearNotifications">
+                                        Clear
+                                    </MudButton>
+                                </div>
+                            }
+                        </div>
+                    </ChildContent>
+                </MudMenu>
                 <MudMenu DropShadow="true" AnchorOrigin="Origin.BottomRight">
                     <ActivatorContent>
                         <MudAvatar>

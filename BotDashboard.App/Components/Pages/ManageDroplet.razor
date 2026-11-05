@@ -46,13 +46,16 @@
                     <MudDivider Class="my-4"/>
                     @* Auto Load Data used to sit beside Power. It governs SSH round trips to
                        Cortex, not anything the droplet does, so it lives on Manage Cortex now. *@
-                    <MudStack Class="w-100" Justify="Justify.Center" Row="true" Spacing="2">
-                        <MudSwitch T="bool"
-                                   @bind-Value="PowerSwitch"
-                                   @bind-Value:after="OnPowerSwitchChanged"
-                                   Color="Color.Tertiary"
-                                   Label="Power"/>
-                    </MudStack>
+                    <MudText Typo="Typo.subtitle2" GutterBottom="true">Settings</MudText>
+                    <MudSwitch T="bool"
+                               @bind-Value="PowerSwitch"
+                               @bind-Value:after="OnPowerSwitchChanged"
+                               Color="Color.Tertiary"
+                               Label="Power"/>
+                    <MudText Typo="Typo.caption" Class="bh-muted">
+                        Powers the droplet itself on and off through the DigitalOcean API. Ollama
+                        goes with it, so Jam Junction stops recommending songs while it is off.
+                    </MudText>
                     <MudStack Spacing="2">
                         <MudButton Disabled="Locked" Class="mt-2" Variant="Variant.Filled" OnClick="RebootDroplet"
                                    Color="Color.Tertiary"> Reboot

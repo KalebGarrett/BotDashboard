@@ -2,14 +2,30 @@
 
 public class UbuntuCommand
 {
-    public string ListMemoryUsage()
+    /// <summary>Total and available memory, in kB, straight from the kernel.</summary>
+    /// <remarks>
+    /// Two lines for the caller to do arithmetic on, rather than an awk program that formats a
+    /// sentence. MemAvailable is the kernel's own estimate of what a new workload could claim
+    /// without swapping, so total minus available is the figure UGOS shows too -- page cache is
+    /// not counted as used, because it is not.
+    /// </remarks>
+    public string ListMemory()
     {
-        return "free | awk '/Mem:/ {printf(\"Memory Usage: %.2f%%\\n\", $3/$2 * 100.0)}'\n";
+        return "grep -E '^(MemTotal|MemAvailable):' /proc/meminfo";
     }
 
-    public string ListCpuUsage()
+    /// <summary>Two snapshots of the aggregate CPU counters, a second apart.</summary>
+    /// <remarks>
+    /// This replaces <c>top -bn1 | grep "Cpu(s)" | awk '{print 100 - $8}'</c>, which was wrong
+    /// twice over. First, a single <c>top</c> iteration reports averages since boot rather than
+    /// current load. Second, and worse, top pads its percentages to a fixed width: at exactly
+    /// 100% idle the line reads "0.0 ni,100.0 id" with no space after the comma, awk's $8 lands
+    /// on "id," instead of the number, and `100 - 0` reports the machine as 100% busy while it
+    /// sits idle. Counting jiffies has no field-position guesswork in it at all.
+    /// </remarks>
+    public string ListCpuSamples()
     {
-        return "top -bn1 | grep \"Cpu(s)\" | awk '{print \"CPU Usage: \" 100 - $8 \"%\"}'\n";
+        return "head -1 /proc/stat; sleep 1; head -1 /proc/stat";
     }
 
     public string ListDiskUsage(string path)

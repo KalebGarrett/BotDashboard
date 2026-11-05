@@ -16,26 +16,82 @@ public class UbuntuService
     
     private UbuntuCommand UbuntuCommand { get; } = new();
 
+    /// <summary>Memory in use as a percentage of the total.</summary>
     public double MemoryUsagePercentage()
     {
-        var command = UbuntuCommand.ListMemoryUsage();
-        var response = RunCommandWithResponse(command);
+        var response = RunCommandWithResponse(UbuntuCommand.ListMemory());
 
-        var trimmedResponse = response.Substring(14).Trim();
-        var usedMemory = trimmedResponse.Remove(trimmedResponse.LastIndexOf('%'));
+        double total = 0;
+        double available = 0;
 
-        return Convert.ToDouble(usedMemory);
+        foreach (var line in response.Split('\n', StringSplitOptions.RemoveEmptyEntries))
+        {
+            var parts = line.Split(':', 2);
+            if (parts.Length != 2)
+            {
+                continue;
+            }
+
+            // "MemTotal:        7896808 kB" -- take the number, drop the unit.
+            var figure = parts[1].Trim().Split(' ', StringSplitOptions.RemoveEmptyEntries);
+            if (figure.Length == 0 || !double.TryParse(figure[0], out var kilobytes))
+            {
+                continue;
+            }
+
+            if (parts[0].Trim() == "MemTotal")
+            {
+                total = kilobytes;
+            }
+            else if (parts[0].Trim() == "MemAvailable")
+            {
+                available = kilobytes;
+            }
+        }
+
+        return total <= 0 ? 0 : Math.Round((total - available) / total * 100, 2);
     }
 
+    /// <summary>CPU busy as a percentage, measured across a one second window.</summary>
     public double CpuUsagePercentage()
     {
-        var command = UbuntuCommand.ListCpuUsage();
-        var response = RunCommandWithResponse(command);
+        var samples = RunCommandWithResponse(UbuntuCommand.ListCpuSamples())
+            .Split('\n', StringSplitOptions.RemoveEmptyEntries)
+            .Where(line => line.StartsWith("cpu ", StringComparison.Ordinal))
+            .Select(ParseCpuSample)
+            .ToArray();
 
-        var trimmedResponse = response.Substring(10).Trim();
-        var usedCpu = trimmedResponse.Remove(trimmedResponse.LastIndexOf('%'));
+        if (samples.Length < 2)
+        {
+            return 0;
+        }
 
-        return Convert.ToDouble(usedCpu);
+        var busyAndIdle = samples[1].Total - samples[0].Total;
+        var idle = samples[1].Idle - samples[0].Idle;
+
+        // A counter that did not move means the window caught nothing, not a busy machine.
+        return busyAndIdle <= 0 ? 0 : Math.Round((busyAndIdle - idle) / busyAndIdle * 100, 2);
+    }
+
+    /// <summary>
+    /// Reads one <c>/proc/stat</c> aggregate line into total and idle jiffies.
+    /// </summary>
+    /// <remarks>
+    /// The fields are user, nice, system, idle, iowait, irq, softirq, steal, guest and
+    /// guest_nice; newer kernels may append more, so the total sums whatever is there rather
+    /// than a fixed ten. iowait counts as idle: the CPU had nothing to run.
+    /// </remarks>
+    private static (double Total, double Idle) ParseCpuSample(string line)
+    {
+        var fields = line
+            .Split(' ', StringSplitOptions.RemoveEmptyEntries)
+            .Skip(1)
+            .Select(field => double.TryParse(field, out var value) ? value : 0)
+            .ToArray();
+
+        var idle = fields.Length > 4 ? fields[3] + fields[4] : 0;
+
+        return (fields.Sum(), idle);
     }
 
     /// <summary>Total size of Cortex's root filesystem, in GiB.</summary>

@@ -17,6 +17,7 @@ public partial class ManageCortex
 {
     [Inject] private UbuntuService UbuntuService { get; set; }
     [Inject] private PreferencesService Preferences { get; set; }
+    [Inject] private NotificationService Notifications { get; set; }
 
     private CortexStatus Status { get; set; } = new();
 
@@ -92,6 +93,17 @@ public partial class ManageCortex
             Reachable = false;
             ErrorMessage = exception.Message;
         }
+
+        // A bell row while Cortex is unreachable, withdrawn as soon as it answers again. Worth
+        // filing: an unreachable NAS makes every other page look broken in its own way, and
+        // the one notice here names the actual cause.
+        Notifications.ReconcileState("cortex:", Reachable
+            ? []
+            : [("ssh", "Cortex is unreachable",
+                string.IsNullOrWhiteSpace(ErrorMessage)
+                    ? $"No SSH answer from {Status.Host}."
+                    : ErrorMessage,
+                NotificationLevel.Error)]);
 
         Loaded = true;
         Locked = false;

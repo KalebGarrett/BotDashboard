@@ -15,153 +15,96 @@
                         <i class="bi bi-command"></i>
                         Commands
                     </h2>
-                    <div class="card main-site-card">
-                        <div class="position-relative">
-                            <div class="bg-image hover-overlay ripple" data-mdb-ripple-color="light">
-                                <div class="mt-2 ms-3 text-center">
-                                    <img src="imgs/Docker Logo.png"
-                                         width="128" height="128" alt="Digital Ocean"/>
+                    <div class="main-site-card">
+                        <div class="p-4">
+                            <div class="d-flex align-items-center gap-3 mb-4">
+                                <div class="bh-container-logo">
+                                    <img src="imgs/Docker Logo.png" alt="Docker"/>
                                 </div>
-                            </div>
-                            <div class="card-body text-center">
-                                <div class="container justify-content-center">
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <div class="d-flex flex-column flex-md-row justify-content-center gap-2">
-                                                <MudButton Disabled="Locked"
-                                                           FullWidth="true"
-                                                           Color="Color.Primary"
-                                                           Variant="Variant.Filled"
-                                                           Size="Size.Large"
-                                                           OnClick="StopAllContainers">
-                                                    Stop All Containers
-                                                </MudButton>
-
-                                                <MudButton Disabled="Locked"
-                                                           FullWidth="true"
-                                                           Color="Color.Primary"
-                                                           Variant="Variant.Filled"
-                                                           Size="Size.Large"
-                                                           OnClick="RestartAllContainers">
-                                                    Restart All Containers
-                                                </MudButton>
-
-                                                <MudButton Disabled="Locked"
-                                                           FullWidth="true"
-                                                           Color="Color.Primary"
-                                                           Variant="Variant.Filled"
-                                                           Size="Size.Large"
-                                                           OnClick="() => ListImages()">
-                                                    List All Images
-                                                </MudButton>
-
-                                                <MudButton Disabled="Locked"
-                                                           FullWidth="true"
-                                                           Color="Color.Primary"
-                                                           Variant="Variant.Filled"
-                                                           Size="Size.Large"
-                                                           OnClick="() => ListContainers()">
-                                                    List All Containers
-                                                </MudButton>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-12 mt-2">
-                                            <div class="d-flex flex-column flex-md-row justify-content-center gap-2">
-                                                <MudButton Disabled="Locked" FullWidth="true"
-                                                           Color="Color.Tertiary" Variant="Variant.Filled"
-                                                           Size="Size.Large"
-                                                           OnClick="() => RunImage(DockerRepository.JokeBot)">
-                                                    Start JokeBot
-                                                </MudButton>
-
-                                                <MudButton Disabled="Locked" FullWidth="true"
-                                                           Color="Color.Tertiary" Variant="Variant.Filled"
-                                                           Size="Size.Large"
-                                                           OnClick="() => RunImage(DockerRepository.TriviaBot)">
-                                                    Start TriviaBot
-                                                </MudButton>
-
-                                                <MudButton Disabled="Locked" FullWidth="true"
-                                                           Color="Color.Tertiary" Variant="Variant.Filled"
-                                                           Size="Size.Large"
-                                                           OnClick="() => RunImage(DockerRepository.FactBot)">
-                                                    Start FactBot
-                                                </MudButton>
-
-                                                <MudButton Disabled="Locked" FullWidth="true"
-                                                           Color="Color.Tertiary" Variant="Variant.Filled"
-                                                           Size="Size.Large"
-                                                           OnClick="() => RunImage(DockerRepository.PremBot)">
-                                                    Start PremBot
-                                                </MudButton>
-
-                                                <MudButton Disabled="Locked" FullWidth="true"
-                                                           Color="Color.Tertiary" Variant="Variant.Filled"
-                                                           Size="Size.Large"
-                                                           OnClick="() => RunImage(DockerRepository.JamJunction)">
-                                                    Start JamJunction
-                                                </MudButton>
-
-                                                <MudButton Disabled="Locked" FullWidth="true"
-                                                           Color="Color.Tertiary" Variant="Variant.Filled"
-                                                           Size="Size.Large"
-                                                           OnClick="() => RunImage(DockerRepository.YtCipher)">
-                                                    Start Youtube Cipher
-                                                </MudButton>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-12 mt-2">
-                                            <div class="d-flex flex-column flex-md-row justify-content-center gap-2">
-                                                <MudButton Disabled="Locked" FullWidth="true"
-                                                           Color="Color.Primary" Variant="Variant.Filled"
-                                                           Size="Size.Large"
-                                                           OnClick="() => PullImage(DockerRepository.JokeBot)">
-                                                    Pull JokeBot
-                                                </MudButton>
-
-                                                <MudButton Disabled="Locked" FullWidth="true"
-                                                           Color="Color.Primary" Variant="Variant.Filled"
-                                                           Size="Size.Large"
-                                                           OnClick="() => PullImage(DockerRepository.TriviaBot)">
-                                                    Pull TriviaBot
-                                                </MudButton>
-
-                                                <MudButton Disabled="Locked" FullWidth="true"
-                                                           Color="Color.Primary" Variant="Variant.Filled"
-                                                           Size="Size.Large"
-                                                           OnClick="() => PullImage(DockerRepository.FactBot)">
-                                                    Pull FactBot
-                                                </MudButton>
-
-                                                <MudButton Disabled="Locked" FullWidth="true"
-                                                           Color="Color.Primary" Variant="Variant.Filled"
-                                                           Size="Size.Large"
-                                                           OnClick="() => PullImage(DockerRepository.PremBot)">
-                                                    Pull PremBot
-                                                </MudButton>
-
-                                                <MudButton Disabled="Locked" FullWidth="true"
-                                                           Color="Color.Primary" Variant="Variant.Filled"
-                                                           Size="Size.Large"
-                                                           OnClick="() => PullImage(DockerRepository.JamJunction)">
-                                                    Pull JamJunction
-                                                </MudButton>
-
-                                                <MudButton Disabled="Locked" FullWidth="true"
-                                                           Color="Color.Primary" Variant="Variant.Filled"
-                                                           Size="Size.Large"
-                                                           OnClick="() => PullImage(DockerRepository.YtCipher)">
-                                                    Pull Youtube Cipher
-                                                </MudButton>
-                                            </div>
-                                        </div>
+                                <div>
+                                    <div class="fw-bold">Docker fleet</div>
+                                    <div class="bh-muted" style="font-size: 0.8rem;">
+                                        Acting on @Containers.Count running container@(Containers.Count == 1 ? "" : "s") on Cortex
                                     </div>
                                 </div>
                             </div>
+
+                            <div class="bh-command-section">Fleet</div>
+                            <div class="d-flex flex-wrap gap-2 mb-4">
+                                <MudButton Disabled="Locked" Color="Color.Primary" Variant="Variant.Filled"
+                                           StartIcon="@Icons.Material.Filled.StopCircle"
+                                           OnClick="StopAllContainers">
+                                    Stop All
+                                </MudButton>
+                                <MudButton Disabled="Locked" Color="Color.Primary" Variant="Variant.Filled"
+                                           StartIcon="@Icons.Material.Filled.RestartAlt"
+                                           OnClick="RestartAllContainers">
+                                    Restart All
+                                </MudButton>
+                                <MudButton Disabled="Locked" Color="Color.Primary" Variant="Variant.Outlined"
+                                           StartIcon="@Icons.Material.Filled.Refresh"
+                                           OnClick="() => ListContainers()">
+                                    Refresh Containers
+                                </MudButton>
+                            </div>
+
+                            @* The same sections as the dashboard, since they answer the same
+                               question: which container do I want, and what kind is it. *@
+                            @foreach (var group in LaunchGroups)
+                            {
+                                <div class="bh-command-section">@group.Heading</div>
+                                <div class="d-flex flex-wrap gap-2 mb-4">
+                                    @foreach (var container in CortexContainers.In(group.Group))
+                                    {
+                                        <MudButtonGroup Variant="Variant.Filled" Color="@group.Colour" Size="Size.Small">
+                                            <MudButton Disabled="Locked"
+                                                       StartIcon="@Icons.Material.Filled.PlayArrow"
+                                                       OnClick="() => StartContainer(container)">
+                                                @container.Display
+                                            </MudButton>
+                                            <MudTooltip Text="@($"Restart {container.Display}")">
+                                                <MudIconButton Disabled="Locked"
+                                                               Variant="Variant.Filled"
+                                                               Color="@group.Colour"
+                                                               Icon="@Icons.Material.Filled.RestartAlt"
+                                                               OnClick="() => RestartNamedContainer(container)"/>
+                                            </MudTooltip>
+                                        </MudButtonGroup>
+                                    }
+                                </div>
+                            }
+
+                            <div class="bh-command-section">Pull images</div>
+                            <div class="d-flex flex-wrap gap-2 mb-4">
+                                @foreach (var container in CortexContainers.Pullable)
+                                {
+                                    <MudButton Disabled="Locked" Color="Color.Primary" Variant="Variant.Outlined"
+                                               Size="Size.Small"
+                                               StartIcon="@Icons.Material.Filled.CloudDownload"
+                                               OnClick="() => PullImage(container.Image)">
+                                        @container.Display
+                                    </MudButton>
+                                }
+                            </div>
+
+                            <div class="bh-command-section">Inspect</div>
+                            <div class="d-flex flex-wrap gap-2">
+                                <MudButton Disabled="Locked" Color="Color.Primary" Variant="Variant.Outlined"
+                                           StartIcon="@Icons.Material.Filled.Layers"
+                                           OnClick="() => ListImages()">
+                                    List All Images
+                                </MudButton>
+                                <MudButton Disabled="Locked" Color="Color.Primary" Variant="Variant.Outlined"
+                                           StartIcon="@Icons.Material.Filled.ViewList"
+                                           OnClick="() => ListContainers()">
+                                    List All Containers
+                                </MudButton>
+                            </div>
+
+                            @if (Locked)
+                            {
+                                <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="mt-4" Rounded="true"/>
+                            }
                         </div>
                     </div>
                     <div class="col-md-12 mt-4">

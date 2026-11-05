@@ -327,6 +327,98 @@ h1:focus {
     margin-right: 16px;
 }
 
+/* Section label inside a command card. Was repeated as an inline style on every heading in
+   the dashboard card; the Commands card needed the same six times over. */
+.bh-command-section {
+    color: var(--bh-text);
+    opacity: 0.72;
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+}
+
+/* Notification bell feed. Sized so a full list scrolls inside the menu rather than growing
+   it past the bottom of the viewport, where the footer buttons would be unreachable. */
+.bh-bell {
+    width: 360px;
+    max-width: 92vw;
+}
+
+.bh-bell__head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--bh-border);
+}
+
+.bh-bell__empty {
+    padding: 1.25rem 1rem;
+    text-align: center;
+    font-size: 0.85rem;
+}
+
+.bh-bell__list {
+    max-height: 360px;
+    overflow-y: auto;
+}
+
+.bh-bell__row {
+    display: flex;
+    gap: 0.6rem;
+    padding: 0.7rem 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.bh-bell__row--unread {
+    background-color: rgba(76, 141, 255, 0.07);
+}
+
+.bh-bell__dot {
+    width: 8px;
+    height: 8px;
+    margin-top: 0.38rem;
+    border-radius: 50%;
+    flex: 0 0 auto;
+}
+
+.bh-bell__dot--info { background: var(--bh-beacon); }
+.bh-bell__dot--success { background: var(--bh-signal); }
+.bh-bell__dot--warning { background: #FBBF24; }
+.bh-bell__dot--error { background: #F43F5E; }
+
+.bh-bell__body {
+    min-width: 0;
+}
+
+.bh-bell__title {
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+}
+
+.bh-bell__message {
+    font-size: 0.82rem;
+    /* Long docker errors wrap rather than widening the menu off the screen edge. */
+    overflow-wrap: anywhere;
+}
+
+.bh-bell__time {
+    font-size: 0.7rem;
+    opacity: 0.6;
+    margin-top: 0.15rem;
+}
+
+.bh-bell__foot {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.4rem 0.6rem;
+    border-top: 1px solid var(--bh-border);
+}
+
 /* The drawer's own collapse control, now that it lives under the links. */
 .bh-drawer-toggle {
     color: var(--bh-text) !important;

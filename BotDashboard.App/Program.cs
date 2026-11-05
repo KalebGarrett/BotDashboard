@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using MudBlazor;
 using MudBlazor.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -142,11 +143,32 @@ builder.Services.AddScoped<UbuntuService>();
 builder.Services.AddScoped<OllamaService>();
 builder.Services.AddSingleton<PreferencesService>();
 
+builder.Services.AddSingleton<NotificationService>();
+
 builder.Services.AddMudServices(config =>
 {
     config.SnackbarConfiguration.MaxDisplayedSnackbars = 5;
     config.SnackbarConfiguration.ShowCloseIcon = true;
 });
+
+// Swap MudBlazor's own ISnackbar registration for a decorator, so every page's existing
+// Snackbar.Add also files a notification-bell row. Done here rather than by editing a dozen
+// call sites, which would leave the next page added to the app silently out of step.
+// The original descriptor is reused to build the inner service: MudBlazor's SnackbarService
+// constructor has changed shape between versions, and reconstructing it by hand would be a
+// package upgrade away from breaking.
+var snackbarDescriptor = builder.Services.Last(service => service.ServiceType == typeof(ISnackbar));
+builder.Services.Remove(snackbarDescriptor);
+builder.Services.Add(new ServiceDescriptor(typeof(ISnackbar), provider =>
+{
+    var inner = snackbarDescriptor.ImplementationFactory is not null
+        ? (ISnackbar)snackbarDescriptor.ImplementationFactory(provider)
+        : snackbarDescriptor.ImplementationInstance is ISnackbar instance
+            ? instance
+            : (ISnackbar)ActivatorUtilities.CreateInstance(provider, snackbarDescriptor.ImplementationType!);
+
+    return new BellSyncedSnackbar(inner, provider.GetRequiredService<NotificationService>());
+}, snackbarDescriptor.Lifetime));
 
 builder.Services.AddHealthChecks()
     .AddDbContextCheck<BotHarborDbContext>("database");
@@ -201,6 +223,10 @@ app.MapAccountServices();
 var preferences = app.Services.GetRequiredService<PreferencesService>();
 preferences.Load();
 Switch.OnInitialized = preferences.AutoLoadData;
+
+// Notifications filed before the last restart are still worth reading: the point of the bell
+// is to survive the browser being closed, which includes a redeploy.
+app.Services.GetRequiredService<NotificationService>().Load();
 
 var startupLogger = app.Services
     .GetRequiredService<ILoggerFactory>()

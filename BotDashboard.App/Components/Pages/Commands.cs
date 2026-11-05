@@ -1,4 +1,5 @@
 ﻿using System.Globalization;
+using BotDashboard.App.Constants;
 using BotDashboard.App.Services;
 using BotDashboard.Models;
 using Microsoft.AspNetCore.Components;
@@ -10,6 +11,7 @@ public partial class Commands
 {
     [Inject] public DockerService DockerService { get; set; }
     [Inject] public OllamaService OllamaService { get; set; }
+    [Inject] private NotificationService Notifications { get; set; }
 
     private List<DockerImage> DockerImages { get; set; } = new();
     private string ImageFetchTime { get; set; }
@@ -26,6 +28,17 @@ public partial class Commands
     private string OllamaHealthFetchTime { get; set; }
 
     private bool Locked { get; set; }
+
+    /// <summary>
+    /// The launch sections, matching the dashboard's so the two cards read the same way.
+    /// </summary>
+    private static readonly (string Heading, ContainerGroup Group, Color Colour)[] LaunchGroups =
+    [
+        ("Launch a bot", ContainerGroup.Bot, Color.Tertiary),
+        ("Music and audio", ContainerGroup.Audio, Color.Tertiary),
+        ("Infrastructure", ContainerGroup.Infrastructure, Color.Primary),
+        ("NAS apps", ContainerGroup.App, Color.Default)
+    ];
 
     protected override async Task OnInitializedAsync()
     {
@@ -55,6 +68,8 @@ public partial class Commands
             OllamaHealth = await OllamaService.HealthAsync();
             OllamaHealthFetchTime = DateTime.UtcNow.ToLocalTime().ToString(CultureInfo.CurrentCulture);
 
+            FileOllamaState();
+
             if (showSnackbar)
             {
                 CreateSnackbarMessage(
@@ -67,6 +82,8 @@ public partial class Commands
             OllamaHealth = new OllamaHealth { Error = exception.Message };
             OllamaHealthFetchTime = DateTime.UtcNow.ToLocalTime().ToString(CultureInfo.CurrentCulture);
 
+            FileOllamaState();
+
             if (showSnackbar)
             {
                 CreateSnackbarMessage("Could not check Ollama.", Severity.Error);
@@ -77,15 +94,59 @@ public partial class Commands
         await InvokeAsync(StateHasChanged);
     }
 
-   private async Task RunImage(string imageName)
+    /// <summary>
+    /// Turns the Ollama panel's two answers into bell rows, and withdraws them when they clear.
+    /// </summary>
+    /// <remarks>
+    /// Jam Junction's song recommender is the only consumer, and it fails quietly: the bot
+    /// stays online and simply stops recommending. Without a row here, nothing says so.
+    /// </remarks>
+    private void FileOllamaState()
+    {
+        var conditions = new List<(string, string, string, NotificationLevel)>();
+
+        if (OllamaHealth is not null && !OllamaHealth.ServiceActive)
+        {
+            conditions.Add(("service", "Ollama service is not active",
+                $"systemctl reports \"{OllamaHealth.ServiceState}\" on the droplet.",
+                NotificationLevel.Error));
+        }
+
+        if (OllamaHealth is not null && !OllamaHealth.Reachable)
+        {
+            conditions.Add(("reachable", "Ollama unreachable from Cortex",
+                string.IsNullOrWhiteSpace(OllamaHealth.Error)
+                    ? "The tailnet path from the bots sidecar is not answering."
+                    : OllamaHealth.Error,
+                NotificationLevel.Warning));
+        }
+
+        Notifications.ReconcileState("ollama:", conditions);
+    }
+
+    private async Task StartContainer(CortexContainer container)
     {
         Locked = true;
         await InvokeAsync(StateHasChanged);
         await Task.Yield();
 
-        DockerService.RunImage(imageName);
+        DockerService.StartContainer(container.Name);
         await ListContainers(isInternalCall: true);
-        CreateSnackbarMessage("Successfully ran image!", Severity.Success);
+        CreateSnackbarMessage($"Started {container.Display}.", Severity.Success);
+
+        Locked = false;
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private async Task RestartNamedContainer(CortexContainer container)
+    {
+        Locked = true;
+        await InvokeAsync(StateHasChanged);
+        await Task.Yield();
+
+        DockerService.RestartContainer(container.Name);
+        await ListContainers(isInternalCall: true);
+        CreateSnackbarMessage($"Restarted {container.Display}.", Severity.Success);
 
         Locked = false;
         await InvokeAsync(StateHasChanged);

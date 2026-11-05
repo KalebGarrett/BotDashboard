@@ -16,9 +16,9 @@ public class DockerService
 
     private DockerCommand DockerCommand { get; } = new();
     
-    public void RunImage(string imageName)
+    public void StartContainer(string containerName)
     {
-        var command = DockerCommand.Run(imageName);
+        var command = DockerCommand.Start(containerName);
         RunCommand(command);
     }
 

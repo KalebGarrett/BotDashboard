@@ -4,16 +4,16 @@ namespace BotDashboard.App.Commands;
 
 public class DockerCommand
 {
-    public string Run(string imageName)
+    /// <summary>Starts an existing container by name.</summary>
+    /// <remarks>
+    /// Not <c>docker run</c>. Every container on Cortex is created by a compose file, so running
+    /// the image again builds a second, anonymous container with none of the stack's environment
+    /// or networking -- and for a Discord bot that means two gateway connections on one token,
+    /// so every command gets answered twice. See <see cref="Constants.CortexContainers"/>.
+    /// </remarks>
+    public string Start(string containerName)
     {
-        // Jam Junction runs the AI song recommender against an Ollama server on the
-        // droplet's loopback (127.0.0.1:11434). Host networking lets the container
-        // reach that loopback, and OLLAMA_MODEL selects the 1B model that fits the
-        // 4 GB droplet (the image's baked-in default is the larger 3B model).
-        if (imageName == DockerRepository.JamJunction)
-            return $"docker run -d --network host -e OLLAMA_MODEL=llama3.2:1b {imageName}";
-
-        return $"docker run {imageName}";
+        return $"docker start {containerName}";
     }
 
     public string Stop(string containerId)
@@ -21,19 +21,35 @@ public class DockerCommand
         return $"docker stop {containerId}";
     }
 
+    /// <summary>Stops every running container except the ones serving this page.</summary>
+    /// <remarks>
+    /// This used to be <c>docker stop $(docker ps -q)</c>, which included the dashboard, its
+    /// database and its tunnel -- one click and the operator was looking at a Cloudflare 502
+    /// with no way back except SSH. The exclusions come from
+    /// <see cref="Constants.CortexContainers.Protected"/>; anchoring the pattern matters so a
+    /// future container whose name merely contains "botharbor-app" is not spared by accident.
+    /// </remarks>
     public string StopAll()
     {
-        return "docker stop $(docker ps -q)";
+        return $"docker ps --format '{{{{.Names}}}}' | grep -vxE '{ProtectedPattern()}' "
+               + "| xargs -r docker stop";
     }
 
     public string Restart(string containerId)
     {
         return $"docker restart {containerId}";
     }
-    
+
+    /// <summary>Restarts every running container except the ones serving this page.</summary>
     public string RestartAll()
     {
-        return "docker restart $(docker ps -q)";
+        return $"docker ps --format '{{{{.Names}}}}' | grep -vxE '{ProtectedPattern()}' "
+               + "| xargs -r docker restart";
+    }
+
+    private static string ProtectedPattern()
+    {
+        return string.Join('|', Constants.CortexContainers.Protected);
     }
 
     /// <summary>Every image, one per line, tab separated.</summary>
