@@ -159,13 +159,20 @@ curl -s localhost:8080/healthz           # from inside the tailscale netns
 
 ### Updating after a code change
 
-Built on the NAS:
+Built on the NAS. The stack lives in `/volume1/appdata/botharbor`, and UGOS ships no `git`
+binary, so the pull runs in a container against the same checkout:
 
 ```bash
-cd /volume1/docker/botharbor
-git pull
+cd /volume1/appdata/botharbor
+docker run --rm -v /volume1/appdata/botharbor:/git -w /git alpine/git -c safe.directory=/git pull --ff-only
 docker compose build botharbor && docker compose up -d botharbor
+docker compose --profile cloudflare up -d --force-recreate cloudflared
 ```
+
+That last line is not optional. `cloudflared` runs with `network_mode: service:botharbor`, so
+it lives inside the app container's network namespace -- recreating the app pulls the namespace
+out from under the tunnel and every request starts returning a Cloudflare 502 even though the
+app itself is healthy. Recreating `cloudflared` afterwards puts it back in the new namespace.
 
 Or build on your PC and push, matching the Jam Junction workflow:
 

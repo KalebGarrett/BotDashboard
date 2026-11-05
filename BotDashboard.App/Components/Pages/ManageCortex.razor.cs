@@ -1,4 +1,4 @@
-using BotDashboard.App.Services;
+﻿using BotDashboard.App.Services;
 using BotDashboard.Models;
 using Microsoft.AspNetCore.Components;
 
@@ -30,6 +30,14 @@ public partial class ManageCortex
     private string ErrorMessage { get; set; }
 
     private bool AutoLoadData { get; set; }
+
+    private string StatusClass => Loaded
+        ? Reachable ? "bh-status--up" : "bh-status--down"
+        : "bh-status--idle";
+
+    private string StatusText => Loaded
+        ? Reachable ? "Connected" : "Unreachable"
+        : "Not loaded";
 
     private IEnumerable<KeyValuePair<string, string>> Rows =>
     [

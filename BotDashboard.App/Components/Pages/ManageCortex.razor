@@ -1,4 +1,4 @@
-@page "/manage/cortex"
+﻿@page "/manage/cortex"
 
 <PageTitle>Manage Cortex</PageTitle>
 
@@ -17,11 +17,14 @@
                              Style="font-size: 6rem;"/>
                 </div>
                 <MudCardContent>
-                    <div class="d-flex justify-center align-center mb-4">
-                        <span class="bh-status @(Loaded ? (Reachable ? "bh-status--up" : "bh-status--down") : "")"></span>
-                        <MudText Typo="Typo.subtitle1" Class="ms-2">
-                            @(Loaded ? Reachable ? "Connected" : "Unreachable" : "Not loaded")
-                        </MudText>
+                    @* bh-status is the whole pill -- dot and label together -- not a dot to put a
+                       label beside. Used as a bare span in a flex row it stretches into an empty
+                       lozenge. *@
+                    <div class="d-flex justify-center mb-4">
+                        <span class="bh-status @StatusClass">
+                            <span class="bh-status__dot"></span>
+                            @StatusText
+                        </span>
                     </div>
 
                     <MudStack Spacing="3">
