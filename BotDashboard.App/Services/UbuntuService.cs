@@ -83,21 +83,29 @@ public class UbuntuService
         {
             var parts = line.Trim().Split(' ', StringSplitOptions.RemoveEmptyEntries);
 
-            // "<mount> <bytes>". A mount point can contain spaces, so take the used figure
-            // from the end rather than assuming the line splits into exactly two fields.
-            if (parts.Length < 2 || !double.TryParse(parts[^1], out var usedBytes))
+            // "<source> <mount> <bytes>". A mount point can contain spaces, so read the device
+            // off the front and the used figure off the end rather than assuming three fields.
+            if (parts.Length < 3 || !double.TryParse(parts[^1], out var usedBytes))
             {
                 continue;
             }
 
             mounts.Add(new DiskMount
             {
-                Mount = string.Join(' ', parts[..^1]),
+                Source = parts[0],
+                Mount = string.Join(' ', parts[1..^1]),
                 UsedGb = Math.Round(usedBytes / 1024 / 1024 / 1024, 2)
             });
         }
 
-        return mounts.OrderByDescending(mount => mount.UsedGb).ToList();
+        // One filesystem can be mounted in several places -- on Cortex /volume1 and /home are
+        // the same device, as are / and /overlay. Charting both would double-count the pool and
+        // show two identical strands, so keep the first mount of each device.
+        return mounts
+            .GroupBy(mount => mount.Source)
+            .Select(group => group.First())
+            .OrderByDescending(mount => mount.UsedGb)
+            .ToList();
     }
 
     public List<SshLogin> SshLogins()

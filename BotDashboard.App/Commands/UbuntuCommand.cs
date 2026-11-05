@@ -33,7 +33,7 @@ public class UbuntuCommand
     /// </remarks>
     public string ListDiskBreakdown()
     {
-        return "df -B1 --output=target,used -x tmpfs -x devtmpfs -x squashfs -x efivarfs | tail -n +2";
+        return "df -B1 --output=source,target,used -x tmpfs -x devtmpfs -x squashfs -x efivarfs | tail -n +2";
     }
 
     /// <remarks>
