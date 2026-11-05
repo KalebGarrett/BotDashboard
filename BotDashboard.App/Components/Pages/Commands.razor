@@ -54,22 +54,18 @@
                             {
                                 <div class="bh-command-section">@group.Heading</div>
                                 <div class="d-flex flex-wrap gap-2 mb-4">
+                                    @* Start only. Restart and stop already live on each card under
+                                       "Containers Running", and a MudButtonGroup wrapping a
+                                       tooltipped icon button here put enough extra markup between
+                                       the server's render tree and the browser's DOM to crash the
+                                       circuit with "insertBefore of null". *@
                                     @foreach (var container in CortexContainers.In(group.Group))
                                     {
-                                        <MudButtonGroup Variant="Variant.Filled" Color="@group.Colour" Size="Size.Small">
-                                            <MudButton Disabled="Locked"
-                                                       StartIcon="@Icons.Material.Filled.PlayArrow"
-                                                       OnClick="() => StartContainer(container)">
-                                                @container.Display
-                                            </MudButton>
-                                            <MudTooltip Text="@($"Restart {container.Display}")">
-                                                <MudIconButton Disabled="Locked"
-                                                               Variant="Variant.Filled"
-                                                               Color="@group.Colour"
-                                                               Icon="@Icons.Material.Filled.RestartAlt"
-                                                               OnClick="() => RestartNamedContainer(container)"/>
-                                            </MudTooltip>
-                                        </MudButtonGroup>
+                                        <MudButton Disabled="Locked" Color="@group.Colour" Variant="Variant.Filled"
+                                                   StartIcon="@Icons.Material.Filled.PlayArrow"
+                                                   OnClick="() => StartContainer(container)">
+                                            @container.Display
+                                        </MudButton>
                                     }
                                 </div>
                             }

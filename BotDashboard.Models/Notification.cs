@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 namespace BotDashboard.Models;
 
 /// <summary>How loud a notification is.</summary>
@@ -38,6 +40,8 @@ public class Notification
 
     public DateTime? ReadAt { get; set; }
 
+    /// <summary>Derived from <see cref="ReadAt"/>, so it is not worth a field in the stored file.</summary>
+    [JsonIgnore]
     public bool Unread => ReadAt is null;
 
     /// <summary>Rows the reconciler owns, and will withdraw once the condition clears.</summary>

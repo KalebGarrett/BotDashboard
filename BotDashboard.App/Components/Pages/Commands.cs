@@ -138,19 +138,6 @@ public partial class Commands
         await InvokeAsync(StateHasChanged);
     }
 
-    private async Task RestartNamedContainer(CortexContainer container)
-    {
-        Locked = true;
-        await InvokeAsync(StateHasChanged);
-        await Task.Yield();
-
-        DockerService.RestartContainer(container.Name);
-        await ListContainers(isInternalCall: true);
-        CreateSnackbarMessage($"Restarted {container.Display}.", Severity.Success);
-
-        Locked = false;
-        await InvokeAsync(StateHasChanged);
-    }
 
     private async Task StopContainer(string containerId)
     {
