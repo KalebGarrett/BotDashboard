@@ -327,6 +327,19 @@ h1:focus {
     margin-right: 16px;
 }
 
+/* Secondary icon actions on a container card, beside Restart and Stop. Muted so the two
+   named buttons stay the obvious targets. */
+.bh-card-action {
+    color: var(--bh-text) !important;
+    opacity: 0.7;
+    flex: 0 0 auto;
+}
+
+.bh-card-action:hover {
+    opacity: 1;
+    background-color: rgba(76, 141, 255, 0.14) !important;
+}
+
 /* Section label inside a command card. Was repeated as an inline style on every heading in
    the dashboard card; the Commands card needed the same six times over. */
 .bh-command-section {

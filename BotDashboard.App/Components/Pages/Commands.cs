@@ -36,8 +36,7 @@ public partial class Commands
     [
         ("Launch a bot", ContainerGroup.Bot, Color.Tertiary),
         ("Music and audio", ContainerGroup.Audio, Color.Tertiary),
-        ("Infrastructure", ContainerGroup.Infrastructure, Color.Primary),
-        ("NAS apps", ContainerGroup.App, Color.Default)
+        ("Infrastructure", ContainerGroup.Infrastructure, Color.Primary)
     ];
 
     protected override async Task OnInitializedAsync()

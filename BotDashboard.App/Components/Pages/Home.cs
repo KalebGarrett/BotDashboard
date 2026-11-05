@@ -43,8 +43,7 @@ public partial class Home
     [
         ("Launch a bot", ContainerGroup.Bot, Color.Tertiary),
         ("Music and audio", ContainerGroup.Audio, Color.Tertiary),
-        ("Infrastructure", ContainerGroup.Infrastructure, Color.Primary),
-        ("NAS apps", ContainerGroup.App, Color.Default)
+        ("Infrastructure", ContainerGroup.Infrastructure, Color.Primary)
     ];
 
     protected override async Task OnInitializedAsync()
@@ -221,32 +220,6 @@ public partial class Home
         Notifications.ReconcileState("container:", faults);
     }
 
-    /// <summary>
-    /// Maps a <c>docker ps</c> status string onto a <c>.bh-status--*</c> CSS modifier.
-    /// Docker reports things like "Up 2 hours", "Restarting (1) 3 seconds ago",
-    /// "Exited (0) 5 minutes ago" and "Created".
-    /// </summary>
-    private static string StatusModifier(string status)
-    {
-        if (string.IsNullOrWhiteSpace(status))
-        {
-            return "bh-status--idle";
-        }
-
-        if (status.StartsWith("Up", StringComparison.OrdinalIgnoreCase))
-        {
-            // "Up 5 minutes (unhealthy)" is running, but not happily.
-            return status.Contains("unhealthy", StringComparison.OrdinalIgnoreCase)
-                ? "bh-status--idle"
-                : "bh-status--up";
-        }
-
-        if (status.Contains("Exit", StringComparison.OrdinalIgnoreCase)
-            || status.Contains("Dead", StringComparison.OrdinalIgnoreCase))
-        {
-            return "bh-status--down";
-        }
-
-        return "bh-status--idle";
-    }
+    /// <summary>Shared with the Commands page, which draws the same card.</summary>
+    private static string StatusModifier(string status) => ContainerDisplay.StatusModifier(status);
 }

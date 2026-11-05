@@ -115,4 +115,37 @@ public static class ContainerDisplay
         image?.Contains("yt-cipher", StringComparison.OrdinalIgnoreCase) == true
             ? YouTubeIcon
             : DockerIcon;
+
+    /// <summary>
+    /// Maps a <c>docker ps</c> status string onto a <c>.bh-status--*</c> CSS modifier.
+    /// </summary>
+    /// <remarks>
+    /// Docker reports things like "Up 2 hours", "Up 5 minutes (unhealthy)", "Restarting (1) 3
+    /// seconds ago", "Exited (0) 5 minutes ago" and "Created". Lives here rather than on a page
+    /// because the dashboard and the Commands page draw the same card and must agree on what
+    /// counts as healthy.
+    /// </remarks>
+    public static string StatusModifier(string status)
+    {
+        if (string.IsNullOrWhiteSpace(status))
+        {
+            return "bh-status--idle";
+        }
+
+        if (status.StartsWith("Up", StringComparison.OrdinalIgnoreCase))
+        {
+            // "Up 5 minutes (unhealthy)" is running, but not happily.
+            return status.Contains("unhealthy", StringComparison.OrdinalIgnoreCase)
+                ? "bh-status--idle"
+                : "bh-status--up";
+        }
+
+        if (status.Contains("Exit", StringComparison.OrdinalIgnoreCase)
+            || status.Contains("Dead", StringComparison.OrdinalIgnoreCase))
+        {
+            return "bh-status--down";
+        }
+
+        return "bh-status--idle";
+    }
 }
