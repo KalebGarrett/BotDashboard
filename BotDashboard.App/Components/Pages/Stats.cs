@@ -224,6 +224,18 @@ public partial class Stats
         await InvokeAsync(StateHasChanged);
     }
 
+    /// <summary>
+    /// Formats a size in GiB, switching to TB once the number stops being readable.
+    /// </summary>
+    /// <remarks>
+    /// Cortex's pool is about 11,000 GiB. Printed in gigabytes that is a five-digit number
+    /// nobody parses at a glance, and it does not match how the disk is actually thought about.
+    /// </remarks>
+    private static string FormatSize(double gigabytes) =>
+        gigabytes >= 1024
+            ? $"{gigabytes / 1024:0.##} TB"
+            : $"{gigabytes:0.##} GB";
+
     private void CreateSnackbarMessage(string message, Severity severity)
     {
         Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomRight;

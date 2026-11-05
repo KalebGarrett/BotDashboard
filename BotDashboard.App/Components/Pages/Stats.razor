@@ -91,14 +91,14 @@
                                       Height="300px"/>
                         </div>
                         <div class="col-md-6 mt-2">
-                            <MudText Class="mt-10">Disk Used: @($"{DiskUsed}GB") / @($"{DiskTotal}GB")</MudText>
+                            <MudText Class="mt-10">Disk Used: @FormatSize(DiskUsed) / @FormatSize(DiskTotal)</MudText>
                             <div class="d-flex justify-content-center">
                                 <MudProgressLinear Color="Color.Tertiary" Striped="true" Size="Size.Large"
                                                    Value="DiskUsedPercentage"
                                                    Class="my-3"/>
                             </div>
                             <MudDivider Class="my-10"></MudDivider>
-                            <MudText Class="mt-10">Free Disk: @($"{FreeDisk}GB") / @($"{DiskTotal}GB")</MudText>
+                            <MudText Class="mt-10">Free Disk: @FormatSize(FreeDisk) / @FormatSize(DiskTotal)</MudText>
                             <div class="d-flex justify-content-center">
                                 <MudProgressLinear Color="Color.Info" Striped="true" Size="Size.Large"
                                                    Value="FreeDiskPercentage"
