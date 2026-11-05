@@ -15,34 +15,57 @@ A personal project for managing my Discord bots through a web-based dashboard. T
 | **[Blazor](https://github.com/dotnet/blazor)** | For building the interactive web UI. |
 | **[MudBlazor](https://github.com/MudBlazor/MudBlazor)** | A Material Design component library for Blazor. |
 | **[PostgreSQL](https://www.postgresql.org/)** | Stores the operator account. Runs in a container on the NAS. |
-| **[Tailscale](https://tailscale.com/)** | Private tunnel to the dashboard. No port forward, nothing public. |
+| **[Cloudflare Tunnel](https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/)** | Publishes the dashboard with no port forward and no public IP. Cloudflare Access sits in front of it. |
+| **[Tailscale](https://tailscale.com/)** | Not used by the dashboard. It is how the bots reach Ollama and Lavalink, which have no authentication of their own. |
 | **[SSH.NET](https://github.com/sshnet/SSH.NET)** | Enables secure SSH operations with remote servers. |
 
 ## Hosting
 
-The dashboard is **self-hosted on Cortex**, a UGREEN DXP4800 Plus NAS, as a three-container
-Docker Compose stack. It used to run as an Azure App Service with an Azure SQL database; both
-are gone, along with the bill.
+Everything is **self-hosted on Cortex**, a UGREEN DXP4800 Plus NAS, as two Docker Compose
+stacks. The dashboard used to be an Azure App Service with an Azure SQL database; both are
+gone, along with the bill.
 
 ```text
-Browser on the tailnet ──HTTPS──▶ bot-harbor.<tailnet>.ts.net
-                                      │ tailscale serve
-                                      ▼
-                                  botharbor-app ──▶ botharbor-postgres
-                                      │
-                                      └──SSH / DO API──▶ droplet running the bots
+Browser ──HTTPS──▶ botharbor.<your-domain>
+                        │  Cloudflare Access: email login before anything reaches the app
+                        ▼
+                   Cloudflare Tunnel  (botharbor-cloudflared)
+                        │
+                        ▼
+                   botharbor-app ──▶ botharbor-postgres
+                        │
+                        ├──SSH──▶ Cortex: Docker, the bots, every figure on the Stats page
+                        └──SSH / API──▶ droplet: Ollama, and nothing else
 ```
 
-The bots themselves are unchanged — they still run on the DigitalOcean droplet. Only the
-dashboard and its database moved home.
+`cloudflared` runs inside the app container's network namespace, so rebuilding the app takes
+the tunnel's network with it. Recreate `cloudflared` after any app rebuild — `deploy/README.md`
+has the exact sequence.
+
+### Where the bots run
+
+All six run on Cortex, in a second stack under `deploy/bots`:
+
+| Stack | Containers |
+| ----- | ---------- |
+| `botharbor` | `botharbor-app`, `botharbor-postgres`, `botharbor-cloudflared` |
+| `bots` | `jokebot`, `triviabot`, `factbot`, `prembot`, and behind the `audio` profile `jamjunction`, `yt-cipher`, `bots-tailscale` |
+
+The four simple bots need nothing but outbound internet. Jam Junction is the exception: it runs
+inside `bots-tailscale`'s network namespace, because it talks to Lavalink on the home server PC
+and to Ollama on the droplet, and neither has any authentication of its own. The tailnet is what
+keeps them off the public internet rather than something the dashboard needs for itself.
+
+The DigitalOcean droplet is now down to one job: hosting Ollama for Jam Junction's song
+recommender, bound to its own loopback. The Manage Droplet page powers it on and off.
 
 **[Setup, operations and troubleshooting → `deploy/README.md`](deploy/README.md)**
 
 Quick start on the NAS:
 
 ```bash
-cp .env.example .env   # fill in the blanks
-docker compose up -d
+cp .env.example .env   # or run ./deploy/configure.sh, which quotes values correctly
+docker compose --profile cloudflare up -d
 ```
 
 Local development needs only the database. The dev overlay publishes it on loopback, which

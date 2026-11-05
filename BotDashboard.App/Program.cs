@@ -1,4 +1,4 @@
-using BotDashboard.App;
+﻿using BotDashboard.App;
 using BotDashboard.App.Components;
 using BotDashboard.App.Components.Account;
 using BotDashboard.App.Credentials;
@@ -14,7 +14,7 @@ using MudBlazor.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Bot Harbor is self-hosted behind a Tailscale sidecar on the Cortex NAS. `tailscale serve`
+// Bot Harbor is self-hosted on the Cortex NAS behind a Cloudflare Tunnel. `cloudflared`
 // terminates TLS and forwards plain HTTP to Kestrel, so the app must trust the forwarded headers
 // and must not try to issue its own HTTPS redirects.
 var behindReverseProxy = builder.Configuration.GetValue("BotHarbor:BehindReverseProxy", false);
@@ -35,13 +35,26 @@ builder.Services.AddAuthentication(options =>
     })
     .AddIdentityCookies();
 
+// "Remember me" asks Identity for a persistent cookie instead of a session one; this is how
+// long that cookie is then good for. Left implicit it was the framework's 14 days, which is
+// short for a dashboard exactly one person ever signs in to, and being implicit made the
+// setting impossible to reason about from the code. Sliding, so active use keeps it alive.
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.ExpireTimeSpan = TimeSpan.FromDays(30);
+    options.SlidingExpiration = true;
+    options.LoginPath = "/login";
+    options.AccessDeniedPath = "/login";
+});
+
 if (behindReverseProxy)
 {
     builder.Services.Configure<ForwardedHeadersOptions>(options =>
     {
         options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
-        // The only upstream is the Tailscale sidecar sharing this pod's loopback, and the Docker
-        // bridge gateway. Clearing the defaults lets those private addresses be trusted.
+        // The only upstream is the cloudflared sidecar sharing this container's loopback, and
+        // the Docker bridge gateway. Clearing the defaults lets those private addresses be
+        // trusted.
         options.KnownNetworks.Clear();
         options.KnownProxies.Clear();
     });
@@ -117,15 +130,9 @@ builder.Services.AddSingleton(_ =>
 {
     var host = builder.Configuration["Ollama:Host"];
     var port = builder.Configuration.GetValue("Ollama:Port", 11434);
+    var probeContainer = builder.Configuration["Ollama:ProbeContainer"];
 
-    return new OllamaEndpoint(host, port);
-});
-
-// Short timeout on purpose: this backs a status panel, and a dead tailnet path should report
-// itself in seconds rather than leaving the page spinning on the default 100.
-builder.Services.AddHttpClient("ollama", client =>
-{
-    client.Timeout = TimeSpan.FromSeconds(8);
+    return new OllamaEndpoint(host, port, probeContainer);
 });
 
 builder.Services.AddScoped<DigitalOceanService>();

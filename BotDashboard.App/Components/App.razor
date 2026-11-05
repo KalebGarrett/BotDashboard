@@ -41,11 +41,15 @@
     [CascadingParameter]
     private HttpContext HttpContext { get; set; } = default!;
 
-        // These pages take HttpContext as a cascading parameter, which exists only during
-        // static server rendering. Rendered interactively it is null, OnInitializedAsync
-        // throws, the circuit dies and the browser reloads -- an endless refresh loop.
-    private IComponentRenderMode? RenderModeForPage => 
-        HttpContext.Request.Path.StartsWithSegments("/manage/password") 
+    // These pages take HttpContext as a cascading parameter and post a real form, both of
+    // which exist only during static server rendering. Rendered interactively HttpContext is
+    // null, OnInitializedAsync throws, the circuit dies and the browser reloads -- an endless
+    // refresh loop. Login belongs here for a second reason: writing the authentication cookie
+    // needs a response that has not been sent yet, so "Remember me" can only take effect on a
+    // genuine POST. Over a circuit the flag was read and then had nowhere to be written.
+    private IComponentRenderMode? RenderModeForPage =>
+        HttpContext.Request.Path.StartsWithSegments("/login")
+        || HttpContext.Request.Path.StartsWithSegments("/manage/password")
         || HttpContext.Request.Path.StartsWithSegments("/manage/setpassword")
         || HttpContext.Request.Path.StartsWithSegments("/manage/email")
         ? null

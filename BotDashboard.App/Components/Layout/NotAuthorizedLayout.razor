@@ -7,10 +7,9 @@
 <MudPopoverProvider/>
 
 <MudLayout>
-    @* No nav on the login screen, so the bar is just a thin branded strip. *@
-    <MudAppBar Elevation="0" Dense="true">
-        <MudText Typo="Typo.subtitle2" Class="bh-muted">Bot Harbor</MudText>
-    </MudAppBar>
+    @* No nav and no title on the login screen: the wordmark sits right below this, so a label
+       here only repeats it. The bar stays for the gradient strip along the top. *@
+    <MudAppBar Elevation="0" Dense="true"/>
     <MudMainContent Class="d-flex flex-column" Style="min-height:100vh;">
         <article class="content px-4 flex-fill">
             @Body

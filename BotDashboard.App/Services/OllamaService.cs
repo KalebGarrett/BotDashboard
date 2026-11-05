@@ -1,4 +1,4 @@
-using System.Diagnostics;
+using System.Text;
 using System.Text.Json;
 using BotDashboard.App.Commands;
 using BotDashboard.App.Credentials;
@@ -17,17 +17,17 @@ namespace BotDashboard.App.Services;
 public class OllamaService
 {
     private readonly DigitalOceanDropletCredentials _digitalOcean;
+    private readonly NasCredentials _nas;
     private readonly OllamaEndpoint _endpoint;
-    private readonly IHttpClientFactory _httpClientFactory;
 
     public OllamaService(
         DigitalOceanDropletCredentials digitalOcean,
-        OllamaEndpoint endpoint,
-        IHttpClientFactory httpClientFactory)
+        NasCredentials nas,
+        OllamaEndpoint endpoint)
     {
         _digitalOcean = digitalOcean;
+        _nas = nas;
         _endpoint = endpoint;
-        _httpClientFactory = httpClientFactory;
     }
 
     private OllamaCommand OllamaCommand { get; } = new();
@@ -58,10 +58,12 @@ public class OllamaService
     /// Whether Ollama is up, and whether Cortex can actually reach it.
     /// </summary>
     /// <remarks>
-    /// The HTTP half does not go through SSH. Bot Harbor shares the Tailscale sidecar's network
-    /// namespace, so it calls the droplet's tailnet address directly -- the same path Jam
-    /// Junction would take from Cortex. Asking the droplet to curl its own loopback would
-    /// always succeed and would prove nothing about whether Cortex can get there.
+    /// Two machines, two connections. The service state comes from the droplet, which is where
+    /// Ollama runs. The reachability half comes from Cortex, issued inside the container whose
+    /// network namespace Jam Junction shares -- see <see cref="OllamaCommand.TailnetProbe"/>.
+    ///
+    /// Asking the droplet to curl its own loopback would always succeed and prove nothing, and
+    /// asking from this process proves nothing either now that Bot Harbor is off the tailnet.
     /// </remarks>
     public async Task<OllamaHealth> HealthAsync(CancellationToken cancellationToken = default)
     {
@@ -84,27 +86,46 @@ public class OllamaService
             return health;
         }
 
-        // Half two: the HTTP API, from here, across the tailnet.
-        var stopwatch = Stopwatch.StartNew();
+        // Half two: the HTTP API, asked from Jam Junction's own network namespace on Cortex.
         try
         {
-            var client = _httpClientFactory.CreateClient("ollama");
-            using var response = await client.GetAsync(
-                $"{_endpoint.BaseUrl}/api/tags", cancellationToken);
+            var output = await Task.Run(
+                () => RunOnCortex(OllamaCommand.TailnetProbe(_endpoint.ProbeContainer, _endpoint.BaseUrl)),
+                cancellationToken);
 
-            stopwatch.Stop();
-            health.LatencyMs = stopwatch.ElapsedMilliseconds;
+            var exitCode = -1;
+            var body = new StringBuilder();
 
-            if (!response.IsSuccessStatusCode)
+            foreach (var line in output.Split('\n'))
             {
-                health.Error = $"HTTP {(int)response.StatusCode} from {_endpoint.BaseUrl}/api/tags";
+                var trimmed = line.Trim();
+
+                if (trimmed.StartsWith("rc=", StringComparison.Ordinal))
+                {
+                    int.TryParse(trimmed[3..], out exitCode);
+                }
+                else if (trimmed.StartsWith("ms=", StringComparison.Ordinal))
+                {
+                    health.LatencyMs = long.TryParse(trimmed[3..], out var elapsed) ? elapsed : 0;
+                }
+                else
+                {
+                    body.Append(trimmed);
+                }
+            }
+
+            if (exitCode != 0)
+            {
+                // The useful context is which container was asked and for what: a wrong
+                // container name otherwise looks exactly like a dead tailnet.
+                health.Error = $"No answer from {_endpoint.BaseUrl}/api/tags inside "
+                               + $"{_endpoint.ProbeContainer} on Cortex (wget exit {exitCode}).";
                 return health;
             }
 
             health.Reachable = true;
 
-            var body = await response.Content.ReadAsStringAsync(cancellationToken);
-            using var document = JsonDocument.Parse(body);
+            using var document = JsonDocument.Parse(body.ToString());
             if (document.RootElement.TryGetProperty("models", out var models))
             {
                 foreach (var model in models.EnumerateArray())
@@ -118,14 +139,35 @@ public class OllamaService
         }
         catch (Exception exception)
         {
-            stopwatch.Stop();
-            health.LatencyMs = stopwatch.ElapsedMilliseconds;
-            // Nearly always a timeout, which here means the tailnet path is down rather than
-            // that Ollama is broken -- worth distinguishing, so report the message verbatim.
+            // Either Cortex is unreachable or the reply was not Ollama's JSON. Both are worth
+            // seeing verbatim rather than flattened into "no route".
+            health.Reachable = false;
             health.Error = exception.Message;
         }
 
         return health;
+    }
+
+    /// <summary>Runs a command on Cortex, where the bots stack and its tailnet sidecar live.</summary>
+    private string RunOnCortex(string command)
+    {
+        if (!_nas.IsConfigured)
+        {
+            throw new InvalidOperationException(
+                "Cortex SSH settings are missing, so the tailnet path to Ollama cannot be "
+                + "checked. Set NAS_HOST, NAS_USERNAME and NAS_PASSWORD in .env.");
+        }
+
+        using var client = new SshClient(_nas.Host, _nas.Username, _nas.Password);
+        client.Connect();
+
+        var sshCommand = client.CreateCommand(command);
+        sshCommand.CommandTimeout = TimeSpan.FromSeconds(30);
+        var response = sshCommand.Execute();
+
+        client.Disconnect();
+
+        return response;
     }
 
     private string RunCommandWithResponse(string command)

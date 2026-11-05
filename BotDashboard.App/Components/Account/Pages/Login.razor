@@ -26,10 +26,15 @@
         <div class="row d-flex justify-content-center mt-4">
             <div class="col-md-5 col-lg-4">
                 <div class="bh-panel p-4">
-                    <h1 class="h5 fw-bold mb-1">Sign in</h1>
-                    <p class="bh-muted mb-4" style="font-size: 0.85rem;">
-                        Private to your tailnet. No public access.
-                    </p>
+                    <h1 class="h5 fw-bold mb-4">Sign in</h1>
+                    @* Rendered inline rather than raised as a snackbar: this page is statically
+                       rendered, so there is no circuit for MudBlazor to show one on. *@
+                    @if (!string.IsNullOrWhiteSpace(ErrorMessage))
+                    {
+                        <div class="alert alert-danger py-2 px-3 mb-3" role="alert">
+                            @ErrorMessage
+                        </div>
+                    }
                     <EditForm Model="Input" method="post" OnValidSubmit="LoginUser" FormName="login">
                         <DataAnnotationsValidator/>
                         <ValidationSummary class="text-danger" role="alert"/>
@@ -71,8 +76,6 @@
 
     [SupplyParameterFromQuery] private string? ReturnUrl { get; set; }
 
-    [Inject] private ISnackbar Snackbar { get; set; }
-
     protected override async Task OnInitializedAsync()
     {
         if (HttpMethods.IsGet(HttpContext.Request.Method))
@@ -105,20 +108,13 @@
         }
         else
         {
-            ErrorMessage = "Error: Invalid login attempt.";
-            CreateSnackbarMessage(ErrorMessage, Severity.Error);
+            ErrorMessage = "That email and password did not match an account.";
         }
     }
 
     private void NavigateToHomePage()
     {
         NavigationManager.NavigateTo("");
-    }
-
-    private void CreateSnackbarMessage(string message, Severity severity)
-    {
-        Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomRight;
-        Snackbar.Add(message, severity);
     }
 
     private sealed class InputModel

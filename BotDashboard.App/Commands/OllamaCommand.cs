@@ -1,4 +1,4 @@
-namespace BotDashboard.App.Commands;
+﻿namespace BotDashboard.App.Commands;
 
 /// <summary>
 /// Shell commands for the Ollama server that backs Jam Junction's AI song recommender.
@@ -75,6 +75,33 @@ public class OllamaCommand
     {
         return "curl -s -o /dev/null -w 'http_status=%{http_code}\n' --max-time 10 "
                + "http://127.0.0.1:11434/api/tags || echo 'http_status=unreachable'";
+    }
+
+    /// <summary>
+    /// Asks Ollama's HTTP API from inside the container that owns the tailnet route.
+    /// </summary>
+    /// <remarks>
+    /// This one runs on Cortex, not on the droplet. Jam Junction has no network stack of its
+    /// own -- it runs with <c>network_mode: service:bots-tailscale</c> -- so the only honest
+    /// test of "can the bot reach Ollama" is one issued from inside that sidecar. Bot Harbor
+    /// used to ask directly, which worked only while it shared a Tailscale sidecar of its own;
+    /// once Cloudflare replaced that sidecar the call had no tailnet route and the panel read
+    /// "no route" while the bot was talking to Ollama perfectly happily.
+    ///
+    /// busybox wget rather than curl: the Tailscale image carries no curl. The timing is taken
+    /// around the whole <c>docker exec</c>, so it includes a few milliseconds of exec overhead
+    /// -- it is a health signal, not a benchmark.
+    /// </remarks>
+    public string TailnetProbe(string container, string baseUrl)
+    {
+        return "start=$(date +%s%3N); "
+               + "body=$(docker exec " + container + " wget -q -T 8 -O - "
+               + baseUrl + "/api/tags 2>/dev/null); "
+               + "rc=$?; "
+               + "end=$(date +%s%3N); "
+               + "echo \"rc=$rc\"; "
+               + "echo \"ms=$((end-start))\"; "
+               + "echo \"$body\"";
     }
 
     public string Version()
