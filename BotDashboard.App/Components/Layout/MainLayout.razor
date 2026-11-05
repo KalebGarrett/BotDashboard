@@ -103,7 +103,8 @@
                drawer goes away completely and comes back on the app bar's menu button. *@
             <MudDrawer @bind-Open="@Open" Elevation="0" ClipMode="DrawerClipMode.Never"
                        Variant="DrawerVariant.Mini" OpenMiniOnHover="false"
-                       MiniWidth="72px" Breakpoint="Breakpoint.Md">
+                       MiniWidth="72px" Breakpoint="Breakpoint.Md"
+                       Class="@(AwaitingViewport ? "bh-drawer-presync" : null)">
                 <NavMenu Open="Open" OnToggle="ToggleDrawer"/>
             </MudDrawer>
             <MudMainContent Class="d-flex flex-column" Style="min-height:100vh;">

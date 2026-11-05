@@ -557,7 +557,11 @@ h1:focus {
         --mud-drawer-width-mini-left: 0px;
     }
 
-    .mud-drawer.mud-drawer-mini.mud-drawer-pos-left.mud-drawer--closed {
+    /* Collapsed, and also the brief moment before the browser has reported its width: the
+       server has to guess, it guesses "open" for the desktop, and on a phone that guess would
+       otherwise cover the page until the first measurement lands. */
+    .mud-drawer.mud-drawer-mini.mud-drawer-pos-left.mud-drawer--closed,
+    .mud-drawer.mud-drawer-mini.mud-drawer-pos-left.bh-drawer-presync {
         width: 0;
         min-width: 0;
         border-right: none;
