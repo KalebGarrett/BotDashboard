@@ -11,21 +11,24 @@ namespace BotDashboard.App.Services;
 /// Runs Ollama management commands on the droplet over SSH.
 /// </summary>
 /// <remarks>
-/// Mirrors <see cref="UbuntuService"/>: one short-lived <see cref="SshClient"/> per call, which
-/// keeps a dropped droplet connection from leaving the dashboard holding a dead socket.
+/// Two connections, and they are deliberately different shapes. Droplet commands go through
+/// the shared <see cref="DropletSshSession"/>, because that host rate-limits inbound SSH and a
+/// connection per button locked the dashboard out of it. The Cortex call keeps the
+/// short-lived client <see cref="UbuntuService"/> uses: it is on the LAN, it is not rate
+/// limited, and a fresh client per call cannot leave a dead socket behind.
 /// </remarks>
 public class OllamaService
 {
-    private readonly DigitalOceanDropletCredentials _digitalOcean;
+    private readonly DropletSshSession _droplet;
     private readonly NasCredentials _nas;
     private readonly OllamaEndpoint _endpoint;
 
     public OllamaService(
-        DigitalOceanDropletCredentials digitalOcean,
+        DropletSshSession droplet,
         NasCredentials nas,
         OllamaEndpoint endpoint)
     {
-        _digitalOcean = digitalOcean;
+        _droplet = droplet;
         _nas = nas;
         _endpoint = endpoint;
     }
@@ -170,33 +173,26 @@ public class OllamaService
         return response;
     }
 
+    /// <summary>
+    /// Runs a command on the droplet over the shared session.
+    /// </summary>
+    /// <remarks>
+    /// Every call used to open and close its own connection, which the droplet's
+    /// <c>22/tcp LIMIT IN</c> rule counts: this panel has nine buttons, and six clicks inside
+    /// thirty seconds had the dashboard rate-limiting itself out of its own droplet. See
+    /// <see cref="DropletSshSession"/>.
+    /// </remarks>
     private string RunCommandWithResponse(string command)
     {
         // Fail with something the operator can act on. Without this the SSH client throws
         // deep inside Renci with an argument-null message that says nothing about the cause,
         // which is exactly what the blank DROPLET_ID produced on the Manage Droplet page.
-        if (string.IsNullOrWhiteSpace(_digitalOcean.Host)
-            || string.IsNullOrWhiteSpace(_digitalOcean.Username)
-            || string.IsNullOrWhiteSpace(_digitalOcean.Password))
+        if (!_droplet.IsConfigured)
         {
             return "Droplet SSH settings are missing. Set DROPLET_HOST, DROPLET_USERNAME and "
                    + "DROPLET_PASSWORD in .env, then restart the app. See deploy/README.md.";
         }
 
-        using var client = new SshClient(_digitalOcean.Host, _digitalOcean.Username, _digitalOcean.Password);
-        client.Connect();
-
-        // Pulling a model downloads gigabytes, so the default 30s command timeout is not enough.
-        var sshCommand = client.CreateCommand(command);
-        sshCommand.CommandTimeout = TimeSpan.FromMinutes(10);
-
-        var response = sshCommand.Execute();
-        var error = sshCommand.Error;
-
-        client.Disconnect();
-
-        // systemctl and ollama both report real failures on stderr with an empty stdout, so a
-        // blank panel would otherwise be the only sign that anything went wrong.
-        return string.IsNullOrWhiteSpace(error) ? response : $"{response}\n{error}".Trim();
+        return _droplet.Run(command);
     }
 }

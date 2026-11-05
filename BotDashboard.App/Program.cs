@@ -145,6 +145,10 @@ builder.Services.AddSingleton<PreferencesService>();
 
 builder.Services.AddSingleton<NotificationService>();
 
+// Singleton on purpose: the whole point is that every circuit shares one SSH connection to
+// the droplet, rather than each Ollama button opening its own and tripping UFW's rate limit.
+builder.Services.AddSingleton<DropletSshSession>();
+
 builder.Services.AddMudServices(config =>
 {
     config.SnackbarConfiguration.MaxDisplayedSnackbars = 5;
