@@ -87,7 +87,7 @@ public class ServerPcSshSession : IDisposable
     {
         if (_client is null)
         {
-            _client = new SshClient(_serverPc.Host, _serverPc.Username, _serverPc.Password)
+            _client = new SshClient(ConnectionInfo())
             {
                 // Without traffic an idle link can be torn down underneath us, and the next
                 // command pays for a full Windows login. A keepalive is far cheaper.
@@ -109,6 +109,36 @@ public class ServerPcSshSession : IDisposable
         // PowerShell and ollama both report real failures on stderr with an empty stdout, so a
         // blank panel would otherwise be the only sign that anything went wrong.
         return string.IsNullOrWhiteSpace(error) ? response : $"{response}\n{error}".Trim();
+    }
+
+    /// <summary>
+    /// Offers the password both as plain <c>password</c> auth and as <c>keyboard-interactive</c>.
+    /// </summary>
+    /// <remarks>
+    /// The OpenSSH client falls back to keyboard-interactive on its own, so a server that only
+    /// allows that method looks perfectly normal from a terminal. SSH.NET's
+    /// <c>SshClient(host, user, password)</c> offers plain password auth and nothing else, and
+    /// such a server answers it with "Permission denied (password)" -- indistinguishable from
+    /// a wrong password. Offering both makes the dashboard log in wherever a terminal can.
+    /// </remarks>
+    private Renci.SshNet.ConnectionInfo ConnectionInfo()
+    {
+        var keyboardInteractive = new KeyboardInteractiveAuthenticationMethod(_serverPc.Username);
+        keyboardInteractive.AuthenticationPrompt += (_, prompt) =>
+        {
+            // Windows sshd asks a single "Password:" question. Answer anything else blank
+            // rather than leak the password into a prompt it was not asked for.
+            foreach (var question in prompt.Prompts)
+            {
+                question.Response = question.Request.Contains("password", StringComparison.OrdinalIgnoreCase)
+                    ? _serverPc.Password
+                    : string.Empty;
+            }
+        };
+
+        return new Renci.SshNet.ConnectionInfo(_serverPc.Host, _serverPc.Username,
+            new PasswordAuthenticationMethod(_serverPc.Username, _serverPc.Password),
+            keyboardInteractive);
     }
 
     /// <summary>
