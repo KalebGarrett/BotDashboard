@@ -130,13 +130,7 @@ check_tailnet_address() {
     esac
     echo "  not a tailnet address. Tailscale addresses start with 100. or end in .ts.net." >&2
     echo "  Ollama has no authentication, so it must not be reached over the public" >&2
-    echo "  internet. Run: tailscale status   on the droplet to find its address." >&2
-    return 1
-}
-
-check_droplet_id() {
-    [[ "$1" =~ ^[0-9]+$ ]] && return 0
-    echo "  a droplet id is all digits. Find it in the droplet's URL on DigitalOcean." >&2
+    echo "  internet. Run: tailscale status   on the server PC to find its address." >&2
     return 1
 }
 
@@ -149,20 +143,15 @@ ask NAS_USERNAME "SSH user on Cortex. Must be in the docker and systemd-journal 
 
 ask NAS_PASSWORD "Password for that Cortex account." yes
 
-ask OLLAMA_HOST "The droplet TAILNET address (100.x.y.z), not its public IP." no check_tailnet_address
+ask OLLAMA_HOST "The server PC TAILNET address (100.x.y.z), where Ollama runs." no check_tailnet_address
 
 ask TS_AUTHKEY \
     "Tailscale auth key. Must be Reusable, with Ephemeral OFF, or the node disappears on restart." \
     yes check_tailscale_key
 
-ask DIGITALOCEAN_TOKEN \
-    "DigitalOcean API token with read and write scope." \
-    yes
-
-ask DROPLET_ID   "Numeric id of the droplet running the bots." no check_droplet_id
-ask DROPLET_HOST "Droplet IP or hostname." no
-ask DROPLET_USERNAME "SSH user on the droplet (often root)." no
-ask DROPLET_PASSWORD "SSH password for that user." yes
+ask SERVER_PC_HOST "IP or hostname of the home server PC, where Ollama runs as a Windows service." no
+ask SERVER_PC_USERNAME "SSH user on the server PC. Must be a local administrator." no
+ask SERVER_PC_PASSWORD "Password for that server PC account." yes
 
 echo
 read -r -p "Set up the Cloudflare Tunnel as well? [y/N] " want_cloudflare

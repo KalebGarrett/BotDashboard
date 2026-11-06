@@ -2,18 +2,12 @@
 #
 #   cd /volume1/appdata/bots && sudo docker compose up -d
 #
-# STOP THE DROPLET COPIES FIRST. Discord allows one gateway connection per bot token. Running
-# the same bot here and on the droplet means both receive every interaction, so the bot replies
-# twice and the two instances fight over the same commands. Stop them on the droplet before
-# starting anything here -- Bot Harbor's "Stop All Containers" does it in one click once the
-# DROPLET_* settings are filled in.
-#
 # All secrets are compiled into these images (the Secrets/*.cs classes are gitignored but are
 # copied in by `COPY . ./`), so none of the four simple bots need configuration here. They need
 # nothing but outbound internet.
 #
-# Jam Junction and yt-cipher are held behind the `audio` profile and do NOT start by default.
-# See the notes on each, and deploy/bots/README.md.
+# Jam Junction and its tailnet sidecar are held behind the `audio` profile and do NOT start by
+# default. See deploy/bots/README.md.
 
 name: bots
 
@@ -49,8 +43,8 @@ services:
   # Below here: not started by default. `--profile audio` opts in.
   # ---------------------------------------------------------------------------------------
 
-  # Joins the tailnet so Jam Junction can reach Lavalink on the home server PC and Ollama on
-  # the droplet. Both are private services with no authentication of their own, which is
+  # Joins the tailnet so Jam Junction can reach Lavalink and Ollama on the home server PC.
+  # Both are private services with no authentication of their own, which is
   # exactly why they must not be reached over the public internet.
   bots-tailscale:
     image: tailscale/tailscale:latest
@@ -84,32 +78,16 @@ services:
       # change; before that this was a compile-time const needing a rebuild to move.
       LAVALINK_HOST: ${LAVALINK_HOST:-100.121.114.24}
       LAVALINK_PORT: ${LAVALINK_PORT:-2333}
-      # Ollama stays on the droplet. 1b because the droplet is memory-constrained; if Ollama
-      # ever moves somewhere roomier, drop the suffix for the 3B default.
-      OLLAMA_HOST: ${OLLAMA_HOST:-100.120.70.97}
+      # Ollama, also on the home server PC. 1b was chosen for the old 4 GB droplet; the PC has
+      # room for the 3B default (OLLAMA_MODEL=llama3.2) once that model is pulled there.
+      OLLAMA_HOST: ${OLLAMA_HOST:-100.121.114.24}
       OLLAMA_PORT: ${OLLAMA_PORT:-11434}
       OLLAMA_MODEL: ${OLLAMA_MODEL:-llama3.2:1b}
       OLLAMA_ENABLED: ${OLLAMA_ENABLED:-true}
       # The proxy exists only to give YouTube a residential egress IP. Cortex is already on
-      # the home connection, so requests go out from the same address without it -- and the
-      # SOCKS listener it would otherwise use lives on the droplet's loopback, unreachable
-      # from here, and only while the home server PC is awake.
+      # the home connection, so requests go out from the same address without it.
       PROXY_ENABLED: ${PROXY_ENABLED:-false}
       PROXY_ADDRESS: ${PROXY_ADDRESS:-}
-
-  # Solves YouTube's signature cipher for Lavalink. Lavalink runs on the home server PC, so
-  # moving this here puts a network hop between them that does not exist today. Keeping it on
-  # the droplet, or alongside Lavalink, is likely better -- measure before moving it.
-  yt-cipher:
-    image: ghcr.io/kikkia/yt-cipher:master
-    container_name: yt-cipher
-    profiles: [audio]
-    restart: unless-stopped
-    ports:
-      # Verified against the running droplet container: it listens on 8001, not 8080.
-      - "${YT_CIPHER_BIND:-0.0.0.0}:${YT_CIPHER_PORT:-8001}:8001"
-    environment:
-      API_KEY: ${YT_CIPHER_API_KEY:-}
 
 volumes:
   bots-tailscale-state:

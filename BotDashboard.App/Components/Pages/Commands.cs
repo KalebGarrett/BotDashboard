@@ -53,7 +53,7 @@ public partial class Commands
     }
 
     /// <summary>
-    /// Refreshes the Ollama panel: the systemd state over SSH, and whether Cortex can reach
+    /// Refreshes the Ollama panel: the service state over SSH, and whether Cortex can reach
     /// the HTTP API across the tailnet.
     /// </summary>
     private async Task CheckOllamaHealth(bool showSnackbar = true)
@@ -107,7 +107,7 @@ public partial class Commands
         if (OllamaHealth is not null && !OllamaHealth.ServiceActive)
         {
             conditions.Add(("service", "Ollama service is not active",
-                $"systemctl reports \"{OllamaHealth.ServiceState}\" on the droplet.",
+                $"The Ollama service reports \"{OllamaHealth.ServiceState}\" on the server PC.",
                 NotificationLevel.Error));
         }
 
@@ -281,7 +281,7 @@ public partial class Commands
     // ---------------------------------------------------------------------------------------
     // Ollama
     //
-    // Every one of these is a read or a service action on the droplet, and all of them write
+    // Every one of these is a read or a service action on the server PC, and all of them write
     // their result into the same Logs panel the Docker commands use, so the output has one
     // place to land rather than a second panel to look at.
     // ---------------------------------------------------------------------------------------
@@ -300,7 +300,7 @@ public partial class Commands
         }
         catch (Exception exception)
         {
-            // An unreachable droplet or a refused SSH login throws out of SshClient. Without
+            // An unreachable server PC or a refused SSH login throws out of SshClient. Without
             // this the whole Blazor circuit tears down and the page dies with the generic
             // "Oops... something went wrong", which says nothing about what actually failed.
             Output = exception.Message;
@@ -319,7 +319,7 @@ public partial class Commands
         RunOllamaCommand(() => OllamaService.ApiHealth(), "Checked the Ollama API!");
 
     private Task OllamaMemoryUsage() =>
-        RunOllamaCommand(() => OllamaService.MemoryUsage(), "Fetched droplet memory!");
+        RunOllamaCommand(() => OllamaService.MemoryUsage(), "Fetched server PC memory!");
 
     private Task OllamaListModels() =>
         RunOllamaCommand(() => OllamaService.ListModels(), "Listed Ollama models!");

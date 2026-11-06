@@ -16,10 +16,11 @@ botharbor-app                        ← Blazor Server dashboard
     ▼
 botharbor-postgres                   ← PostgreSQL 16
 
-botharbor-app ──SSH / DigitalOcean API──▶ droplet that runs the bots
+botharbor-app ──SSH──▶ home server PC (Windows): the Ollama service
 ```
 
-The droplet is unchanged. Cortex hosts the dashboard; the bots still live on DigitalOcean.
+The DigitalOcean droplet is retired. The bots run on Cortex (see `deploy/bots`), and Ollama runs
+on the home server PC beside Lavalink.
 
 ## Why these choices
 
@@ -91,7 +92,7 @@ survive. If you do edit `.env` by hand, single-quote anything containing a `$`.
 
 `POSTGRES_PASSWORD` is mandatory — compose refuses to start the database without it. Set
 `BOTHARBOR_ADMIN_EMAIL` and `BOTHARBOR_ADMIN_PASSWORD` too: there is no sign-up page, so this
-is the only way into a fresh database. `TS_AUTHKEY` and `DIGITALOCEAN_TOKEN` are not guarded by
+is the only way into a fresh database. `TS_AUTHKEY` and `SERVER_PC_*` are not guarded by
 compose (see the note at the top of `docker-compose.yml`); without them the tunnel never comes
 up and the app logs a warning naming what is missing.
 
@@ -130,8 +131,7 @@ the environment.
 ### 8. Disable key expiry
 
 At <https://login.tailscale.com/admin/machines>, on `bot-harbor`: **… → Disable key expiry**.
-Without this the tunnel dies after 180 days. Same step you already did for `server-pc` and
-`bots-ytcipher`.
+Without this the tunnel dies after 180 days. Same step you already did for `server-pc`.
 
 ## Decommissioning Azure
 
@@ -140,8 +140,8 @@ Only after you have logged in to the NAS instance:
 1. Azure portal → delete the **App Service** and its **App Service Plan**.
 2. Delete the **SQL Database**, then the **SQL Server** that hosted it.
 3. Check **Cost Management → Cost analysis** next billing cycle for anything left running.
-4. **Rotate the DigitalOcean API token and the droplet SSH password.** Both were set as Azure
-   app settings, so treat them as exposed.
+4. **Revoke the DigitalOcean API token** in the DigitalOcean console. It was set as an Azure app
+   setting, and nothing uses it now the droplet is gone.
 
 No data is carried over — the Postgres database starts empty, which is what you asked for. The
 only thing in the old database was the Identity user table.
@@ -248,19 +248,83 @@ name simply does not resolve.
 | --- | --- | --- |
 | Containers, images, run/stop/restart/pull/logs | **Cortex** | SSH, `NAS_*` |
 | Stats: memory, CPU, disk, uptime, SSH logins | **Cortex** | SSH, `NAS_*` |
-| Manage Droplet: status, power, reboot | droplet | DigitalOcean API, `DIGITALOCEAN_TOKEN` + `DROPLET_ID` |
-| Ollama: status, models, start/stop/restart | droplet | SSH, `DROPLET_*` |
-| Ollama health panel | both | systemd state over SSH to the droplet, **plus** an HTTP call from Bot Harbor across the tailnet |
+| Ollama: status, models, start/stop/restart | **server PC** | SSH (PowerShell), `SERVER_PC_*` |
+| Ollama health panel | both | Windows service state over SSH to the server PC, **plus** an HTTP call from `bots-tailscale` on Cortex across the tailnet |
 
 That last row is the one worth understanding. The panel reports two things separately because
-they fail separately: the systemd unit can be `active` while the port answers nothing, and the
+they fail separately: the service can be `Running` while the port answers nothing, and the
 tailnet path can be down while Ollama is perfectly healthy. Jam Junction only ever cares about
-the second, so the HTTP call is made from Bot Harbor itself — which shares the Tailscale
-sidecar's network namespace — rather than asking the droplet to curl its own loopback, which
-would always succeed and prove nothing.
+the second, so the HTTP call is made from inside `bots-tailscale` — whose network namespace Jam
+Junction shares — rather than asking the server PC to call its own loopback, which would always
+succeed and prove nothing.
 
-`OLLAMA_HOST` must therefore be the droplet's **tailnet** address, not its public IP. Ollama
-has no authentication of its own; the tailnet is the only thing keeping it private.
+`OLLAMA_HOST` must therefore be the server PC's **tailnet** address (`100.121.114.24`, the same
+one Jam Junction uses for Lavalink). Ollama has no authentication of its own; the firewall rule
+below is what keeps it to the tailnet.
+
+## Ollama on the home server PC
+
+Ollama runs natively on the server PC as a Windows service, wrapped by NSSM exactly like
+`LavalinkNode`, so it starts at boot without anyone signing in.
+
+**The quick way:** [`deploy/serverpc/Install-Ollama.ps1`](serverpc/Install-Ollama.ps1) does
+steps 1–4 below and is safe to re-run. Copy it to the server PC and, signed in as `Server`, run
+it from an **elevated** PowerShell:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File "C:\Users\Server\Documents\Ollama\Install-Ollama.ps1"
+```
+
+The steps it performs, if you would rather do them by hand (also elevated, as `Server`):
+
+1. **Install Ollama** from <https://ollama.com/download/windows> while signed in as `Server`.
+   Then stop the tray app and stop it starting at login. It binds 11434 too, and whichever
+   starts first wins:
+
+   ```powershell
+   Get-Process 'ollama app', ollama -ErrorAction SilentlyContinue | Stop-Process
+   Remove-Item "$env:APPDATA\Microsoft\Windows\Start Menu\Programs\Startup\Ollama.lnk" -ErrorAction SilentlyContinue
+   ```
+
+2. **Register the service.** `OLLAMA_HOST=0.0.0.0` makes it listen beyond loopback so Cortex can
+   reach it; `OLLAMA_MODELS` keeps models in `Server`'s profile rather than the SYSTEM one.
+
+   ```powershell
+   $nssm   = 'C:\Users\Server\Documents\nssm-2.24\win64\nssm.exe'
+   $ollama = 'C:\Users\Server\AppData\Local\Programs\Ollama\ollama.exe'
+   & $nssm install Ollama $ollama serve
+   & $nssm set Ollama AppEnvironmentExtra OLLAMA_HOST=0.0.0.0 OLLAMA_MODELS=C:\Users\Server\.ollama\models
+   & $nssm set Ollama AppStdout C:\Users\Server\Documents\Ollama\ollama.log
+   & $nssm set Ollama AppStderr C:\Users\Server\Documents\Ollama\ollama.log
+   & $nssm set Ollama Start SERVICE_AUTO_START
+   & $nssm start Ollama
+   ```
+
+3. **Firewall it to the tailnet.** Ollama has no authentication, so admit 11434 only from
+   Tailscale's `100.64.0.0/10` range. Nothing on the LAN or the internet can then reach it.
+
+   ```powershell
+   New-NetFirewallRule -DisplayName 'Ollama (tailnet only)' -Direction Inbound -Protocol TCP `
+       -LocalPort 11434 -RemoteAddress 100.64.0.0/10 -Action Allow
+   ```
+
+   If Windows offered an "allow ollama.exe" prompt during install, delete that broader rule in
+   **Windows Defender Firewall → Inbound Rules**.
+
+4. **Pull the model** Jam Junction uses (`OLLAMA_MODEL` in `deploy/bots/.env`):
+
+   ```powershell
+   ollama pull llama3.2:1b
+   ```
+
+   Or press **Pull llama3.2:1b** on the Commands page once `SERVER_PC_*` is set.
+
+5. **Point Bot Harbor at it.** In `.env`: `OLLAMA_HOST=100.121.114.24`, plus `SERVER_PC_HOST`,
+   `SERVER_PC_USERNAME` and `SERVER_PC_PASSWORD` for an administrator account (the server PC's
+   OpenSSH server already listens on 22). Then `docker compose up -d botharbor`.
+
+From Cortex, `docker exec bots-tailscale wget -q -O - http://100.121.114.24:11434/api/tags`
+should print the model list.
 
 ## Troubleshooting
 
@@ -273,12 +337,14 @@ has no authentication of its own; the tailnet is the only thing keeping it priva
 | Login page loops back on itself | Data Protection keys were lost, so the auth cookie can't be decrypted. Check the `dataprotection-keys` volume is still mounted; clear cookies and log in again. |
 | `relation "AspNetUsers" does not exist` | Migrations didn't run. Confirm `Database__MigrateOnStartup=true` and read `docker compose logs botharbor`. |
 | Can't log in, fresh database | No bootstrap user was configured. Set `BOTHARBOR_ADMIN_EMAIL` / `_PASSWORD` in `.env` and `docker compose up -d botharbor`. |
-| Dashboard up but droplet actions fail | Droplet credentials or the DigitalOcean token are wrong — or you rotated them during Azure teardown and didn't update `.env`. |
-| `Running without these droplet settings: ...` in the logs | Exactly what it says: those keys are blank in `.env`. Sign-in and the UI still work, so this is a warning, not a crash. |
+| Ollama buttons say `Server PC SSH settings are missing` | `SERVER_PC_*` is blank in `.env`. |
+| `Running without these server PC settings: ...` in the logs | Exactly what it says: those keys are blank in `.env`. Sign-in and the UI still work, so this is a warning, not a crash. |
+| Ollama Start/Stop says `Access is denied` | The `SERVER_PC_USERNAME` account is not a local administrator on the server PC. |
 | `permission denied ... /var/run/docker.sock` on every container panel | The Cortex account is not in the `docker` group. See step 3b, and log out and back in afterwards. |
 | SSH logins chart is empty | The account is not in `systemd-journal`, or the unit is named `sshd` rather than `ssh`. The command asks for both. |
-| Ollama panel: service `active` but `no route` | The tailnet path from Cortex to the droplet is down, not Ollama. Check `tailscale status` on both, and that `OLLAMA_HOST` is the 100.x address. |
-| Ollama panel: `no route` and service `unknown` | The droplet is unreachable entirely. Check it is powered on from the Manage Droplet page. |
+| Ollama panel: service `Running` but `no route` | The tailnet path from Cortex to the server PC is down, not Ollama. Or the firewall rule is missing, or the service lost `OLLAMA_HOST=0.0.0.0` and listens on loopback only. Check `tailscale status` on both, and `netstat -an \| findstr 11434` on the PC. |
+| Ollama panel: service `NotInstalled` | The NSSM service is not registered. See **Ollama on the home server PC**. |
+| Ollama panel: `no route` and service `unknown` | The server PC is unreachable entirely: asleep, rebooting for updates, or off. |
 | Credentials are right but authentication fails | A value in `.env` contains a `$` and is not single-quoted, so Compose interpolated part of it away. Re-run `./deploy/configure.sh`, which quotes correctly. An apostrophe cannot be represented in `.env` at all; change that credential. |
 | `up -d postgres` fails on an unrelated variable | Should not happen any more. Only `POSTGRES_PASSWORD` uses a `${VAR:?}` guard, because Compose interpolates the whole file before narrowing to the services you named, so a guard anywhere aborts every `up`. Don't add new ones. |
 | `failed to bind host port 127.0.0.1:5432: address already in use` | UGOS runs its own PostgreSQL 15 on 5432 (`/usr/ugreen/etc/psql`). The stack no longer publishes a port, so this only happens if you added `docker-compose.dev.yml` on the NAS. Drop it; the app reaches `postgres:5432` over the compose network. |

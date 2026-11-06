@@ -24,7 +24,7 @@ public class Notification
     /// Identity for the thing being reported, not for this row.
     /// </summary>
     /// <remarks>
-    /// Rows about a condition use a stable key such as <c>state:container:yt-cipher</c>, so a
+    /// Rows about a condition use a stable key such as <c>state:container:jamjunction</c>, so a
     /// container that has been down for an hour is one row rather than sixty. Rows about an
     /// event that happened once use a unique <c>toast:{guid}</c>.
     /// </remarks>

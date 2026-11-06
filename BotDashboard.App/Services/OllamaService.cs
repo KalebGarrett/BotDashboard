@@ -8,27 +8,26 @@ using Renci.SshNet;
 namespace BotDashboard.App.Services;
 
 /// <summary>
-/// Runs Ollama management commands on the droplet over SSH.
+/// Runs Ollama management commands on the home server PC over SSH.
 /// </summary>
 /// <remarks>
-/// Two connections, and they are deliberately different shapes. Droplet commands go through
-/// the shared <see cref="DropletSshSession"/>, because that host rate-limits inbound SSH and a
-/// connection per button locked the dashboard out of it. The Cortex call keeps the
-/// short-lived client <see cref="UbuntuService"/> uses: it is on the LAN, it is not rate
-/// limited, and a fresh client per call cannot leave a dead socket behind.
+/// Two connections, and they are deliberately different shapes. Server PC commands go through
+/// the shared <see cref="ServerPcSshSession"/>, because a Windows SSH login is slow and the
+/// panel has nine buttons. The Cortex call keeps the short-lived client
+/// <see cref="UbuntuService"/> uses: a fresh client per call cannot leave a dead socket behind.
 /// </remarks>
 public class OllamaService
 {
-    private readonly DropletSshSession _droplet;
+    private readonly ServerPcSshSession _serverPc;
     private readonly NasCredentials _nas;
     private readonly OllamaEndpoint _endpoint;
 
     public OllamaService(
-        DropletSshSession droplet,
+        ServerPcSshSession serverPc,
         NasCredentials nas,
         OllamaEndpoint endpoint)
     {
-        _droplet = droplet;
+        _serverPc = serverPc;
         _nas = nas;
         _endpoint = endpoint;
     }
@@ -61,21 +60,23 @@ public class OllamaService
     /// Whether Ollama is up, and whether Cortex can actually reach it.
     /// </summary>
     /// <remarks>
-    /// Two machines, two connections. The service state comes from the droplet, which is where
-    /// Ollama runs. The reachability half comes from Cortex, issued inside the container whose
-    /// network namespace Jam Junction shares -- see <see cref="OllamaCommand.TailnetProbe"/>.
+    /// Two machines, two connections. The service state comes from the server PC, which is
+    /// where Ollama runs. The reachability half comes from Cortex, issued inside the container
+    /// whose network namespace Jam Junction shares -- see <see cref="OllamaCommand.TailnetProbe"/>.
     ///
-    /// Asking the droplet to curl its own loopback would always succeed and prove nothing, and
-    /// asking from this process proves nothing either now that Bot Harbor is off the tailnet.
+    /// Asking the server PC to call its own loopback would always succeed and prove nothing
+    /// about the tailnet or its firewall rule.
     /// </remarks>
     public async Task<OllamaHealth> HealthAsync(CancellationToken cancellationToken = default)
     {
         var health = new OllamaHealth { Endpoint = _endpoint.BaseUrl };
 
-        // Half one: the systemd unit, over SSH to the droplet.
+        // Half one: the Windows service, over SSH to the server PC.
         try
         {
-            health.ServiceState = RunCommandWithResponse("systemctl is-active ollama").Trim();
+            health.ServiceState = _serverPc.IsConfigured
+                ? RunCommandWithResponse(OllamaCommand.ServiceState()).Trim()
+                : "unknown";
         }
         catch (Exception exception)
         {
@@ -173,26 +174,17 @@ public class OllamaService
         return response;
     }
 
-    /// <summary>
-    /// Runs a command on the droplet over the shared session.
-    /// </summary>
-    /// <remarks>
-    /// Every call used to open and close its own connection, which the droplet's
-    /// <c>22/tcp LIMIT IN</c> rule counts: this panel has nine buttons, and six clicks inside
-    /// thirty seconds had the dashboard rate-limiting itself out of its own droplet. See
-    /// <see cref="DropletSshSession"/>.
-    /// </remarks>
+    /// <summary>Runs a command on the server PC over the shared session.</summary>
     private string RunCommandWithResponse(string command)
     {
         // Fail with something the operator can act on. Without this the SSH client throws
-        // deep inside Renci with an argument-null message that says nothing about the cause,
-        // which is exactly what the blank DROPLET_ID produced on the Manage Droplet page.
-        if (!_droplet.IsConfigured)
+        // deep inside Renci with an argument-null message that says nothing about the cause.
+        if (!_serverPc.IsConfigured)
         {
-            return "Droplet SSH settings are missing. Set DROPLET_HOST, DROPLET_USERNAME and "
-                   + "DROPLET_PASSWORD in .env, then restart the app. See deploy/README.md.";
+            return "Server PC SSH settings are missing. Set SERVER_PC_HOST, SERVER_PC_USERNAME and "
+                   + "SERVER_PC_PASSWORD in .env, then restart the app. See deploy/README.md.";
         }
 
-        return _droplet.Run(command);
+        return _serverPc.Run(command);
     }
 }

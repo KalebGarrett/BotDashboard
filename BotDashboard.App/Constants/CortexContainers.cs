@@ -50,7 +50,6 @@ public static class CortexContainers
         new("prembot", "Prem Bot", DockerRepository.PremBot, ContainerGroup.Bot),
 
         new("jamjunction", "Jam Junction", DockerRepository.JamJunction, ContainerGroup.Audio),
-        new("yt-cipher", "YouTube Cipher", DockerRepository.YtCipher, ContainerGroup.Audio),
         // Jam Junction has no network stack of its own; it runs inside this one's namespace,
         // so starting Jam Junction without this first gets nowhere.
         new("bots-tailscale", "Tailscale (Bots)", "tailscale/tailscale:latest", ContainerGroup.Audio),

@@ -15,7 +15,7 @@
 # filters down to the services you named, so a guard on one service aborts `up` for every
 # other one too -- bringing up postgres alone for local dev would die on TS_AUTHKEY.
 # The rest are ${VAR:-}: the tailscale container reports a bad auth key itself, and the app
-# logs a warning at startup naming any droplet settings it is missing.
+# logs a warning at startup naming any server PC settings it is missing.
 #
 # See deploy/README.md for first-run setup.
 
@@ -111,7 +111,6 @@ services:
       BotHarbor__BootstrapUser__Email: ${BOTHARBOR_ADMIN_EMAIL:-}
       BotHarbor__BootstrapUser__Password: ${BOTHARBOR_ADMIN_PASSWORD:-}
       Database__MigrateOnStartup: "true"
-      ApiTokens__DigitalOcean: ${DIGITALOCEAN_TOKEN:-}
       # Cortex. Containers, images and the Stats page all read from here over SSH. The app
       # runs on this machine, so it is SSHing back to its own host -- see NasCredentials for
       # why that beats mounting the docker socket.
@@ -120,15 +119,15 @@ services:
       Nas__Password: ${NAS_PASSWORD:-}
       # The storage pool, not the OS overlay at / -- see NasCredentials.
       Nas__DiskPath: ${NAS_DISK_PATH:-/volume1}
-      # The droplet's tailnet address. Reached directly from this container, which shares the
-      # tailscale sidecar's namespace, so the health panel tests the real path rather than
-      # asking the droplet to check itself.
+      # The server PC's tailnet address. The health panel probes it from inside the bots
+      # stack's tailscale sidecar on Cortex, so it tests the path Jam Junction really uses.
       Ollama__Host: ${OLLAMA_HOST:-}
       Ollama__Port: ${OLLAMA_PORT:-11434}
-      SSH__Id: ${DROPLET_ID:-}
-      SSH__Host: ${DROPLET_HOST:-}
-      SSH__Username: ${DROPLET_USERNAME:-}
-      SSH__Password: ${DROPLET_PASSWORD:-}
+      # The home server PC (Windows), where Ollama runs as a service. SSH for the Ollama
+      # panel's start/stop/pull buttons -- see ServerPcCredentials.
+      ServerPc__Host: ${SERVER_PC_HOST:-}
+      ServerPc__Username: ${SERVER_PC_USERNAME:-}
+      ServerPc__Password: ${SERVER_PC_PASSWORD:-}
     volumes:
       - dataprotection-keys:/var/botharbor/keys
       - botharbor-data:/var/botharbor/data

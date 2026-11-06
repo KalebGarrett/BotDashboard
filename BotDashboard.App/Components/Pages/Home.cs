@@ -192,7 +192,7 @@ public partial class Home
     /// <remarks>
     /// Deliberately only reports faults -- unhealthy, restarting -- rather than absence. The
     /// list comes from <c>docker ps</c>, so a container that is simply switched off does not
-    /// appear here at all, and that is the right behaviour: yt-cipher and the UGOS apps are off
+    /// appear here at all, and that is the right behaviour: the audio stack and the UGOS apps are off
     /// on purpose most of the time, and a bell that nags about them would be ignored within a
     /// day. A container flapping in a restart loop is a different matter.
     /// </remarks>

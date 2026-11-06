@@ -4,7 +4,6 @@ using BotDashboard.App.Components.Account;
 using BotDashboard.App.Credentials;
 using BotDashboard.App.Data;
 using BotDashboard.App.Services;
-using DigitalOcean.API;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.HttpOverrides;
@@ -92,31 +91,7 @@ builder.Services.AddIdentityCore<BotHarborUser>(options => options.SignIn.Requir
     .AddSignInManager()
     .AddDefaultTokenProviders();
 
-builder.Services.AddSingleton(_ =>
-{
-    var apiToken = builder.Configuration["ApiTokens:DigitalOcean"];
-
-    return new DigitalOceanCredentials(apiToken);
-});
-
-builder.Services.AddSingleton(_ =>
-{
-    var token = builder.Configuration["ApiTokens:DigitalOcean"];
-    return new DigitalOceanClient(token);
-});
-
-builder.Services.AddSingleton(_ =>
-{
-    var id = builder.Configuration["SSH:Id"];
-    var host = builder.Configuration["SSH:Host"];
-    var username = builder.Configuration["SSH:Username"];
-    var password = builder.Configuration["SSH:Password"];
-
-    return new DigitalOceanDropletCredentials(id, host, username, password);
-});
-
-// Cortex, the NAS. Everything container-related and the whole Stats page run here; the droplet
-// is left with only the Manage Droplet page and the Ollama controls.
+// Cortex, the NAS. Everything container-related and the whole Stats page run here.
 builder.Services.AddSingleton(_ =>
 {
     var host = builder.Configuration["Nas:Host"];
@@ -125,6 +100,16 @@ builder.Services.AddSingleton(_ =>
     var diskPath = builder.Configuration["Nas:DiskPath"];
 
     return new NasCredentials(host, username, password, diskPath);
+});
+
+// The home server PC, a Windows box running Lavalink and Ollama. Only the Ollama controls use it.
+builder.Services.AddSingleton(_ =>
+{
+    var host = builder.Configuration["ServerPc:Host"];
+    var username = builder.Configuration["ServerPc:Username"];
+    var password = builder.Configuration["ServerPc:Password"];
+
+    return new ServerPcCredentials(host, username, password);
 });
 
 builder.Services.AddSingleton(_ =>
@@ -136,8 +121,6 @@ builder.Services.AddSingleton(_ =>
     return new OllamaEndpoint(host, port, probeContainer);
 });
 
-builder.Services.AddScoped<DigitalOceanService>();
-
 builder.Services.AddScoped<DockerService>();
 builder.Services.AddScoped<UbuntuService>();
 builder.Services.AddScoped<OllamaService>();
@@ -145,9 +128,9 @@ builder.Services.AddSingleton<PreferencesService>();
 
 builder.Services.AddSingleton<NotificationService>();
 
-// Singleton on purpose: the whole point is that every circuit shares one SSH connection to
-// the droplet, rather than each Ollama button opening its own and tripping UFW's rate limit.
-builder.Services.AddSingleton<DropletSshSession>();
+// Singleton on purpose: every circuit shares one SSH connection to the server PC, rather than
+// each Ollama button paying for its own Windows login.
+builder.Services.AddSingleton<ServerPcSshSession>();
 
 builder.Services.AddMudServices(config =>
 {
@@ -236,13 +219,13 @@ var startupLogger = app.Services
     .GetRequiredService<ILoggerFactory>()
     .CreateLogger("BotHarbor.Startup");
 
-// The dashboard's whole job is driving the droplet, but Switch.OnInitialized starts false so
+// The dashboard's whole job is driving Cortex, but Switch.OnInitialized starts false so
 // nothing is fetched until the operator asks. A missing token is therefore not fatal, and must
 // not throw -- that would break `dotnet run` for local UI work, the same way the compose
 // ${VAR:?} guards used to break `docker compose up -d postgres`. Name what is missing instead,
 // once, at startup, so a half-configured deployment is obvious in `docker compose logs`.
 // Cortex first: without it the container grid and the whole Stats page are blind, which is a
-// far bigger hole than the droplet-only features below.
+// far bigger hole than the Ollama controls below.
 var missingNasSettings = new[]
     {
         ("Nas:Host", "NAS_HOST"),
@@ -265,27 +248,25 @@ if (string.IsNullOrWhiteSpace(app.Configuration["Ollama:Host"]))
 {
     startupLogger.LogWarning(
         "Ollama:Host is not set, so the Ollama health panel cannot test the path from Cortex "
-        + "to the droplet. Set OLLAMA_HOST in .env to the droplet's tailnet address.");
+        + "to the server PC. Set OLLAMA_HOST in .env to the server PC's tailnet address.");
 }
 
-var missingDropletSettings = new[]
+var missingServerPcSettings = new[]
     {
-        ("ApiTokens:DigitalOcean", "DIGITALOCEAN_TOKEN"),
-        ("SSH:Id", "DROPLET_ID"),
-        ("SSH:Host", "DROPLET_HOST"),
-        ("SSH:Username", "DROPLET_USERNAME"),
-        ("SSH:Password", "DROPLET_PASSWORD")
+        ("ServerPc:Host", "SERVER_PC_HOST"),
+        ("ServerPc:Username", "SERVER_PC_USERNAME"),
+        ("ServerPc:Password", "SERVER_PC_PASSWORD")
     }
     .Where(setting => string.IsNullOrWhiteSpace(app.Configuration[setting.Item1]))
     .Select(setting => setting.Item2)
     .ToArray();
 
-if (missingDropletSettings.Length > 0)
+if (missingServerPcSettings.Length > 0)
 {
     startupLogger.LogWarning(
-        "Running without these droplet settings: {Missing}. The Manage Droplet page and the "
-        + "Ollama controls need them; everything else now reads from Cortex. See deploy/README.md.",
-        string.Join(", ", missingDropletSettings));
+        "Running without these server PC settings: {Missing}. The Ollama controls need them; "
+        + "everything else reads from Cortex. See deploy/README.md.",
+        string.Join(", ", missingServerPcSettings));
 }
 
 await DatabaseInitializer.InitializeAsync(app.Services, app.Configuration, startupLogger);

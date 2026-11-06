@@ -35,7 +35,7 @@ Browser ──HTTPS──▶ botharbor.<your-domain>
                    botharbor-app ──▶ botharbor-postgres
                         │
                         ├──SSH──▶ Cortex: Docker, the bots, every figure on the Stats page
-                        └──SSH / API──▶ droplet: Ollama, and nothing else
+                        └──SSH──▶ home server PC: the Ollama service
 ```
 
 `cloudflared` runs inside the app container's network namespace, so rebuilding the app takes
@@ -49,15 +49,16 @@ All six run on Cortex, in a second stack under `deploy/bots`:
 | Stack | Containers |
 | ----- | ---------- |
 | `botharbor` | `botharbor-app`, `botharbor-postgres`, `botharbor-cloudflared` |
-| `bots` | `jokebot`, `triviabot`, `factbot`, `prembot`, and behind the `audio` profile `jamjunction`, `yt-cipher`, `bots-tailscale` |
+| `bots` | `jokebot`, `triviabot`, `factbot`, `prembot`, and behind the `audio` profile `jamjunction`, `bots-tailscale` |
 
 The four simple bots need nothing but outbound internet. Jam Junction is the exception: it runs
-inside `bots-tailscale`'s network namespace, because it talks to Lavalink on the home server PC
-and to Ollama on the droplet, and neither has any authentication of its own. The tailnet is what
+inside `bots-tailscale`'s network namespace, because it talks to Lavalink and Ollama on the home
+server PC, and neither has any authentication of its own. The tailnet is what
 keeps them off the public internet rather than something the dashboard needs for itself.
 
-The DigitalOcean droplet is now down to one job: hosting Ollama for Jam Junction's song
-recommender, bound to its own loopback. The Manage Droplet page powers it on and off.
+The DigitalOcean droplet is retired. Ollama moved to the home server PC beside Lavalink, and the
+YouTube cipher helper went with the droplet: it was only ever needed for the public Lavalink node
+that used to run there.
 
 **[Setup, operations and troubleshooting → `deploy/README.md`](deploy/README.md)**
 

@@ -4,8 +4,9 @@
 /// Where the Ollama server lives, as seen from Bot Harbor.
 /// </summary>
 /// <remarks>
-/// Ollama stays on the DigitalOcean droplet. It binds to the droplet's loopback and has no
-/// authentication of its own, so the only route to it is the tailnet.
+/// Ollama runs on the home server PC. It has no authentication of its own, so the server PC's
+/// firewall admits port 11434 only from the tailnet, and this is the server PC's tailnet
+/// address -- the same one Jam Junction is given for Lavalink.
 ///
 /// Bot Harbor itself is not on the tailnet and does not need to be: it reaches the public
 /// internet through Cloudflare, and its own Tailscale sidecar was retired with that move. The

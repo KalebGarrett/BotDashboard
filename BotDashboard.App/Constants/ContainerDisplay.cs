@@ -16,8 +16,6 @@ public static class ContainerDisplay
     /// <summary>Docker's own mark, used for anything without a more specific icon.</summary>
     public const string DockerIcon = "imgs/Docker Logo.png";
 
-    private const string YouTubeIcon = "https://www.svgrepo.com/show/28730/youtube.svg";
-
     // Matched against the container name first, then the image. Order matters: the first
     // substring that matches wins, so put the more specific keys above the general ones.
     private static readonly (string Key, string Name)[] KnownNames =
@@ -27,8 +25,6 @@ public static class ContainerDisplay
         ("triviabot", "Trivia Bot"),
         ("factbot", "Fact Bot"),
         ("prembot", "Prem Bot"),
-        ("yt-cipher", "YouTube Cipher"),
-        ("signature_api", "YouTube Cipher"),
         ("botharbor-postgres", "PostgreSQL"),
         ("botharbor-cloudflared", "Cloudflare Tunnel"),
         ("botharbor-tailscale", "Tailscale"),
@@ -107,14 +103,8 @@ public static class ContainerDisplay
             char.ToUpperInvariant(word[0]) + word[1..].ToLowerInvariant()));
     }
 
-    /// <summary>
-    /// The icon for a container. Docker's mark for everything except yt-cipher, which is
-    /// recognisable enough to earn its own.
-    /// </summary>
-    public static string IconUrl(string image) =>
-        image?.Contains("yt-cipher", StringComparison.OrdinalIgnoreCase) == true
-            ? YouTubeIcon
-            : DockerIcon;
+    /// <summary>The icon for a container: Docker's mark for all of them.</summary>
+    public static string IconUrl(string image) => DockerIcon;
 
     /// <summary>
     /// Maps a <c>docker ps</c> status string onto a <c>.bh-status--*</c> CSS modifier.
